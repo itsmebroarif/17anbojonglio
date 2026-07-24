@@ -1,0 +1,6 @@
+{
+  "name": "17an Arena",
+  "description": "Independence Day Competition Management System (Offline First + PWA)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

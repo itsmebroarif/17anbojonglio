@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.font-heading {
+  font-family: 'Cinzel', serif;
+}
+
+/* Custom Red & White Independence Day Aesthetics */
+.bg-red-flag {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.bg-merah-putih {
+  background: linear-gradient(180deg, #dc2626 50%, #ffffff 50%);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.92; transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}
+
+/* Printable Stylesheet for A4 Formatting (Competition Board, Results, Certificates) */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide header, navigation, sidebars, buttons, modals, floating UI */
+  header,
+  nav,
+  aside,
+  button,
+  .no-print,
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+
+  /* Reset main wrapper */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Specific formatting for Competition Board & Leaderboard Results */
+  .print-board,
+  .print-results,
+  .certificate-print-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    width: 100% !important;
+  }
+
+  /* Ensure background colors for badges/headers print cleanly */
+  .bg-red-600,
+  .bg-slate-900,
+  .bg-emerald-600,
+  .bg-amber-500 {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
