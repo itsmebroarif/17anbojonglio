@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h1 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
           <i class="bi bi-calculator-fill text-red-600"></i>
@@ -13,7 +13,7 @@
       <!-- Select Competition -->
       <select
         v-model="selectedCompId"
-        class="px-4 py-2 bg-white text-slate-800 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-2xs"
+        class="w-full sm:w-auto px-4 py-2 bg-white text-slate-800 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-2xs"
       >
         <option value="">-- Pilih Perlombaan --</option>
         <option v-for="c in store.competitions" :key="c.id" :value="c.id">
@@ -106,7 +106,7 @@
 
       <!-- Recapped Score Leaderboard Table -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 class="font-bold text-slate-900 text-sm">Rekapitulasi Nilai & Peringkat Sementara</h3>
             <p class="text-xs text-slate-500">Hitungan otomatis total & rata-rata nilai juri</p>
@@ -114,14 +114,15 @@
 
           <button
             @click="autoSaveWinners"
-            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
+            class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5"
           >
             <i class="bi bi-trophy-fill"></i>
             <span>Tetapkan Juara 1, 2, 3</span>
           </button>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Desktop Table (sm and up) -->
+        <div class="hidden sm:block overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-100 text-slate-500 uppercase font-bold">
               <tr>
@@ -189,6 +190,69 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Mobile Cards View (< sm) -->
+        <div class="block sm:hidden divide-y divide-slate-100 p-3 space-y-3 bg-slate-50/50">
+          <div
+            v-for="(row, idx) in scoreStandings"
+            :key="'mob-sc-' + row.participant.id"
+            class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3"
+          >
+            <!-- Header: Rank & Reg Number -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span
+                  class="w-7 h-7 rounded-full inline-flex items-center justify-center font-bold text-xs"
+                  :class="[
+                    idx === 0 ? 'bg-amber-400 text-slate-900 shadow-xs' :
+                    idx === 1 ? 'bg-slate-300 text-slate-900' :
+                    idx === 2 ? 'bg-amber-800 text-amber-100' :
+                    'bg-slate-100 text-slate-600'
+                  ]"
+                >
+                  #{{ idx + 1 }}
+                </span>
+                <span class="font-bold text-slate-900 text-sm">
+                  {{ row.participant.name }}
+                </span>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-red-700 border border-slate-200 font-mono font-bold text-xs">
+                {{ row.registration?.participantNumber }}
+              </span>
+            </div>
+
+            <!-- Scores Breakdown -->
+            <div>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Rincian Nilai Juri:</span>
+              <div class="flex flex-wrap gap-1">
+                <span
+                  v-for="s in row.scores"
+                  :key="s.id"
+                  class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] text-slate-700"
+                >
+                  {{ s.judgeName }}: <strong>{{ s.score }}</strong>
+                </span>
+                <span v-if="row.scores.length === 0" class="text-xs text-slate-400 italic">Belum ada nilai</span>
+              </div>
+            </div>
+
+            <!-- Footer: Total & Avg -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+              <div>
+                <span class="text-slate-500 font-medium">Total Nilai: </span>
+                <span class="font-black text-slate-900 text-sm">{{ row.totalScore }}</span>
+              </div>
+              <div>
+                <span class="text-slate-500 font-medium">Rata-Rata: </span>
+                <span class="font-extrabold text-red-600 text-sm">{{ row.avgScore }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="scoreStandings.length === 0" class="p-6 text-center text-slate-400 text-xs">
+            Belum ada peserta terdaftar atau nilai juri yang dimasukkan untuk cabang lomba ini.
+          </div>
         </div>
       </div>
     </div>

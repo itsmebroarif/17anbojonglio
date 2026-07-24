@@ -5,7 +5,6 @@
       v-if="$route.path !== '/competition-board'"
       @toggleSidebar="isSidebarOpen = !isSidebarOpen"
       @openSearch="isSearchOpen = true"
-      @openGemini="isGeminiOpen = true"
     />
 
     <div class="flex-1 flex">

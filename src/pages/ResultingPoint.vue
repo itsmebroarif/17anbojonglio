@@ -56,7 +56,8 @@
         <p class="text-xs text-slate-500">Data poin diperbarui otomatis setiap kali pemenang lomba ditetapkan</p>
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- Desktop Table (sm and up) -->
+      <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-100 text-slate-500 uppercase font-bold">
             <tr>
@@ -119,6 +120,61 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Cards View (< sm) -->
+      <div class="block sm:hidden divide-y divide-slate-100 p-3 space-y-3 bg-slate-50/50">
+        <div
+          v-for="(item, idx) in leaderboard"
+          :key="'mob-rp-' + item.participant.id"
+          class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3"
+        >
+          <!-- Card Header: Rank + Name -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span
+                class="w-7 h-7 rounded-full inline-flex items-center justify-center font-extrabold text-xs"
+                :class="[
+                  idx === 0 ? 'bg-amber-400 text-slate-900' :
+                  idx === 1 ? 'bg-slate-300 text-slate-900' :
+                  idx === 2 ? 'bg-amber-800 text-amber-100' :
+                  'bg-slate-100 text-slate-600'
+                ]"
+              >
+                #{{ idx + 1 }}
+              </span>
+              <div>
+                <h3 class="font-extrabold text-slate-900 text-sm">
+                  {{ item.participant.name }}
+                </h3>
+                <p class="text-[11px] text-slate-500">
+                  {{ item.participant.age }} Thn • {{ item.participant.address || 'Peserta RT/RW' }}
+                </p>
+              </div>
+            </div>
+            <span class="font-black text-red-600 text-base">
+              {{ item.totalPoints }} pt
+            </span>
+          </div>
+
+          <!-- Points Breakdown Tags -->
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Pencapaian Poin:</span>
+            <div class="flex flex-wrap gap-1">
+              <span
+                v-for="(b, bIdx) in item.breakdown"
+                :key="bIdx"
+                class="px-2 py-0.5 bg-red-50 border border-red-200 text-red-800 rounded font-medium text-[10px]"
+              >
+                {{ b.competitionName }} ({{ b.rankName }}: +{{ b.points }}pt)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="leaderboard.length === 0" class="p-6 text-center text-slate-400 text-xs">
+          Belum ada perolehan poin. Tetapkan juara di menu Penilaian untuk mengisi klasemen poin.
+        </div>
       </div>
     </div>
   </div>

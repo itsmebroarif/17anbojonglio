@@ -32,10 +32,10 @@
           <span v-else>{{ s }}</span>
         </div>
         <span
-          class="text-xs font-bold hidden sm:inline"
+          class="text-[10px] sm:text-xs font-bold block"
           :class="step >= s ? 'text-slate-800' : 'text-slate-400'"
         >
-          {{ s === 1 ? 'Pilih Lomba' : s === 2 ? 'Data Peserta' : 'Konfirmasi' }}
+          {{ s === 1 ? 'Lomba' : s === 2 ? 'Data' : 'Konfirmasi' }}
         </span>
       </div>
     </div>

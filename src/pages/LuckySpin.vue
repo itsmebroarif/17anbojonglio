@@ -14,7 +14,7 @@
 
       <button
         @click="openAddModal"
-        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+        class="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
       >
         <i class="bi bi-plus-lg"></i>
         <span>Tambah Hadiah Doorprize</span>
@@ -24,8 +24,8 @@
     <!-- Spinner Arena Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Left 2 Cols: Interactive Lucky Wheel Canvas / Wheel Display -->
-      <div class="lg:col-span-2 bg-slate-950 text-white rounded-3xl p-8 border border-slate-800 shadow-2xl flex flex-col items-center justify-between text-center relative overflow-hidden">
-        <div class="w-full flex items-center justify-between border-b border-slate-800/80 pb-4 mb-4">
+      <div class="lg:col-span-2 bg-slate-950 text-white rounded-3xl p-4 sm:p-8 border border-slate-800 shadow-2xl flex flex-col items-center justify-between text-center relative overflow-hidden">
+        <div class="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/80 pb-4 mb-4 gap-2">
           <div class="flex items-center space-x-2">
             <i class="bi bi-gift-fill text-amber-400 text-xl"></i>
             <span class="font-extrabold text-sm uppercase text-slate-200">
@@ -35,7 +35,7 @@
 
           <select
             v-model="selectedDoorprizeId"
-            class="bg-slate-900 border border-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-xl text-xs focus:outline-none"
+            class="w-full sm:w-auto bg-slate-900 border border-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-xl text-xs focus:outline-none"
           >
             <option v-for="d in store.doorprizes" :key="d.id" :value="d.id">
               {{ d.name }} (Filter: {{ d.categoryFilter }}) {{ d.winnerParticipantId ? '✅ Ada Pemenang' : '' }}

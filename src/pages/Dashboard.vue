@@ -172,20 +172,20 @@
           </router-link>
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
-          <div class="p-4 bg-orange-50/80 border border-orange-200/80 rounded-xl">
-            <span class="text-xs font-bold text-orange-700 uppercase tracking-wider block">Menunggu (Waiting)</span>
-            <span class="text-2xl font-black text-orange-900 mt-1 block">{{ stats.waiting }}</span>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 sm:p-4 bg-orange-50/80 border border-orange-200/80 rounded-xl">
+            <span class="text-[10px] sm:text-xs font-bold text-orange-700 uppercase tracking-wider block">Menunggu (Waiting)</span>
+            <span class="text-xl sm:text-2xl font-black text-orange-900 mt-1 block">{{ stats.waiting }}</span>
           </div>
 
-          <div class="p-4 bg-emerald-50/80 border border-emerald-200/80 rounded-xl">
-            <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider block">Sedang Tampil</span>
-            <span class="text-2xl font-black text-emerald-900 mt-1 block">{{ stats.playing }}</span>
+          <div class="p-3.5 sm:p-4 bg-emerald-50/80 border border-emerald-200/80 rounded-xl">
+            <span class="text-[10px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider block">Sedang Tampil</span>
+            <span class="text-xl sm:text-2xl font-black text-emerald-900 mt-1 block">{{ stats.playing }}</span>
           </div>
 
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block">Selesai</span>
-            <span class="text-2xl font-black text-slate-900 mt-1 block">{{ stats.finished }}</span>
+          <div class="p-3.5 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider block">Selesai</span>
+            <span class="text-xl sm:text-2xl font-black text-slate-900 mt-1 block">{{ stats.finished }}</span>
           </div>
         </div>
 

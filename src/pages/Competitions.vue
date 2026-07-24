@@ -7,10 +7,10 @@
         <p class="text-xs sm:text-sm text-slate-500">Kelola daftar cabang lomba, kategori, lokasi, dan alokasi poin juara.</p>
       </div>
 
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 w-full sm:w-auto">
         <button
           @click="openModal()"
-          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors flex items-center gap-2"
+          class="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
         >
           <i class="bi bi-plus-lg"></i>
           <span>Tambah Lomba Baru</span>

@@ -11,34 +11,34 @@
       </div>
 
       <!-- Action & Export Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
         <button
           @click="isPrintPreviewOpen = true"
-          class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="col-span-2 sm:col-span-1 px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-printer-fill"></i>
-          <span>Print Preview Hasil</span>
+          <span>Print Preview</span>
         </button>
 
         <button
           @click="exportXLSXReport"
-          class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-file-earmark-excel-fill"></i>
-          <span>Ekspor XLSX</span>
+          <span>XLSX</span>
         </button>
 
         <button
           @click="exportCSVReport"
-          class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-filetype-csv"></i>
-          <span>Ekspor CSV</span>
+          <span>CSV</span>
         </button>
 
         <button
           @click="exportSQLReport"
-          class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="col-span-2 sm:col-span-1 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-database-fill-down"></i>
           <span>Ekspor SQL</span>
@@ -53,26 +53,26 @@
         :key="comp.id"
         class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs"
       >
-        <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 font-bold flex items-center justify-center text-sm">
+            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 font-bold flex items-center justify-center text-sm flex-shrink-0">
               {{ comp.prefix }}
             </div>
             <div>
-              <div class="flex items-center space-x-2">
+              <div class="flex flex-wrap items-center gap-1.5">
                 <h2 class="font-bold text-slate-900 text-base">{{ comp.name }}</h2>
                 <span class="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-semibold">
                   {{ comp.category }}
                 </span>
               </div>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-slate-500 mt-0.5">
                 Poin Juara 1: {{ comp.pointFirst }} | Juara 2: {{ comp.pointSecond }} | Juara 3: {{ comp.pointThird }}
               </p>
             </div>
           </div>
 
           <span
-            class="px-2.5 py-1 text-xs font-bold rounded-full"
+            class="px-2.5 py-1 text-xs font-bold rounded-full self-start sm:self-auto"
             :class="comp.status === 'Finished' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
           >
             {{ comp.status === 'Finished' ? 'Lomba Selesai' : 'Sedang/Belum Selesai' }}

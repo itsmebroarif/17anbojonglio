@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h1 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
           <i class="bi bi-patch-check-fill text-purple-600"></i>
@@ -11,32 +11,32 @@
       </div>
 
       <!-- Actions -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 w-full sm:w-auto">
         <button
           @click="generateAllCertificates"
-          class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-gear-wide-connected"></i>
-          <span>Generate Massal Sertifikat</span>
+          <span>Generate Massal</span>
         </button>
 
         <button
           @click="triggerPrint"
-          class="px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5"
+          class="flex-1 sm:flex-none px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-printer-fill"></i>
-          <span>Cetak (Print)</span>
+          <span>Cetak</span>
         </button>
       </div>
     </div>
 
     <!-- Filter Bar -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between gap-4">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
       <div class="flex items-center space-x-3 w-full sm:w-auto">
-        <label class="text-xs font-bold text-slate-700">Filter Lomba:</label>
+        <label class="text-xs font-bold text-slate-700 whitespace-nowrap">Filter Lomba:</label>
         <select
           v-model="selectedCompId"
-          class="px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
+          class="w-full sm:w-auto px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
         >
           <option value="ALL">-- Semua Lomba --</option>
           <option v-for="c in store.competitions" :key="c.id" :value="c.id">
@@ -54,7 +54,7 @@
       <div
         v-for="cert in filteredCertificates"
         :key="cert.id"
-        class="bg-white rounded-3xl border-4 border-amber-500/80 p-8 shadow-xl relative overflow-hidden text-slate-900 flex flex-col justify-between h-[360px]"
+        class="bg-white rounded-3xl border-4 border-amber-500/80 p-5 sm:p-8 shadow-xl relative overflow-hidden text-slate-900 flex flex-col justify-between min-h-[340px] sm:h-[360px]"
       >
         <!-- Background Flag Watermark Accent -->
         <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-9xl font-black font-heading">

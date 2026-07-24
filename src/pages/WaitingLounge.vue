@@ -11,10 +11,10 @@
       </div>
 
       <!-- Quick Action Buttons -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 w-full sm:w-auto">
         <button
           @click="callNextParticipant"
-          class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+          class="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-megaphone-fill"></i>
           <span>Panggil Peserta Berikutnya (Next Call)</span>
@@ -23,12 +23,12 @@
     </div>
 
     <!-- Filters Bar -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-wrap items-center justify-between gap-4">
-      <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
         <!-- Competition Selector -->
         <select
           v-model="selectedCompetitionId"
-          class="px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
+          class="w-full sm:w-auto px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
         >
           <option value="ALL">-- Semua Perlombaan --</option>
           <option v-for="c in store.competitions" :key="c.id" :value="c.id">
@@ -39,7 +39,7 @@
         <!-- Status Selector -->
         <select
           v-model="selectedStatus"
-          class="px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
+          class="w-full sm:w-auto px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
         >
           <option value="ALL">-- Semua Status --</option>
           <option value="Waiting">Waiting (Menunggu)</option>
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Search Box -->
-      <div class="relative w-full md:w-64">
+      <div class="relative w-full sm:w-64">
         <i class="bi bi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
         <input
           v-model="searchQuery"
@@ -63,9 +63,10 @@
       </div>
     </div>
 
-    <!-- Lounge Table -->
+    <!-- Lounge Data View: Desktop Table + Mobile Cards -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-      <div class="overflow-x-auto">
+      <!-- Desktop Table (sm and up) -->
+      <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider">
             <tr>
@@ -153,6 +154,72 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Card View (< sm) -->
+      <div class="block sm:hidden divide-y divide-slate-100 p-3 space-y-3 bg-slate-50/50">
+        <div
+          v-for="reg in filteredRegistrations"
+          :key="'mob-' + reg.id"
+          class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3"
+        >
+          <!-- Card Header: Participant Number + Status Badge -->
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-red-700 border border-slate-200 font-mono font-bold text-xs">
+              #{{ reg.participantNumber }}
+            </span>
+            <span
+              class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-flex items-center gap-1"
+              :class="statusBadgeClass(reg.status)"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+              {{ reg.status }}
+            </span>
+          </div>
+
+          <!-- Participant Info & Competition -->
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">
+              {{ store.getParticipantById(reg.participantId)?.name }}
+            </h3>
+            <p class="text-xs text-slate-500 font-medium">
+              {{ store.getCompetitionById(reg.competitionId)?.name }}
+              <span class="text-[10px] text-slate-400">({{ store.getCompetitionById(reg.competitionId)?.category }})</span>
+            </p>
+            <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <i class="bi bi-whatsapp text-emerald-600"></i>
+              <span>{{ store.getParticipantById(reg.participantId)?.whatsapp }}</span>
+            </p>
+          </div>
+
+          <!-- Card Actions: Dropdown & WA Button -->
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+            <select
+              :value="reg.status"
+              @change="changeStatus(reg.id, ($event.target as HTMLSelectElement).value as any)"
+              class="flex-1 px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-800 rounded-lg text-xs font-semibold focus:outline-none"
+            >
+              <option value="Waiting">Waiting</option>
+              <option value="Called">Called</option>
+              <option value="Ready">Ready</option>
+              <option value="Playing">Playing</option>
+              <option value="Finished">Finished</option>
+              <option value="Disqualified">Disqualified</option>
+            </select>
+
+            <a
+              :href="getWaCallUrl(reg)"
+              target="_blank"
+              class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1 transition-colors"
+            >
+              <i class="bi bi-whatsapp"></i> WA
+            </a>
+          </div>
+        </div>
+
+        <div v-if="filteredRegistrations.length === 0" class="p-6 text-center text-slate-400 text-xs">
+          Tidak ada data peserta yang memenuhi kriteria pencarian / filter.
+        </div>
       </div>
     </div>
   </div>

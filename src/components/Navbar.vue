@@ -14,7 +14,7 @@
         <h2 class="text-base sm:text-xl font-black text-slate-900 leading-tight tracking-tight uppercase">
           CHAMPIONSHIP ALL IN ONE
         </h2>
-        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider inline-flex items-center gap-1.5 w-fit border border-emerald-200">
+        <span class="hidden sm:inline-flex px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider items-center gap-1.5 w-fit border border-emerald-200">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>{{ store.settings.location || 'Lapangan Warga Depok' }}</span>
         </span>
@@ -57,15 +57,6 @@
         <i class="bi bi-display text-sm"></i>
         <span>TV Board</span>
       </router-link>
-
-      <!-- Gemini AI Panitia Assistant Button -->
-      <button
-        @click="$emit('openGemini')"
-        class="flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm shadow-red-200 transition-all"
-      >
-        <i class="bi bi-stars"></i>
-        <span>AI Panitia</span>
-      </button>
     </div>
   </header>
 </template>
@@ -75,5 +66,5 @@ import { useArenaStore } from '../stores/arenaStore';
 
 const store = useArenaStore();
 
-defineEmits(['toggleSidebar', 'openSearch', 'openGemini']);
+defineEmits(['toggleSidebar', 'openSearch']);
 </script>
