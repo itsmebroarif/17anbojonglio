@@ -94,6 +94,7 @@ export interface AppSettings {
   certificateTemplateText: string;
   autoBackup: boolean;
   colorTheme: string;
+  lastBackupAt?: string;
 }
 
 export interface ActivityLog {

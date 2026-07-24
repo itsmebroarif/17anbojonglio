@@ -12,6 +12,7 @@ import {
   RegistrationStatus
 } from '../types';
 import { StorageService, DEFAULT_SETTINGS } from '../services/storage';
+import { exportToJSON } from '../services/export';
 import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
 
@@ -27,7 +28,8 @@ export const useArenaStore = defineStore('arena', {
     settings: DEFAULT_SETTINGS as AppSettings,
     history: [] as ActivityLog[],
     globalSearchQuery: '',
-    isInitialized: false
+    isInitialized: false,
+    isDarkMode: false
   }),
 
   getters: {
@@ -109,6 +111,47 @@ export const useArenaStore = defineStore('arena', {
       this.settings = data.settings;
       this.history = data.history;
       this.isInitialized = true;
+      this.applyDarkMode(false);
+    },
+
+    toggleDarkMode(force?: boolean) {
+      this.isDarkMode = false;
+      StorageService.set('17an_darkmode', false);
+      this.applyDarkMode(false);
+    },
+
+    applyDarkMode(_isDark: boolean) {
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.remove('dark');
+      }
+    },
+
+    exportBackupJson() {
+      const data = StorageService.getAllData();
+      const dateStr = new Date().toISOString().substring(0, 10);
+      this.settings.lastBackupAt = new Date().toISOString();
+      this.saveAll();
+      exportToJSON(data, `17an_arena_backup_${dateStr}.json`);
+      this.logActivity('Backup Export JSON', 'Data berhasil diexport dan waktu backup diperbarui.');
+    },
+
+    flushDemoData() {
+      this.competitions = [];
+      this.participants = [];
+      this.registrations = [];
+      this.scores = [];
+      this.winners = [];
+      this.certificates = [];
+      this.doorprizes = [];
+      this.history = [
+        {
+          id: uuidv4(),
+          timestamp: new Date().toISOString(),
+          action: 'System Flush (Fresh App)',
+          details: 'Sistem dibersihkan total dari seluruh data demo. Siap digunakan untuk acara baru.'
+        }
+      ];
+      this.saveAll();
     },
 
     saveAll() {

@@ -9,7 +9,7 @@
 
     <aside
       :class="[
-        'fixed lg:sticky top-0 lg:top-20 inset-y-0 left-0 z-40 lg:z-20 w-64 h-screen lg:h-[calc(100vh-5rem)] bg-white text-slate-700 transform transition-transform duration-200 ease-in-out lg:translate-x-0 flex flex-col justify-between border-r border-slate-200 shadow-xl lg:shadow-none flex-shrink-0',
+        'fixed lg:sticky top-0 lg:top-20 inset-y-0 left-0 z-40 lg:z-20 w-64 h-screen lg:h-[calc(100vh-5rem)] bg-white text-slate-700 transform transition-transform duration-200 ease-in-out lg:translate-x-0 flex flex-col justify-between border-r border-slate-200 shadow-xl lg:shadow-none flex-shrink-0 transition-colors',
         isOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
@@ -60,7 +60,7 @@
 
     <!-- Footer System Status Card -->
     <div class="p-4 border-t border-slate-100">
-      <div class="bg-slate-900 text-white p-4 rounded-xl space-y-2">
+      <div class="bg-slate-900 text-white p-4 rounded-xl space-y-2 border border-transparent">
         <div class="flex justify-between text-[10px] uppercase font-bold opacity-60 tracking-wider">
           <span>Offline Mode</span>
           <span class="text-emerald-400">Active</span>

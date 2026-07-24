@@ -98,31 +98,54 @@
 
       <form @submit.prevent="goToStep3" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Peserta *</label>
+          <div class="flex items-center mb-1">
+            <label class="block text-xs font-bold text-slate-700">Nama Lengkap Peserta *</label>
+            <QuickHelpTooltip
+              title="Petunjuk Nama"
+              content="Gunakan nama resmi tanpa singkatan berlebihan agar penulisan di sertifikat juara dan pencetakan nomor pendaftaran akurat."
+              example="Budi Santoso"
+              position="top"
+            />
+          </div>
           <input
             v-model="participantForm.name"
             required
             type="text"
             placeholder="e.g. Arif Alexander"
-            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
+            class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Umur (Tahun) *</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-xs font-bold text-slate-700">Umur (Tahun) *</label>
+              <QuickHelpTooltip
+                title="Petunjuk Umur"
+                content="Digunakan untuk memvalidasi kesesuaian kategori (Anak <12th, Remaja 12-17th, Dewasa 18+th)."
+                example="14"
+                position="top"
+              />
+            </div>
             <input
               v-model.number="participantForm.age"
               required
               type="number"
               min="3"
               max="100"
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Jenis Kelamin *</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-xs font-bold text-slate-700">Jenis Kelamin *</label>
+              <QuickHelpTooltip
+                title="Petunjuk Gender"
+                content="Memudahkan panitia dalam memilah grup bagan / bagan pertandingan Putra dan Putri."
+                position="top"
+              />
+            </div>
             <div class="grid grid-cols-2 gap-2 mt-0.5">
               <label
                 class="flex items-center justify-center p-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors"
@@ -144,34 +167,58 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp *</label>
+          <div class="flex items-center mb-1">
+            <label class="block text-xs font-bold text-slate-700">Nomor WhatsApp *</label>
+            <QuickHelpTooltip
+              title="Format WhatsApp"
+              content="Masukkan nomor seluler aktif diawali '08' untuk pengiriman otomatis konfirmasi pendaftaran via WhatsApp."
+              example="081234567890"
+              position="top"
+            />
+          </div>
           <input
             v-model="participantForm.whatsapp"
             required
             type="tel"
             placeholder="e.g. 081234567890"
-            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
+            class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Email (Opsional)</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-xs font-bold text-slate-700">Email (Opsional)</label>
+              <QuickHelpTooltip
+                title="Petunjuk Email"
+                content="Digunakan untuk pengiriman salinan e-sertifikat jika dibutuhkan."
+                example="budi@gmail.com"
+                position="top"
+              />
+            </div>
             <input
               v-model="participantForm.email"
               type="email"
               placeholder="e.g. arif@gmail.com"
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
             />
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Alamat / RT RW (Opsional)</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-xs font-bold text-slate-700">Alamat / RT RW (Opsional)</label>
+              <QuickHelpTooltip
+                title="Format Alamat"
+                content="Sebutkan nomor RT/RW atau nama blok perumahan untuk statistik peserta per wilayah."
+                example="RT 05 / RW 02 Depok"
+                position="top"
+              />
+            </div>
             <input
               v-model="participantForm.address"
               type="text"
               placeholder="e.g. RT 05 / RW 02"
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
             />
           </div>
         </div>
@@ -311,6 +358,7 @@
 import { ref, reactive } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { generateRegistrationConfirmationMessage } from '../services/whatsapp';
+import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();

@@ -45,6 +45,64 @@
       </div>
     </div>
 
+    <!-- JSON Backup Notification Banner -->
+    <div
+      :class="[
+        'p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4',
+        isBackupOverdue
+          ? 'bg-amber-50 border-amber-300 text-amber-900'
+          : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+      ]"
+    >
+      <div class="flex items-start space-x-3">
+        <div
+          :class="[
+            'w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 mt-0.5',
+            isBackupOverdue
+              ? 'bg-amber-500 text-white shadow-sm shadow-amber-200'
+              : 'bg-emerald-600 text-white shadow-sm shadow-emerald-200'
+          ]"
+        >
+          <i :class="isBackupOverdue ? 'bi bi-exclamation-triangle-fill' : 'bi bi-shield-check'"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-extrabold text-sm">
+              {{ isBackupOverdue ? 'Peringatan Export Backup Data' : 'Backup JSON Terjadwal Aman' }}
+            </h3>
+            <span
+              v-if="isBackupOverdue"
+              class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-200 text-amber-900 animate-pulse"
+            >
+              Belum Backup >24 Jam
+            </span>
+            <span
+              v-else
+              class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-emerald-200 text-emerald-900"
+            >
+              Up to Date
+            </span>
+          </div>
+          <p class="text-xs opacity-90 mt-0.5 leading-relaxed">
+            <span v-if="isBackupOverdue">
+              Data belum diexport dalam 24 jam terakhir. Ekspor sekarang untuk mencegah potensi kehilangan data saat mati lampu atau browser dibersihkan.
+            </span>
+            <span v-else>
+              Backup JSON terakhir dilakukan pada: <strong>{{ lastBackupFormatted }}</strong>. Seluruh data lokal tersimpan rapi.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <button
+        @click="store.exportBackupJson()"
+        class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-2 whitespace-nowrap self-stretch sm:self-auto justify-center"
+      >
+        <i class="bi bi-download"></i>
+        <span>Export JSON Sekarang</span>
+      </button>
+    </div>
+
     <!-- Stats Grid (Visual Statistics Cards) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between">
@@ -203,6 +261,25 @@ import { useArenaStore } from '../stores/arenaStore';
 
 const store = useArenaStore();
 const stats = computed(() => store.dashboardStats);
+
+const isBackupOverdue = computed(() => {
+  const last = store.settings.lastBackupAt;
+  if (!last) return true;
+  const diffHours = (new Date().getTime() - new Date(last).getTime()) / (1000 * 60 * 60);
+  return diffHours >= 24;
+});
+
+const lastBackupFormatted = computed(() => {
+  const last = store.settings.lastBackupAt;
+  if (!last) return 'Belum pernah di-export';
+  return new Date(last).toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+});
 
 const categoryDistribution = computed(() => {
   const categories = ['Anak-anak', 'Remaja', 'Dewasa', 'Umum'] as const;

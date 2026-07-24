@@ -36,214 +36,11 @@ export const DEFAULT_SETTINGS: AppSettings = {
   colorTheme: '#dc2626'
 };
 
-export const SEED_COMPETITIONS: Competition[] = [
-  {
-    id: 'comp-1',
-    name: 'Balap Karung Helm',
-    category: 'Anak-anak',
-    description: 'Lomba balap karung menggunakan helm keselamatan melintasi jarak 10 meter.',
-    location: 'Lapangan Utama',
-    date: '2026-08-17',
-    time: '08:00',
-    maxParticipants: 30,
-    pointFirst: 100,
-    pointSecond: 60,
-    pointThird: 30,
-    status: 'Ongoing',
-    prefix: 'BK'
-  },
-  {
-    id: 'comp-2',
-    name: 'Makan Kerupuk Raksasa',
-    category: 'Anak-anak',
-    description: 'Lomba memakan kerupuk yang digantung tanpa menggunakan tangan.',
-    location: 'Panggung Utama',
-    date: '2026-08-17',
-    time: '09:30',
-    maxParticipants: 24,
-    pointFirst: 100,
-    pointSecond: 60,
-    pointThird: 30,
-    status: 'Upcoming',
-    prefix: 'MK'
-  },
-  {
-    id: 'comp-3',
-    name: 'Tarik Tambang Kebangsaan',
-    category: 'Dewasa',
-    description: 'Adu kekuatan antar regu 5 orang menarik tambang.',
-    location: 'Lapangan Timur',
-    date: '2026-08-17',
-    time: '14:00',
-    maxParticipants: 16,
-    pointFirst: 150,
-    pointSecond: 90,
-    pointThird: 45,
-    status: 'Upcoming',
-    prefix: 'TT'
-  },
-  {
-    id: 'comp-4',
-    name: 'Balon Joget Pasangan',
-    category: 'Remaja',
-    description: 'Berjoget berpasangan sambil menahan balon di dahi hingga musik berhenti.',
-    location: 'Panggung Utama',
-    date: '2026-08-17',
-    time: '11:00',
-    maxParticipants: 20,
-    pointFirst: 100,
-    pointSecond: 60,
-    pointThird: 30,
-    status: 'Finished',
-    prefix: 'BJ'
-  },
-  {
-    id: 'comp-5',
-    name: 'Mobile Legends Bang Bang (MLBB)',
-    category: 'Remaja',
-    description: 'Turnamen e-sport kualifikasi kustom 5v5.',
-    location: 'Area Posko Digital',
-    date: '2026-08-16',
-    time: '19:30',
-    maxParticipants: 16,
-    pointFirst: 200,
-    pointSecond: 120,
-    pointThird: 60,
-    status: 'Finished',
-    prefix: 'ML'
-  }
-];
-
-export const SEED_PARTICIPANTS: Participant[] = [
-  {
-    id: 'part-1',
-    name: 'Arif Alexander',
-    age: 12,
-    gender: 'L',
-    whatsapp: '081234567890',
-    email: 'arif@example.com',
-    address: 'Jl. Merdeka No. 17',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'part-2',
-    name: 'Siti Nurhaliza',
-    age: 10,
-    gender: 'P',
-    whatsapp: '081298765432',
-    address: 'Jl. Proklamasi No. 45',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'part-3',
-    name: 'Budi Santoso',
-    age: 28,
-    gender: 'L',
-    whatsapp: '085612349876',
-    address: 'Jl. Garuda No. 8',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'part-4',
-    name: 'Dewi Rahmawati',
-    age: 16,
-    gender: 'P',
-    whatsapp: '087811223344',
-    address: 'Jl. Pancasila No. 5',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'part-5',
-    name: 'Eko Prasetyo',
-    age: 35,
-    gender: 'L',
-    whatsapp: '089988776655',
-    address: 'Jl. Diponegoro No. 10',
-    createdAt: new Date().toISOString()
-  }
-];
-
-export const SEED_REGISTRATIONS: Registration[] = [
-  {
-    id: 'reg-1',
-    participantId: 'part-1',
-    competitionId: 'comp-1',
-    participantNumber: 'BK-001',
-    status: 'Playing',
-    registeredAt: new Date().toISOString()
-  },
-  {
-    id: 'reg-2',
-    participantId: 'part-2',
-    competitionId: 'comp-1',
-    participantNumber: 'BK-002',
-    status: 'Ready',
-    registeredAt: new Date().toISOString()
-  },
-  {
-    id: 'reg-3',
-    participantId: 'part-3',
-    competitionId: 'comp-3',
-    participantNumber: 'TT-001',
-    status: 'Waiting',
-    registeredAt: new Date().toISOString()
-  },
-  {
-    id: 'reg-4',
-    participantId: 'part-4',
-    competitionId: 'comp-4',
-    participantNumber: 'BJ-001',
-    status: 'Finished',
-    registeredAt: new Date().toISOString()
-  },
-  {
-    id: 'reg-5',
-    participantId: 'part-1',
-    competitionId: 'comp-4',
-    participantNumber: 'BJ-002',
-    status: 'Finished',
-    registeredAt: new Date().toISOString()
-  }
-];
-
-export const SEED_WINNERS: Winner[] = [
-  {
-    id: 'win-1',
-    competitionId: 'comp-4',
-    firstPlaceId: 'part-4',
-    secondPlaceId: 'part-1',
-    thirdPlaceId: 'part-2',
-    decidedAt: new Date().toISOString(),
-    notes: 'Pertandingan sengit 3 babak'
-  }
-];
-
-export const SEED_DOORPRIZES: Doorprize[] = [
-  {
-    id: 'dp-1',
-    name: 'Sepeda Gunung Polygon',
-    sponsor: 'Toko Sepeda Jaya',
-    categoryFilter: 'Semua'
-  },
-  {
-    id: 'dp-2',
-    name: 'Kipas Angin Cosmos',
-    sponsor: 'Ibu RT 05',
-    categoryFilter: 'Dewasa'
-  },
-  {
-    id: 'dp-3',
-    name: 'Paket Alat Tulis & Tas Sekolah',
-    sponsor: 'Karang Taruna',
-    categoryFilter: 'Anak-anak'
-  },
-  {
-    id: 'dp-4',
-    name: 'Smartwatch Sport',
-    sponsor: 'Donatur Warga',
-    categoryFilter: 'Remaja'
-  }
-];
+export const SEED_COMPETITIONS: Competition[] = [];
+export const SEED_PARTICIPANTS: Participant[] = [];
+export const SEED_REGISTRATIONS: Registration[] = [];
+export const SEED_WINNERS: Winner[] = [];
+export const SEED_DOORPRIZES: Doorprize[] = [];
 
 // LocalStorage Helper Utilities
 export class StorageService {
@@ -266,23 +63,18 @@ export class StorageService {
   }
 
   static initializeDefaults(force = false): void {
-    if (force || !localStorage.getItem(STORAGE_KEYS.COMPETITIONS)) {
-      this.set(STORAGE_KEYS.COMPETITIONS, SEED_COMPETITIONS);
-      this.set(STORAGE_KEYS.PARTICIPANTS, SEED_PARTICIPANTS);
-      this.set(STORAGE_KEYS.REGISTRATIONS, SEED_REGISTRATIONS);
+    const isCleared = localStorage.getItem('17an_cleared_empty_fresh');
+    if (force || !isCleared || !localStorage.getItem(STORAGE_KEYS.COMPETITIONS)) {
+      this.set(STORAGE_KEYS.COMPETITIONS, []);
+      this.set(STORAGE_KEYS.PARTICIPANTS, []);
+      this.set(STORAGE_KEYS.REGISTRATIONS, []);
       this.set(STORAGE_KEYS.SCORES, []);
-      this.set(STORAGE_KEYS.WINNERS, SEED_WINNERS);
+      this.set(STORAGE_KEYS.WINNERS, []);
       this.set(STORAGE_KEYS.CERTIFICATES, []);
-      this.set(STORAGE_KEYS.DOORPRIZES, SEED_DOORPRIZES);
+      this.set(STORAGE_KEYS.DOORPRIZES, []);
       this.set(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS);
-      this.set(STORAGE_KEYS.HISTORY, [
-        {
-          id: uuidv4(),
-          timestamp: new Date().toISOString(),
-          action: 'System Initialized',
-          details: 'Data awal perlombaan 17an berhasil disiapkan.'
-        }
-      ]);
+      this.set(STORAGE_KEYS.HISTORY, []);
+      localStorage.setItem('17an_cleared_empty_fresh', 'true');
     }
   }
 

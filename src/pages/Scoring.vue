@@ -33,11 +33,18 @@
 
         <form @submit.prevent="submitScore" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Pilih Peserta *</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-[11px] font-bold text-slate-700">Pilih Peserta *</label>
+              <QuickHelpTooltip
+                title="Pilih Peserta"
+                content="Pilih nomor atau nama peserta yang sedang dinilai di panggung."
+                position="top"
+              />
+            </div>
             <select
               v-model="scoreForm.participantId"
               required
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:outline-none"
             >
               <option value="">-- Pilih Peserta --</option>
               <option v-for="reg in compRegistrations" :key="reg.id" :value="reg.participantId">
@@ -47,18 +54,34 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nama Juri *</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-[11px] font-bold text-slate-700">Nama Juri *</label>
+              <QuickHelpTooltip
+                title="Identitas Juri"
+                content="Gunakan nama unik juri penilai untuk transparansi rekap poin (misal: Juri 1, Pak RW, Bu RT)."
+                example="Juri 1 (Bpk. Mulyadi)"
+                position="top"
+              />
+            </div>
             <input
               v-model="scoreForm.judgeName"
               required
               type="text"
               placeholder="e.g. Juri 1 (Pak RT)"
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs focus:outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nilai / Poin *</label>
+            <div class="flex items-center mb-1">
+              <label class="block text-[11px] font-bold text-slate-700">Nilai / Poin *</label>
+              <QuickHelpTooltip
+                title="Skala Nilai"
+                content="Input angka bulat (misal 50 - 100). Sistem akan secara otomatis menghitung total & rata-rata nilai seluruh juri."
+                example="88"
+                position="top"
+              />
+            </div>
             <input
               v-model.number="scoreForm.score"
               required
@@ -66,7 +89,7 @@
               min="0"
               max="1000"
               placeholder="e.g. 95"
-              class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-red-600 focus:outline-none"
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-red-600 rounded-xl text-xs font-bold focus:outline-none"
             />
           </div>
 
@@ -182,6 +205,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
+import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();

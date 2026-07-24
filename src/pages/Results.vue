@@ -10,8 +10,16 @@
         <p class="text-xs sm:text-sm text-slate-500">Rekapitulasi lengkap peringkat juara dan ekspor ke format SQL, JSON, XLSX, CSV.</p>
       </div>
 
-      <!-- Export Buttons -->
-      <div class="flex items-center space-x-2">
+      <!-- Action & Export Buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          @click="isPrintPreviewOpen = true"
+          class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+        >
+          <i class="bi bi-printer-fill"></i>
+          <span>Print Preview Hasil</span>
+        </button>
+
         <button
           @click="exportXLSXReport"
           class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
@@ -114,15 +122,50 @@
         </div>
       </div>
     </div>
+
+    <!-- Print Preview Overlay Modal -->
+    <PrintPreviewModal
+      :isOpen="isPrintPreviewOpen"
+      title="Rekapitulasi Hasil Lomba & Juara"
+      subtitle="Daftar Pemenang Resmi Seluruh Cabang Lomba 17an"
+      :columns="resultsPrintColumns"
+      :rows="resultsPrintRows"
+      @close="isPrintPreviewOpen = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { exportToXLSX, exportToCSV, exportToSQL } from '../services/export';
+import PrintPreviewModal from '../components/PrintPreviewModal.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
+const isPrintPreviewOpen = ref(false);
+
+const resultsPrintColumns = ref([
+  { key: 'index', label: 'No.', visible: true },
+  { key: 'competitionName', label: 'Cabang Lomba', visible: true },
+  { key: 'category', label: 'Kategori', visible: true },
+  { key: 'juara1', label: '🥇 Juara 1', visible: true },
+  { key: 'juara2', label: '🥈 Juara 2', visible: true },
+  { key: 'juara3', label: '🥉 Juara 3', visible: true },
+  { key: 'status', label: 'Status Lomba', visible: true }
+]);
+
+const resultsPrintRows = computed(() => {
+  return store.competitions.map((c, i) => ({
+    index: i + 1,
+    competitionName: c.name,
+    category: c.category,
+    juara1: getWinnerName(c.id, 1),
+    juara2: getWinnerName(c.id, 2),
+    juara3: getWinnerName(c.id, 3),
+    status: c.status === 'Finished' ? 'Selesai' : 'Sedang Berlangsung'
+  }));
+});
 
 function getWinnerName(competitionId: string, rank: 1 | 2 | 3) {
   const winner = store.winners.find(w => w.competitionId === competitionId);
