@@ -329,6 +329,21 @@ export const useArenaStore = defineStore('arena', {
       }
     },
 
+    bulkUpdateRegistrationStatus(ids: string[], status: RegistrationStatus) {
+      let count = 0;
+      ids.forEach(id => {
+        const reg = this.registrations.find(r => r.id === id);
+        if (reg) {
+          reg.status = status;
+          count++;
+        }
+      });
+      if (count > 0) {
+        this.logActivity('Status Peserta Massal (Bulk)', `${count} peserta diubah statusnya menjadi ${status}.`);
+        this.saveAll();
+      }
+    },
+
     // Scoring & Winners
     addScore(scoreData: Omit<Score, 'id' | 'createdAt'>) {
       const score: Score = {

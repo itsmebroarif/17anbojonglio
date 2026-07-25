@@ -63,13 +63,82 @@
       </div>
     </div>
 
+    <!-- Bulk Action Toolbar (Floating or Prominent Bar when items selected or available) -->
+    <div
+      class="bg-slate-900 text-white p-4 rounded-2xl shadow-lg border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 transition-all"
+      :class="{ 'ring-2 ring-amber-400': selectedRegIds.length > 0 }"
+    >
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center font-black text-sm flex-shrink-0">
+          <i class="bi bi-ui-checks"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-extrabold text-xs sm:text-sm text-white">Aksi Ubah Status Massal (Bulk Status)</h3>
+            <span
+              class="px-2 py-0.5 rounded-md font-mono font-bold text-[11px]"
+              :class="selectedRegIds.length > 0 ? 'bg-amber-400 text-slate-900' : 'bg-slate-800 text-slate-400'"
+            >
+              {{ selectedRegIds.length }} Terpilih
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">
+            Pilih centang peserta pada tabel di bawah untuk merubah status pemanggilan sekaligus.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bulk Actions Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          @click="toggleSelectAll"
+          class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs rounded-xl border border-slate-700 transition-colors"
+        >
+          {{ isAllSelected ? 'Batal Pilih Semua' : 'Pilih Semua (' + filteredRegistrations.length + ')' }}
+        </button>
+
+        <!-- Dropdown & Apply Button -->
+        <div class="flex items-center space-x-1.5 bg-slate-800 p-1 rounded-xl border border-slate-700">
+          <select
+            v-model="targetBulkStatus"
+            class="px-2.5 py-1 bg-slate-900 text-amber-300 font-bold text-xs rounded-lg border-0 focus:outline-none"
+          >
+            <option value="Waiting">Menunggu (Waiting)</option>
+            <option value="Called">Dipanggil (Called)</option>
+            <option value="Ready">Siap Arena (Ready)</option>
+            <option value="Playing">Bertanding (Playing)</option>
+            <option value="Finished">Selesai (Finished)</option>
+            <option value="Disqualified">Gugur (Disqualified)</option>
+          </select>
+
+          <button
+            @click="applyBulkStatus(targetBulkStatus)"
+            :disabled="selectedRegIds.length === 0"
+            class="px-3 py-1 bg-amber-400 hover:bg-amber-500 disabled:opacity-30 text-slate-900 font-black text-xs rounded-lg shadow-2xs transition-colors flex items-center gap-1"
+          >
+            <i class="bi bi-check-all text-base"></i>
+            <span>Ubah Status ({{ selectedRegIds.length }})</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Lounge Data View: Desktop Table + Mobile Cards -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
       <!-- Desktop Table (sm and up) -->
       <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider select-none">
             <tr>
+              <th class="p-3.5 w-12 text-center">
+                <input
+                  type="checkbox"
+                  :checked="isAllSelected && filteredRegistrations.length > 0"
+                  @change="toggleSelectAll"
+                  class="rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer w-4 h-4"
+                  title="Pilih Semua Peserta"
+                />
+              </th>
               <th class="p-3.5 font-bold">No. Peserta</th>
               <th class="p-3.5 font-bold">Nama Peserta</th>
               <th class="p-3.5 font-bold">Cabang Lomba</th>
@@ -82,7 +151,18 @@
               v-for="reg in filteredRegistrations"
               :key="reg.id"
               class="hover:bg-slate-50/80 transition-colors"
+              :class="selectedRegIds.includes(reg.id) ? 'bg-amber-50/60' : ''"
             >
+              <!-- Checkbox -->
+              <td class="p-3.5 text-center">
+                <input
+                  type="checkbox"
+                  :value="reg.id"
+                  v-model="selectedRegIds"
+                  class="rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer w-4 h-4"
+                />
+              </td>
+
               <td class="p-3.5 font-mono font-bold text-slate-900">
                 <span class="px-2 py-1 rounded bg-slate-100 text-red-700 border border-slate-200">
                   {{ reg.participantNumber }}
@@ -95,7 +175,7 @@
                 </div>
                 <div class="text-[11px] text-slate-500">
                   <i class="bi bi-whatsapp text-emerald-600"></i>
-                  {{ store.getParticipantById(reg.participantId)?.whatsapp }}
+                  {{ store.getParticipantById(reg.participantId)?.whatsapp || '-' }}
                 </div>
               </td>
 
@@ -148,7 +228,7 @@
             </tr>
 
             <tr v-if="filteredRegistrations.length === 0">
-              <td colspan="5" class="p-8 text-center text-slate-400">
+              <td colspan="6" class="p-8 text-center text-slate-400">
                 Tidak ada data peserta yang memenuhi kriteria pencarian / filter.
               </td>
             </tr>
@@ -162,12 +242,22 @@
           v-for="reg in filteredRegistrations"
           :key="'mob-' + reg.id"
           class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3"
+          :class="selectedRegIds.includes(reg.id) ? 'ring-2 ring-amber-400 bg-amber-50/30' : ''"
         >
-          <!-- Card Header: Participant Number + Status Badge -->
+          <!-- Card Header: Checkbox + Participant Number + Status Badge -->
           <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-red-700 border border-slate-200 font-mono font-bold text-xs">
-              #{{ reg.participantNumber }}
-            </span>
+            <div class="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                :value="reg.id"
+                v-model="selectedRegIds"
+                class="rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer w-4 h-4"
+              />
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-red-700 border border-slate-200 font-mono font-bold text-xs">
+                #{{ reg.participantNumber }}
+              </span>
+            </div>
+
             <span
               class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-flex items-center gap-1"
               :class="statusBadgeClass(reg.status)"
@@ -188,7 +278,7 @@
             </p>
             <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
               <i class="bi bi-whatsapp text-emerald-600"></i>
-              <span>{{ store.getParticipantById(reg.participantId)?.whatsapp }}</span>
+              <span>{{ store.getParticipantById(reg.participantId)?.whatsapp || '-' }}</span>
             </p>
           </div>
 
@@ -237,6 +327,10 @@ const selectedCompetitionId = ref('ALL');
 const selectedStatus = ref('ALL');
 const searchQuery = ref('');
 
+// Bulk selection state
+const selectedRegIds = ref<string[]>([]);
+const targetBulkStatus = ref<RegistrationStatus>('Called');
+
 const filteredRegistrations = computed(() => {
   return store.registrations.filter(r => {
     const matchComp = selectedCompetitionId.value === 'ALL' || r.competitionId === selectedCompetitionId.value;
@@ -250,6 +344,57 @@ const filteredRegistrations = computed(() => {
     return matchComp && matchStatus && matchSearch;
   });
 });
+
+const isAllSelected = computed(() => {
+  if (filteredRegistrations.value.length === 0) return false;
+  return filteredRegistrations.value.every(r => selectedRegIds.value.includes(r.id));
+});
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    // Deselect visible
+    const visibleIds = filteredRegistrations.value.map(r => r.id);
+    selectedRegIds.value = selectedRegIds.value.filter(id => !visibleIds.includes(id));
+  } else {
+    // Select visible
+    const visibleIds = filteredRegistrations.value.map(r => r.id);
+    const set = new Set([...selectedRegIds.value, ...visibleIds]);
+    selectedRegIds.value = Array.from(set);
+  }
+}
+
+function applyBulkStatus(status: RegistrationStatus) {
+  if (selectedRegIds.value.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Pilih Peserta',
+      text: 'Pilih minimal satu peserta untuk diubah statusnya secara bersamaan.',
+      confirmButtonColor: '#dc2626'
+    });
+    return;
+  }
+
+  const count = selectedRegIds.value.length;
+  store.bulkUpdateRegistrationStatus(selectedRegIds.value, status);
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Status Berhasil Diubah! ⚡',
+    html: `
+      <p class="text-xs text-slate-600">
+        Sebanyak <strong>${count} peserta</strong> berhasil diubah statusnya menjadi:
+      </p>
+      <div class="mt-2 inline-block px-3 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-xl font-bold text-xs">
+        ${status}
+      </div>
+    `,
+    timer: 1500,
+    showConfirmButton: false
+  });
+
+  // Reset selection
+  selectedRegIds.value = [];
+}
 
 function statusBadgeClass(status: RegistrationStatus) {
   switch (status) {
