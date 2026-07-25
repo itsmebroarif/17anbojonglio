@@ -41,6 +41,23 @@
       </div>
     </div>
 
+    <!-- Draft Autosave Banner Notification -->
+    <div
+      v-if="hasActiveDraft"
+      class="bg-blue-50 border border-blue-200 text-blue-900 px-4 py-2.5 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs"
+    >
+      <div class="flex items-center gap-2">
+        <i class="bi bi-floppy-fill text-blue-600"></i>
+        <span>Draft formulir pendaftaran tersimpan otomatis di browser ini.</span>
+      </div>
+      <button
+        @click="clearCurrentDraft"
+        class="text-[11px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1"
+      >
+        <i class="bi bi-trash"></i> Hapus Draft
+      </button>
+    </div>
+
     <!-- ========================================== -->
     <!-- MODE 1: SINGLE PARTICIPANT WIZARD REGISTRATION -->
     <!-- ========================================== -->
@@ -829,14 +846,136 @@
         </div>
       </div>
     </div>
+
+    <!-- Registration Stats Chart Summary -->
+    <RegistrationStatsChart />
+
+    <!-- Searchable & Filterable Participants Table Section -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="bi bi-people-fill text-red-600"></i>
+            <span>Daftar Seluruh Peserta Terdaftar</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Cari dan filter seluruh data pendaftaran peserta berdasarkan nama, nomor, cabang lomba, atau gender.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Filter Competition -->
+          <select
+            v-model="listCompFilter"
+            class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+          >
+            <option value="ALL">-- Semua Lomba --</option>
+            <option v-for="c in store.competitions" :key="c.id" :value="c.id">
+              {{ c.name }} ({{ c.prefix }})
+            </option>
+          </select>
+
+          <!-- Filter Gender -->
+          <select
+            v-model="listGenderFilter"
+            class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+          >
+            <option value="ALL">-- Semua Gender --</option>
+            <option value="L">👨 Laki-Laki</option>
+            <option value="P">👩 Perempuan</option>
+          </select>
+
+          <!-- Search Query Input -->
+          <div class="relative w-full sm:w-56">
+            <i class="bi bi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+            <input
+              v-model="listSearchQuery"
+              type="text"
+              placeholder="Cari nama/nomor..."
+              class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Table of Filtered Registered Participants -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-100 text-slate-600 uppercase font-bold">
+            <tr>
+              <th class="p-3 w-28">No. Peserta</th>
+              <th class="p-3">Nama Peserta</th>
+              <th class="p-3 w-32">Gender & Umur</th>
+              <th class="p-3">Cabang Perlombaan</th>
+              <th class="p-3 w-28">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr
+              v-for="reg in filteredAllRegistrations"
+              :key="reg.id"
+              class="hover:bg-slate-50 transition-colors"
+            >
+              <td class="p-3 font-mono font-bold text-red-600">
+                {{ reg.participantNumber }}
+              </td>
+              <td class="p-3 font-bold text-slate-900">
+                {{ store.getParticipantById(reg.participantId)?.name }}
+                <span class="block text-[10px] text-slate-400 font-normal">
+                  {{ store.getParticipantById(reg.participantId)?.address || 'Tanpa Alamat' }}
+                </span>
+              </td>
+              <td class="p-3">
+                <span
+                  class="px-2 py-0.5 rounded text-[10px] font-extrabold border"
+                  :class="store.getParticipantById(reg.participantId)?.gender === 'L' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200'"
+                >
+                  {{ store.getParticipantById(reg.participantId)?.gender === 'L' ? '👨 L' : '👩 P' }}
+                </span>
+                <span class="text-[10px] text-slate-500 ml-1 font-bold">
+                  {{ store.getParticipantById(reg.participantId)?.age }} Thn
+                </span>
+              </td>
+              <td class="p-3">
+                <span class="font-bold text-slate-800">
+                  {{ store.getCompetitionById(reg.competitionId)?.name }}
+                </span>
+                <span class="text-[10px] text-slate-400 block">
+                  {{ store.getCompetitionById(reg.competitionId)?.category }}
+                </span>
+              </td>
+              <td class="p-3">
+                <span
+                  class="px-2 py-1 rounded-md text-[10px] font-extrabold uppercase border"
+                  :class="[
+                    reg.status === 'Waiting' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                    reg.status === 'Playing' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                    'bg-slate-100 text-slate-600 border-slate-200'
+                  ]"
+                >
+                  {{ reg.status }}
+                </span>
+              </td>
+            </tr>
+
+            <tr v-if="filteredAllRegistrations.length === 0">
+              <td colspan="5" class="p-8 text-center text-slate-400">
+                Tidak ada peserta yang cocok dengan filter atau kata kunci pencarian.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { generateRegistrationConfirmationMessage } from '../services/whatsapp';
 import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
+import RegistrationStatsChart from '../components/RegistrationStatsChart.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
@@ -902,6 +1041,10 @@ function goToStep3() {
 function submitRegistration() {
   const result = store.registerParticipant(participantForm, selectedCompIds.value);
   createdResult.value = result;
+
+  // Clear single draft
+  localStorage.removeItem(SINGLE_DRAFT_KEY);
+
   Swal.fire({
     icon: 'success',
     title: 'Pendaftaran Berhasil!',
@@ -975,6 +1118,101 @@ const bulkCompParticipantsCount = computed(() => {
 const validBulkRowsCount = computed(() => {
   return bulkRows.value.filter(r => r.name && r.name.trim() !== '').length;
 });
+
+// ---------------------------------------------------------------------
+// DRAFT AUTOSAVE LOGIC
+// ---------------------------------------------------------------------
+const SINGLE_DRAFT_KEY = '17an_reg_single_draft';
+const BULK_DRAFT_KEY = '17an_reg_bulk_draft';
+
+const hasActiveDraft = computed(() => {
+  if (regMode.value === 'single') {
+    return participantForm.name.trim() !== '' || selectedCompIds.value.length > 0;
+  } else {
+    return validBulkRowsCount.value > 0 || bulkTargetCompId.value !== '';
+  }
+});
+
+function loadDrafts() {
+  try {
+    const singleRaw = localStorage.getItem(SINGLE_DRAFT_KEY);
+    if (singleRaw) {
+      const parsed = JSON.parse(singleRaw);
+      if (parsed.participantForm) Object.assign(participantForm, parsed.participantForm);
+      if (parsed.selectedCompIds) selectedCompIds.value = parsed.selectedCompIds;
+      if (parsed.step) step.value = parsed.step;
+    }
+
+    const bulkRaw = localStorage.getItem(BULK_DRAFT_KEY);
+    if (bulkRaw) {
+      const parsed = JSON.parse(bulkRaw);
+      if (parsed.bulkTargetCompId) bulkTargetCompId.value = parsed.bulkTargetCompId;
+      if (parsed.bulkRows && Array.isArray(parsed.bulkRows)) bulkRows.value = parsed.bulkRows;
+    }
+  } catch (e) {
+    console.error('Failed to load registration draft:', e);
+  }
+}
+
+function clearCurrentDraft() {
+  if (regMode.value === 'single') {
+    localStorage.removeItem(SINGLE_DRAFT_KEY);
+    resetWizard();
+  } else {
+    localStorage.removeItem(BULK_DRAFT_KEY);
+    bulkTargetCompId.value = '';
+    bulkRows.value = [
+      { name: '', age: 12, gender: 'L', whatsapp: '', address: '', notes: '' },
+      { name: '', age: 12, gender: 'L', whatsapp: '', address: '', notes: '' },
+      { name: '', age: 12, gender: 'L', whatsapp: '', address: '', notes: '' }
+    ];
+  }
+  Swal.fire({
+    icon: 'info',
+    title: 'Draft Dibersihkan',
+    timer: 1000,
+    showConfirmButton: false
+  });
+}
+
+onMounted(() => {
+  loadDrafts();
+});
+
+// Watch single form changes and save draft
+watch(
+  [participantForm, selectedCompIds, step],
+  () => {
+    if (participantForm.name.trim() || selectedCompIds.value.length > 0) {
+      localStorage.setItem(
+        SINGLE_DRAFT_KEY,
+        JSON.stringify({
+          participantForm,
+          selectedCompIds: selectedCompIds.value,
+          step: step.value
+        })
+      );
+    }
+  },
+  { deep: true }
+);
+
+// Watch bulk form changes and save draft
+watch(
+  [bulkTargetCompId, bulkRows],
+  () => {
+    if (validBulkRowsCount.value > 0 || bulkTargetCompId.value) {
+      localStorage.setItem(
+        BULK_DRAFT_KEY,
+        JSON.stringify({
+          bulkTargetCompId: bulkTargetCompId.value,
+          bulkRows: bulkRows.value
+        })
+      );
+    }
+  },
+  { deep: true }
+);
 
 const parsePasteLinesCount = computed(() => {
   if (!pasteRawText.value.trim()) return 0;
@@ -1079,6 +1317,9 @@ function submitBulkRegistration() {
 
   const comp = selectedBulkComp.value;
 
+  // Clear bulk draft
+  localStorage.removeItem(BULK_DRAFT_KEY);
+
   Swal.fire({
     icon: 'success',
     title: 'Pendaftaran Massal Berhasil! 🚀',
@@ -1093,4 +1334,28 @@ function submitBulkRegistration() {
     confirmButtonColor: '#dc2626'
   });
 }
+
+// ---------------------------------------------------------------------
+// SEARCHABLE & FILTERABLE PARTICIPANTS TABLE LOGIC
+// ---------------------------------------------------------------------
+const listCompFilter = ref('ALL');
+const listGenderFilter = ref('ALL');
+const listSearchQuery = ref('');
+
+const filteredAllRegistrations = computed(() => {
+  return store.registrations.filter(reg => {
+    const matchComp = listCompFilter.value === 'ALL' || reg.competitionId === listCompFilter.value;
+
+    const participant = store.getParticipantById(reg.participantId);
+    const matchGender = listGenderFilter.value === 'ALL' || participant?.gender === listGenderFilter.value;
+
+    const q = listSearchQuery.value.trim().toLowerCase();
+    const matchSearch = !q ||
+      reg.participantNumber.toLowerCase().includes(q) ||
+      (participant?.name.toLowerCase().includes(q) ?? false) ||
+      (participant?.address?.toLowerCase().includes(q) ?? false);
+
+    return matchComp && matchGender && matchSearch;
+  });
+});
 </script>

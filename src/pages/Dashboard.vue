@@ -160,6 +160,11 @@
 
     <!-- Live Lounge & Gender Stats Split -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Registration Bar Chart Summary Visualization -->
+      <div class="lg:col-span-3">
+        <RegistrationStatsChart />
+      </div>
+
       <!-- Waiting Lounge Status Overview -->
       <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -258,6 +263,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
+import RegistrationStatsChart from '../components/RegistrationStatsChart.vue';
 
 const store = useArenaStore();
 const stats = computed(() => store.dashboardStats);

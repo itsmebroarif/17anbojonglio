@@ -24,6 +24,23 @@
 
     <!-- Active Competition Scoring Dashboard -->
     <div v-if="activeComp" class="space-y-6">
+      <!-- Draft Autosave Banner Notification -->
+      <div
+        v-if="hasActiveScoreDraft"
+        class="bg-blue-50 border border-blue-200 text-blue-900 px-4 py-2.5 rounded-2xl flex items-center justify-between gap-3 text-xs shadow-2xs"
+      >
+        <div class="flex items-center gap-2">
+          <i class="bi bi-floppy-fill text-blue-600"></i>
+          <span>Draft penilaian juri tersimpan otomatis di browser ini.</span>
+        </div>
+        <button
+          @click="clearScoreDraft"
+          class="text-[11px] font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1"
+        >
+          <i class="bi bi-trash"></i> Bersihkan Draft
+        </button>
+      </div>
+
       <!-- Input Score Form Card -->
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -131,6 +148,28 @@
             >
               <i class="bi bi-arrow-counterclockwise"></i>
               <span>Reset Auto-Order</span>
+            </button>
+
+            <!-- Export CSV -->
+            <button
+              @click="exportCsv"
+              :disabled="manualStandings.length === 0"
+              class="px-3 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 border border-slate-300"
+              title="Export rekapitulasi poin ke format file CSV (Excel)"
+            >
+              <i class="bi bi-filetype-csv text-emerald-600 text-sm"></i>
+              <span>Export CSV</span>
+            </button>
+
+            <!-- Export PDF -->
+            <button
+              @click="exportPdf"
+              :disabled="manualStandings.length === 0"
+              class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 disabled:opacity-40 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 border border-red-200"
+              title="Cetak/Export rekapitulasi poin ke dokumen PDF resmi"
+            >
+              <i class="bi bi-file-earmark-pdf-fill text-red-600 text-sm"></i>
+              <span>Export PDF</span>
             </button>
 
             <button
@@ -357,10 +396,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, watch } from 'vue';
+import { ref, computed, reactive, watch, onMounted } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
 
 const store = useArenaStore();
 const selectedCompId = ref('');
@@ -370,6 +410,60 @@ const scoreForm = reactive({
   judgeName: 'Juri 1',
   score: 90
 });
+
+// ---------------------------------------------------------------------
+// DRAFT AUTOSAVE LOGIC FOR SCORING PANEL
+// ---------------------------------------------------------------------
+const SCORING_DRAFT_KEY = '17an_scoring_draft';
+
+const hasActiveScoreDraft = computed(() => {
+  return scoreForm.participantId !== '' || selectedCompId.value !== '';
+});
+
+function loadScoreDraft() {
+  try {
+    const raw = localStorage.getItem(SCORING_DRAFT_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.selectedCompId) selectedCompId.value = parsed.selectedCompId;
+      if (parsed.scoreForm) Object.assign(scoreForm, parsed.scoreForm);
+    }
+  } catch (e) {
+    console.error('Failed to load scoring draft:', e);
+  }
+}
+
+function clearScoreDraft() {
+  localStorage.removeItem(SCORING_DRAFT_KEY);
+  scoreForm.participantId = '';
+  scoreForm.score = 90;
+  Swal.fire({
+    icon: 'info',
+    title: 'Draft Penilaian Dibersihkan',
+    timer: 1000,
+    showConfirmButton: false
+  });
+}
+
+onMounted(() => {
+  loadScoreDraft();
+});
+
+watch(
+  [selectedCompId, scoreForm],
+  () => {
+    if (selectedCompId.value || scoreForm.participantId) {
+      localStorage.setItem(
+        SCORING_DRAFT_KEY,
+        JSON.stringify({
+          selectedCompId: selectedCompId.value,
+          scoreForm
+        })
+      );
+    }
+  },
+  { deep: true }
+);
 
 const activeComp = computed(() => store.getCompetitionById(selectedCompId.value));
 
@@ -543,6 +637,139 @@ function autoSaveWinners() {
       <p class="text-xs text-slate-500 mt-3">Data juara telah disimpan ke database & Hall of Fame.</p>
     `,
     confirmButtonColor: '#dc2626'
+  });
+}
+
+function exportCsv() {
+  if (!activeComp.value || manualStandings.value.length === 0) return;
+
+  const compName = activeComp.value.name;
+  const headers = ['Peringkat', 'No. Registrasi', 'Nama Peserta', 'Gender', 'Umur', 'Total Nilai', 'Rata-Rata Nilai', 'Detail Nilai Juri'];
+
+  const rows = manualStandings.value.map((row, idx) => {
+    const rank = idx === 0 ? 'Juara 1' : idx === 1 ? 'Juara 2' : idx === 2 ? 'Juara 3' : `Peringkat ${idx + 1}`;
+    const regNum = row.registration?.participantNumber || '-';
+    const name = row.participant?.name || '-';
+    const gender = row.participant?.gender === 'L' ? 'Laki-Laki' : 'Perempuan';
+    const age = `${row.participant?.age || '-'} Thn`;
+    const total = row.totalScore;
+    const avg = row.avgScore;
+    const judgeScores = row.scores.map((s: any) => `${s.judgeName}: ${s.score}`).join('; ');
+
+    return [rank, regNum, name, gender, age, total, avg, judgeScores]
+      .map(v => `"${String(v).replace(/"/g, '""')}"`)
+      .join(',');
+  });
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Rekap_Nilai_${compName.replace(/\s+/g, '_')}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  Swal.fire({
+    icon: 'success',
+    title: 'File CSV Diexport 📊',
+    text: 'Rekapitulasi nilai berhasil diunduh dalam format CSV.',
+    timer: 1200,
+    showConfirmButton: false
+  });
+}
+
+function exportPdf() {
+  if (!activeComp.value || manualStandings.value.length === 0) return;
+
+  const doc = new jsPDF();
+  const comp = activeComp.value;
+  const eventName = store.settings.eventName || 'Lomba Kemerdekaan 17 Agustus';
+
+  // Header Title
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(220, 38, 38);
+  doc.text(eventName.toUpperCase(), 14, 20);
+
+  doc.setFontSize(11);
+  doc.setTextColor(30, 41, 59);
+  doc.text(`REKAPITULASI PENILAIAN & LEADERBOARD LOMBA`, 14, 27);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(100, 116, 139);
+  doc.text(`Cabang Lomba: ${comp.name} (${comp.category}) | Kode Prefix: [${comp.prefix}]`, 14, 34);
+  doc.text(`Dicetak Pada: ${new Date().toLocaleString('id-ID')} | Total Peserta Dinilai: ${manualStandings.value.length} Orang`, 14, 40);
+
+  doc.setLineWidth(0.5);
+  doc.setDrawColor(226, 232, 240);
+  doc.line(14, 44, 196, 44);
+
+  // Table Headers
+  let y = 52;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setFillColor(241, 245, 249);
+  doc.rect(14, y - 5, 182, 7, 'F');
+
+  doc.text('PERINGKAT', 16, y);
+  doc.text('NO. REG', 44, y);
+  doc.text('NAMA PESERTA', 70, y);
+  doc.text('TOTAL', 145, y);
+  doc.text('RATA-RATA', 170, y);
+
+  y += 7;
+  doc.setFont('helvetica', 'normal');
+
+  manualStandings.value.forEach((row, idx) => {
+    if (y > 255) {
+      doc.addPage();
+      y = 20;
+    }
+
+    const rankStr = idx === 0 ? 'Juara 1 (1st)' : idx === 1 ? 'Juara 2 (2nd)' : idx === 2 ? 'Juara 3 (3rd)' : `Peringkat #${idx + 1}`;
+    const regNum = row.registration?.participantNumber || '-';
+    const name = row.participant?.name || '-';
+
+    doc.text(rankStr, 16, y);
+    doc.text(regNum, 44, y);
+    doc.text(name, 70, y);
+    doc.text(String(row.totalScore), 145, y);
+    doc.text(String(row.avgScore), 170, y);
+
+    y += 7;
+    doc.setDrawColor(241, 245, 249);
+    doc.line(14, y - 4, 196, y - 4);
+  });
+
+  // Official Signature Footer
+  y = Math.min(y + 20, 245);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(51, 65, 85);
+
+  doc.text('Mengetahui,', 25, y);
+  doc.text('Tim Juri Penilai,', 145, y);
+
+  doc.text('( _________________________ )', 20, y + 25);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Ketua Panitia Pelaksana', 25, y + 30);
+
+  doc.setFont('helvetica', 'normal');
+  doc.text('( _________________________ )', 140, y + 25);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Koordinator Juri', 148, y + 30);
+
+  doc.save(`Leaderboard_${comp.name.replace(/\s+/g, '_')}.pdf`);
+
+  Swal.fire({
+    icon: 'success',
+    title: 'File PDF Berhasil Diunduh 📄',
+    text: 'Dokumen rekapitulasi nilai leaderboard resmi siap dicetak/diarsipkan.',
+    timer: 1500,
+    showConfirmButton: false
   });
 }
 </script>
