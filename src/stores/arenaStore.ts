@@ -274,6 +274,34 @@ export const useArenaStore = defineStore('arena', {
       return { participant, registrations: createdRegistrations };
     },
 
+    registerBulkParticipants(
+      competitionId: string,
+      participantsList: Omit<Participant, 'id' | 'createdAt'>[]
+    ) {
+      const results: { participant: Participant; registration: Registration }[] = [];
+      const comp = this.competitions.find(c => c.id === competitionId);
+      if (!comp) return results;
+
+      participantsList.forEach(pData => {
+        if (!pData.name || !pData.name.trim()) return;
+
+        const res = this.registerParticipant(pData, [competitionId]);
+        if (res.registrations.length > 0) {
+          results.push({
+            participant: res.participant,
+            registration: res.registrations[0]
+          });
+        }
+      });
+
+      this.logActivity(
+        'Pendaftaran Massal (Bulk)',
+        `Berhasil mendaftarkan ${results.length} peserta sekaligus untuk lomba ${comp.name}.`
+      );
+      this.saveAll();
+      return results;
+    },
+
     updateParticipant(id: string, updatedData: Partial<Participant>) {
       const idx = this.participants.findIndex(p => p.id === id);
       if (idx !== -1) {
