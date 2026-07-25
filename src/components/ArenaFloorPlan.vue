@@ -231,135 +231,220 @@
         </div>
       </div>
 
-      <!-- Detail Info Panel (4 Cols) -->
-      <div class="lg:col-span-4 bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4">
-        <div v-if="selectedComp" class="space-y-4">
-          <!-- Competition Header -->
-          <div class="border-b border-slate-200 pb-3">
-            <div class="flex items-center justify-between gap-2">
-              <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-extrabold uppercase">
-                {{ selectedComp.category }}
-              </span>
-              <span
-                class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border"
-                :class="[
-                  selectedComp.status === 'Ongoing' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
-                  selectedComp.status === 'Upcoming' ? 'bg-blue-100 text-blue-800 border-blue-300' :
-                  'bg-slate-200 text-slate-700 border-slate-300'
-                ]"
-              >
-                {{ selectedComp.status }}
-              </span>
-            </div>
-            <h3 class="text-base font-extrabold text-slate-900 mt-1 flex items-center gap-1.5">
-              <span>[{{ selectedComp.prefix }}]</span>
-              <span>{{ selectedComp.name }}</span>
-            </h3>
-          </div>
-
-          <!-- Location & Inline Edit -->
-          <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold text-slate-400 uppercase">Lokasi Arena Saat Ini:</span>
+        <!-- Detail Info Panel (4 Cols) -->
+        <div class="lg:col-span-4 bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4">
+          <div v-if="selectedComp" class="space-y-4">
+            <!-- Competition Header -->
+            <div class="border-b border-slate-200 pb-3 flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-extrabold uppercase">
+                    {{ selectedComp.category }}
+                  </span>
+                  <span
+                    class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border"
+                    :class="[
+                      selectedComp.status === 'Ongoing' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                      selectedComp.status === 'Upcoming' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                      'bg-slate-200 text-slate-700 border-slate-300'
+                    ]"
+                  >
+                    {{ selectedComp.status }}
+                  </span>
+                </div>
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-1.5">
+                  <span>[{{ selectedComp.prefix }}]</span>
+                  <span>{{ selectedComp.name }}</span>
+                </h3>
+              </div>
               <button
-                @click="openLocationEditModal(selectedComp)"
-                class="text-[10px] font-bold text-red-600 hover:underline flex items-center gap-1"
+                @click="selectedCompId = ''"
+                class="p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 text-xs font-bold transition-colors"
+                title="Tutup & Lihat Peta 2D Portrait"
               >
-                <i class="bi bi-pencil-square"></i> Ubah Lokasi
+                <i class="bi bi-x-lg"></i>
               </button>
             </div>
-            <p class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
-              <i class="bi bi-geo-alt-fill text-red-600"></i>
-              <span>{{ selectedComp.location || 'Belum ditentukan' }}</span>
-            </p>
-          </div>
 
-          <!-- Panitia Routing Direction Helper -->
-          <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs space-y-1 text-amber-900">
-            <div class="font-extrabold flex items-center gap-1 text-[11px] uppercase text-amber-800">
-              <i class="bi bi-compass-fill text-amber-600"></i>
-              <span>Petunjuk Arah Panitia:</span>
+            <!-- Location & Inline Edit -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-slate-400 uppercase">Lokasi Arena Saat Ini:</span>
+                <button
+                  @click="openLocationEditModal(selectedComp)"
+                  class="text-[10px] font-bold text-red-600 hover:underline flex items-center gap-1"
+                >
+                  <i class="bi bi-pencil-square"></i> Ubah Lokasi
+                </button>
+              </div>
+              <p class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+                <i class="bi bi-geo-alt-fill text-red-600"></i>
+                <span>{{ selectedComp.location || 'Belum ditentukan' }}</span>
+              </p>
             </div>
-            <p class="text-[11px] leading-relaxed">
-              {{ getPanitiaRoutingInstruction(selectedComp) }}
-            </p>
-          </div>
 
-          <!-- Participants Status Summary -->
-          <div class="space-y-2">
-            <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
-              Status Peserta Arena:
-            </h4>
-            <div class="grid grid-cols-3 gap-2 text-center">
-              <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-xl">
-                <span class="block text-[10px] text-emerald-700 font-bold">Bertanding</span>
-                <span class="font-extrabold text-emerald-900 text-sm">{{ getPlayingCount(selectedComp.id) }}</span>
+            <!-- Panitia Routing Direction Helper -->
+            <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs space-y-1 text-amber-900">
+              <div class="font-extrabold flex items-center gap-1 text-[11px] uppercase text-amber-800">
+                <i class="bi bi-compass-fill text-amber-600"></i>
+                <span>Petunjuk Arah Panitia:</span>
               </div>
-              <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl">
-                <span class="block text-[10px] text-blue-700 font-bold">Siap / Panggil</span>
-                <span class="font-extrabold text-blue-900 text-sm">{{ getReadyCount(selectedComp.id) }}</span>
-              </div>
-              <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl">
-                <span class="block text-[10px] text-amber-700 font-bold">Menunggu</span>
-                <span class="font-extrabold text-amber-900 text-sm">{{ getWaitingCount(selectedComp.id) }}</span>
-              </div>
+              <p class="text-[11px] leading-relaxed">
+                {{ getPanitiaRoutingInstruction(selectedComp) }}
+              </p>
             </div>
-          </div>
 
-          <!-- Playing Participants List -->
-          <div class="space-y-2">
-            <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center justify-between">
-              <span>Peserta Di Arena:</span>
-              <span class="text-[10px] text-slate-400 font-normal">Live Queue</span>
-            </h4>
-
-            <div v-if="getArenaParticipants(selectedComp.id).length > 0" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-              <div
-                v-for="item in getArenaParticipants(selectedComp.id)"
-                :key="item.id"
-                class="p-2 bg-white rounded-lg border border-slate-200 text-xs flex items-center justify-between"
-              >
-                <div>
-                  <span class="font-mono font-bold text-red-600 mr-1.5">[{{ item.participantNumber }}]</span>
-                  <span class="font-extrabold text-slate-900">{{ store.getParticipantById(item.participantId)?.name }}</span>
+            <!-- Participants Status Summary -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                Status Peserta Arena:
+              </h4>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-xl">
+                  <span class="block text-[10px] text-emerald-700 font-bold">Bertanding</span>
+                  <span class="font-extrabold text-emerald-900 text-sm">{{ getPlayingCount(selectedComp.id) }}</span>
                 </div>
-                <span
-                  class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border"
+                <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl">
+                  <span class="block text-[10px] text-blue-700 font-bold">Siap / Panggil</span>
+                  <span class="font-extrabold text-blue-900 text-sm">{{ getReadyCount(selectedComp.id) }}</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl">
+                  <span class="block text-[10px] text-amber-700 font-bold">Menunggu</span>
+                  <span class="font-extrabold text-amber-900 text-sm">{{ getWaitingCount(selectedComp.id) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Playing Participants List -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center justify-between">
+                <span>Peserta Di Arena:</span>
+                <span class="text-[10px] text-slate-400 font-normal">Live Queue</span>
+              </h4>
+
+              <div v-if="getArenaParticipants(selectedComp.id).length > 0" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                <div
+                  v-for="item in getArenaParticipants(selectedComp.id)"
+                  :key="item.id"
+                  class="p-2 bg-white rounded-lg border border-slate-200 text-xs flex items-center justify-between"
+                >
+                  <div>
+                    <span class="font-mono font-bold text-red-600 mr-1.5">[{{ item.participantNumber }}]</span>
+                    <span class="font-extrabold text-slate-900">{{ store.getParticipantById(item.participantId)?.name }}</span>
+                  </div>
+                  <span
+                    class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border"
+                    :class="[
+                      item.status === 'Playing' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                      item.status === 'Ready' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                      'bg-amber-100 text-amber-800 border-amber-300'
+                    ]"
+                  >
+                    {{ item.status }}
+                  </span>
+                </div>
+              </div>
+              <p v-else class="text-[11px] text-slate-400 italic py-2 text-center bg-white rounded-xl border border-dashed border-slate-200">
+                Belum ada peserta yang dipanggil ke arena.
+              </p>
+            </div>
+          </div>
+
+          <!-- 2D PORTRAIT MAP BLUEPRINT WHEN NO COMPETITION IS SELECTED -->
+          <div v-else class="space-y-3 my-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-1.5">
+                <i class="bi bi-map-fill text-red-600"></i>
+                <h4 class="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Denah 2D Portrait Arena</h4>
+              </div>
+              <span class="text-[10px] bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold border border-red-200">2D Portrait View</span>
+            </div>
+
+            <!-- Portrait SVG Container -->
+            <div class="relative w-full h-[360px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center shadow-inner p-2">
+              <svg class="w-full h-full select-none" viewBox="0 0 280 420" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <pattern id="grid-portrait" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                  </pattern>
+                </defs>
+                <rect width="280" height="420" fill="url(#grid-portrait)" rx="12" />
+
+                <!-- ZONE B: PANGGUNG PANITIA (TOP) -->
+                <g @click="selectZone('B')" class="cursor-pointer transition-all hover:opacity-90">
+                  <rect x="15" y="15" width="250" height="90" rx="12" fill="rgba(239, 68, 68, 0.18)" stroke="#f87171" stroke-width="2" />
+                  <text x="28" y="42" fill="#f87171" font-size="11" font-weight="bold" font-family="sans-serif">ZONE B: PANGGUNG PANITIA</text>
+                  <text x="28" y="58" fill="#fca5a5" font-size="9" font-family="sans-serif">(Panggung Utama & Podium Juri)</text>
+                </g>
+
+                <!-- Connector -->
+                <path d="M 140 105 L 140 125" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
+
+                <!-- ZONE A: LAPANGAN LOMBA (MIDDLE) -->
+                <g @click="selectZone('A')" class="cursor-pointer transition-all hover:opacity-90">
+                  <rect x="15" y="125" width="250" height="170" rx="12" fill="rgba(16, 185, 129, 0.18)" stroke="#34d399" stroke-width="2" stroke-dasharray="6,4" />
+                  <text x="28" y="152" fill="#34d399" font-size="11" font-weight="bold" font-family="sans-serif">ZONE A: LAPANGAN LOMBA</text>
+                  <text x="28" y="168" fill="#a7f3d0" font-size="9" font-family="sans-serif">(Area Utama Pertandingan Lomba)</text>
+                </g>
+
+                <!-- Connector -->
+                <path d="M 140 295 L 140 315" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
+
+                <!-- ZONE C: AREA REGISTRASI (BOTTOM) -->
+                <g @click="selectZone('C')" class="cursor-pointer transition-all hover:opacity-90">
+                  <rect x="15" y="315" width="250" height="90" rx="12" fill="rgba(59, 130, 246, 0.18)" stroke="#60a5fa" stroke-width="2" />
+                  <text x="28" y="342" fill="#60a5fa" font-size="11" font-weight="bold" font-family="sans-serif">ZONE C: AREA REGISTRASI</text>
+                  <text x="28" y="358" fill="#93c5fd" font-size="9" font-family="sans-serif">(Meja Informasi & Pendaftaran)</text>
+                </g>
+              </svg>
+
+              <!-- HOTSPOT PINS ON PORTRAIT MAP -->
+              <div
+                v-for="comp in filteredCompetitions"
+                :key="comp.id"
+                @click.stop="selectCompetition(comp)"
+                class="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all hover:scale-110 z-20"
+                :style="getPortraitPinPositionStyle(comp)"
+              >
+                <div
+                  class="flex items-center gap-1 px-2 py-0.5 rounded-full shadow-md border text-[10px] font-black backdrop-blur-xs"
                   :class="[
-                    item.status === 'Playing' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
-                    item.status === 'Ready' ? 'bg-blue-100 text-blue-800 border-blue-300' :
-                    'bg-amber-100 text-amber-800 border-amber-300'
+                    selectedCompId === comp.id ? 'bg-red-600 text-white border-yellow-300 ring-2 ring-yellow-400 z-30' :
+                    comp.status === 'Ongoing' ? 'bg-red-600 text-white border-red-400' :
+                    'bg-slate-900/90 text-slate-200 border-slate-700'
                   ]"
                 >
-                  {{ item.status }}
-                </span>
+                  <span class="w-1.5 h-1.5 rounded-full" :class="comp.status === 'Ongoing' ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'"></span>
+                  <span class="font-mono">[{{ comp.prefix }}]</span>
+                  <span class="max-w-[65px] truncate">{{ comp.name }}</span>
+                </div>
               </div>
             </div>
-            <p v-else class="text-[11px] text-slate-400 italic py-2 text-center bg-white rounded-xl border border-dashed border-slate-200">
-              Belum ada peserta yang dipanggil ke arena.
+
+            <p class="text-[10px] text-slate-400 text-center italic">
+              Klik salah satu zona / pin diatas untuk rincian alur perlombaan.
             </p>
           </div>
-        </div>
 
-        <!-- Direct Navigation Buttons -->
-        <div v-if="selectedComp" class="pt-3 border-t border-slate-200 grid grid-cols-2 gap-2">
-          <router-link
-            to="/waiting-lounge"
-            class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-[11px] text-center transition-colors flex items-center justify-center gap-1"
-          >
-            <i class="bi bi-megaphone-fill text-amber-400"></i>
-            <span>Waiting Lounge</span>
-          </router-link>
+          <!-- Direct Navigation Buttons -->
+          <div class="pt-3 border-t border-slate-200 grid grid-cols-2 gap-2">
+            <router-link
+              to="/waiting-lounge"
+              class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-[11px] text-center transition-colors flex items-center justify-center gap-1"
+            >
+              <i class="bi bi-megaphone-fill text-amber-400"></i>
+              <span>Waiting Lounge</span>
+            </router-link>
 
-          <router-link
-            to="/scoring"
-            class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-[11px] text-center transition-colors flex items-center justify-center gap-1"
-          >
-            <i class="bi bi-trophy-fill"></i>
-            <span>Penilaian Juri</span>
-          </router-link>
+            <router-link
+              to="/scoring"
+              class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-[11px] text-center transition-colors flex items-center justify-center gap-1"
+            >
+              <i class="bi bi-trophy-fill"></i>
+              <span>Penilaian Juri</span>
+            </router-link>
+          </div>
         </div>
-      </div>
     </div>
 
     <!-- MAIN VIEW 2: 2D SVG BLUEPRINT -->
@@ -521,8 +606,8 @@ let flagMesh: THREE.Mesh | null = null;
 let characterGroup: THREE.Group | null = null;
 
 const selectedComp = computed(() => {
-  if (!selectedCompId.value && store.competitions.length > 0) {
-    return store.competitions[0];
+  if (!selectedCompId.value) {
+    return null;
   }
   return store.competitions.find(c => c.id === selectedCompId.value);
 });
@@ -615,6 +700,18 @@ function getPinPositionStyle(comp: Competition) {
     return { left: `${66 + seed * 5}%`, top: `${66 + seed * 6}%` };
   }
   return { left: `${16 + (seed * 8)}%`, top: `${24 + (seed * 12)}%` };
+}
+
+function getPortraitPinPositionStyle(comp: Competition) {
+  const loc = comp.location.toLowerCase();
+  const seed = comp.prefix ? (comp.prefix.charCodeAt(0) % 3) : 0;
+  if (loc.includes('panggung') || loc.includes('panitia')) {
+    return { left: `${25 + seed * 25}%`, top: `${15 + seed * 5}%` };
+  }
+  if (loc.includes('registrasi') || loc.includes('meja')) {
+    return { left: `${25 + seed * 25}%`, top: `${82 + seed * 4}%` };
+  }
+  return { left: `${20 + seed * 25}%`, top: `${45 + seed * 8}%` };
 }
 
 function getPanitiaRoutingInstruction(comp: Competition): string {
