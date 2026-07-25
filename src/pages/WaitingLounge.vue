@@ -49,6 +49,16 @@
           <option value="Finished">Finished (Selesai)</option>
           <option value="Disqualified">Disqualified (Gugur)</option>
         </select>
+
+        <!-- Gender Selector -->
+        <select
+          v-model="selectedGender"
+          class="w-full sm:w-auto px-3 py-2 bg-slate-100 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none"
+        >
+          <option value="ALL">-- Semua Gender --</option>
+          <option value="L">👨 Laki-Laki</option>
+          <option value="P">👩 Perempuan</option>
+        </select>
       </div>
 
       <!-- Search Box -->
@@ -141,6 +151,7 @@
               </th>
               <th class="p-3.5 font-bold">No. Peserta</th>
               <th class="p-3.5 font-bold">Nama Peserta</th>
+              <th class="p-3.5 font-bold">Gender & Umur</th>
               <th class="p-3.5 font-bold">Cabang Lomba</th>
               <th class="p-3.5 font-bold">Status Arena</th>
               <th class="p-3.5 font-bold text-center">Aksi Pemanggilan & Status</th>
@@ -177,6 +188,19 @@
                   <i class="bi bi-whatsapp text-emerald-600"></i>
                   {{ store.getParticipantById(reg.participantId)?.whatsapp || '-' }}
                 </div>
+              </td>
+
+              <!-- Gender Column -->
+              <td class="p-3.5">
+                <span
+                  class="px-2.5 py-1 rounded-lg text-xs font-extrabold inline-flex items-center gap-1 border"
+                  :class="store.getParticipantById(reg.participantId)?.gender === 'L' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200'"
+                >
+                  <span>{{ store.getParticipantById(reg.participantId)?.gender === 'L' ? '👨 Laki-Laki' : '👩 Perempuan' }}</span>
+                </span>
+                <span class="text-[10px] text-slate-500 font-bold block mt-1">
+                  {{ store.getParticipantById(reg.participantId)?.age || '-' }} Tahun
+                </span>
               </td>
 
               <td class="p-3.5">
@@ -269,10 +293,18 @@
 
           <!-- Participant Info & Competition -->
           <div>
-            <h3 class="font-bold text-slate-900 text-sm">
-              {{ store.getParticipantById(reg.participantId)?.name }}
-            </h3>
-            <p class="text-xs text-slate-500 font-medium">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-bold text-slate-900 text-sm">
+                {{ store.getParticipantById(reg.participantId)?.name }}
+              </h3>
+              <span
+                class="px-2 py-0.5 rounded text-[10px] font-extrabold border"
+                :class="store.getParticipantById(reg.participantId)?.gender === 'L' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200'"
+              >
+                {{ store.getParticipantById(reg.participantId)?.gender === 'L' ? '👨 L' : '👩 P' }} ({{ store.getParticipantById(reg.participantId)?.age }} Thn)
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium mt-1">
               {{ store.getCompetitionById(reg.competitionId)?.name }}
               <span class="text-[10px] text-slate-400">({{ store.getCompetitionById(reg.competitionId)?.category }})</span>
             </p>
@@ -325,6 +357,7 @@ import Swal from 'sweetalert2';
 const store = useArenaStore();
 const selectedCompetitionId = ref('ALL');
 const selectedStatus = ref('ALL');
+const selectedGender = ref('ALL');
 const searchQuery = ref('');
 
 // Bulk selection state
@@ -337,11 +370,13 @@ const filteredRegistrations = computed(() => {
     const matchStatus = selectedStatus.value === 'ALL' || r.status === selectedStatus.value;
 
     const participant = store.getParticipantById(r.participantId);
+    const matchGender = selectedGender.value === 'ALL' || participant?.gender === selectedGender.value;
+
     const matchSearch =
       r.participantNumber.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       (participant?.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ?? false);
 
-    return matchComp && matchStatus && matchSearch;
+    return matchComp && matchStatus && matchGender && matchSearch;
   });
 });
 
