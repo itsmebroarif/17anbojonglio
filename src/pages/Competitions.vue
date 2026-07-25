@@ -93,25 +93,36 @@
           </p>
 
           <!-- Competition Details List -->
-          <div class="space-y-1.5 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+          <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-100 mb-4">
             <div class="flex items-center justify-between">
-              <span class="text-slate-400"><i class="bi bi-geo-alt"></i> Lokasi:</span>
-              <span class="font-medium text-slate-800">{{ comp.location }}</span>
+              <span class="text-slate-400"><i class="bi bi-geo-alt-fill text-red-500"></i> Lokasi:</span>
+              <span class="font-bold text-slate-800">{{ comp.location }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-slate-400"><i class="bi bi-calendar-event"></i> Waktu:</span>
-              <span class="font-medium text-slate-800">{{ comp.date }} @ {{ comp.time }}</span>
+              <span class="text-slate-400"><i class="bi bi-clock-fill text-amber-500"></i> Waktu:</span>
+              <span class="font-bold text-slate-800">{{ comp.date }} @ {{ comp.time }}</span>
             </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400"><i class="bi bi-people"></i> Peserta Registered:</span>
-              <span class="font-bold text-red-600">
-                {{ store.getRegistrationsByCompetition(comp.id).length }} / {{ comp.maxParticipants }}
-              </span>
+            
+            <!-- Participant Progress Bar -->
+            <div class="pt-1">
+              <div class="flex items-center justify-between text-[11px] mb-1">
+                <span class="text-slate-500 font-bold"><i class="bi bi-people-fill text-indigo-500"></i> Kuota Peserta:</span>
+                <span class="font-extrabold text-red-600">
+                  {{ store.getRegistrationsByCompetition(comp.id).length }} / {{ comp.maxParticipants }}
+                </span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-red-600 rounded-full transition-all"
+                  :style="{ width: `${Math.min(100, (store.getRegistrationsByCompetition(comp.id).length / comp.maxParticipants) * 100)}%` }"
+                ></div>
+              </div>
             </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400"><i class="bi bi-star"></i> Poin Juara (1/2/3):</span>
-              <span class="font-semibold text-amber-700">
-                {{ comp.pointFirst }} / {{ comp.pointSecond }} / {{ comp.pointThird }}
+
+            <div class="flex items-center justify-between pt-1 border-t border-slate-200/60">
+              <span class="text-slate-400"><i class="bi bi-award-fill text-amber-500"></i> Alokasi Poin:</span>
+              <span class="font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
+                🥇{{ comp.pointFirst }} • 🥈{{ comp.pointSecond }} • 🥉{{ comp.pointThird }}
               </span>
             </div>
           </div>
@@ -120,27 +131,34 @@
         <!-- Card Footer Actions -->
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
           <span class="text-xs font-mono font-bold text-slate-400">
-            PREFIX: {{ comp.prefix }}
+            PREFIX: [{{ comp.prefix }}]
           </span>
 
           <div class="flex items-center space-x-1.5">
+            <router-link
+              :to="{ path: '/competition-board', query: { compId: comp.id } }"
+              class="p-1.5 text-slate-700 hover:text-red-700 hover:bg-red-50 rounded-lg text-xs font-bold transition-colors border border-slate-200 flex items-center gap-1"
+              title="Lihat Papan Skor Live"
+            >
+              <i class="bi bi-display-fill text-red-600"></i> Board
+            </router-link>
             <button
               @click="openBulkWaModal(comp.id)"
-              class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-extrabold transition-colors flex items-center gap-1"
+              class="px-2 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-extrabold transition-colors flex items-center gap-1"
               title="Broadcast WA Peserta Lomba Ini"
             >
-              <i class="bi bi-whatsapp"></i> Broadcast WA
+              <i class="bi bi-whatsapp"></i> WA
             </button>
             <button
               @click="openModal(comp)"
-              class="p-2 text-slate-600 hover:text-red-600 hover:bg-slate-100 rounded-lg text-sm transition-colors"
+              class="p-1.5 text-slate-600 hover:text-red-600 hover:bg-slate-100 rounded-lg text-sm transition-colors"
               title="Edit Lomba"
             >
               <i class="bi bi-pencil-square"></i>
             </button>
             <button
               @click="confirmDelete(comp)"
-              class="p-2 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-sm transition-colors"
+              class="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-sm transition-colors"
               title="Hapus Lomba"
             >
               <i class="bi bi-trash"></i>

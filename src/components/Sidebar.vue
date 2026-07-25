@@ -58,26 +58,6 @@
       </router-link>
     </nav>
 
-    <!-- Dedicated TV Board / Public Stage Launcher (Separated from Admin Navigation) -->
-    <div class="px-4 py-2.5 border-t border-slate-100">
-      <router-link
-        to="/competition-board"
-        target="_blank"
-        @click="$emit('close')"
-        class="flex items-center justify-between px-3.5 py-2.5 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-black hover:to-slate-900 text-white rounded-xl text-xs font-extrabold shadow-xs transition-all group border border-slate-700"
-        title="Buka Layar Panggung Proyektor / TV Board di Tab/Window Terpisah"
-      >
-        <div class="flex items-center gap-2">
-          <i class="bi bi-display-fill text-amber-400 text-sm group-hover:scale-110 transition-transform"></i>
-          <span>Layar Panggung (TV)</span>
-        </div>
-        <span class="flex items-center gap-1 text-[10px] text-amber-300 bg-slate-800 px-2 py-0.5 rounded-md border border-slate-600 font-mono">
-          <span>Proyektor</span>
-          <i class="bi bi-box-arrow-up-right text-[9px]"></i>
-        </span>
-      </router-link>
-    </div>
-
     <!-- Footer System Status Card -->
     <div class="p-4 border-t border-slate-100">
       <div class="bg-slate-900 text-white p-4 rounded-xl space-y-2 border border-transparent">
@@ -112,6 +92,7 @@ const navItems = computed(() => [
   { path: '/competitions', label: 'Daftar Lomba', icon: 'bi bi-trophy-fill', badge: store.competitions.length },
   { path: '/registration', label: 'Registrasi Wizard', icon: 'bi bi-person-plus-fill' },
   { path: '/waiting-lounge', label: 'Waiting Lounge', icon: 'bi bi-hourglass-split', badge: store.dashboardStats.waiting, badgeClass: 'bg-amber-500/20 text-amber-300 border border-amber-500/30' },
+  { path: '/competition-board', label: 'Competition Board', icon: 'bi bi-display-fill', badge: 'LIVE', badgeClass: 'bg-red-500/20 text-red-600 border border-red-500/30' },
   { path: '/scoring', label: 'Penilaian (Scoring)', icon: 'bi bi-calculator-fill' },
   { path: '/results', label: 'Hasil Lomba', icon: 'bi bi-award-fill' },
   { path: '/resulting-point', label: 'Resulting Point', icon: 'bi bi-bar-chart-line-fill' },

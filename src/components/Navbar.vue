@@ -61,13 +61,11 @@
       <!-- TV Board / Proyektor Link -->
       <router-link
         to="/competition-board"
-        target="_blank"
         class="hidden sm:flex items-center space-x-1.5 px-3 py-2 text-xs font-extrabold text-amber-900 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors border border-amber-300 shadow-2xs"
-        title="Buka Layar Panggung Proyektor / TV Board di Tab/Window Baru"
+        title="Tampilan Competition Board Live Arena"
       >
         <i class="bi bi-display-fill text-amber-700 text-sm"></i>
-        <span>Layar TV / Proyektor</span>
-        <i class="bi bi-box-arrow-up-right text-[9px] text-amber-700 ml-0.5"></i>
+        <span>Competition Board</span>
       </router-link>
     </div>
   </header>
