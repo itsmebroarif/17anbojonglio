@@ -221,7 +221,8 @@ export const useArenaStore = defineStore('arena', {
     ) {
       // Check if participant already exists by name & whatsapp
       let participant = this.participants.find(
-        p => p.name.trim().toLowerCase() === participantData.name.trim().toLowerCase() && p.whatsapp === participantData.whatsapp
+        p => p.name.trim().toLowerCase() === participantData.name.trim().toLowerCase() &&
+             (participantData.whatsapp && participantData.whatsapp.trim() !== '' ? p.whatsapp === participantData.whatsapp : true)
       );
 
       if (!participant) {
