@@ -341,18 +341,6 @@
           </div>
         </div>
 
-        <div v-else class="text-center py-12 space-y-3 my-auto">
-          <div class="w-12 h-12 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center mx-auto text-xl">
-            <i class="bi bi-box-seam"></i>
-          </div>
-          <div>
-            <h4 class="font-extrabold text-xs text-slate-800">Pilih Zona atau Pin 3D</h4>
-            <p class="text-[11px] text-slate-400 max-w-xs mx-auto mt-1">
-              Klik zona atau objek 3D di miniatur arena untuk melihat rincian alur perlombaan.
-            </p>
-          </div>
-        </div>
-
         <!-- Direct Navigation Buttons -->
         <div v-if="selectedComp" class="pt-3 border-t border-slate-200 grid grid-cols-2 gap-2">
           <router-link
