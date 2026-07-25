@@ -36,11 +36,9 @@
           class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
         >
           <option value="ALL">-- Semua Zona Arena --</option>
-          <option value="A">Zone A: Lapangan Utama</option>
-          <option value="B">Zone B: Panggung Utama</option>
-          <option value="C">Zone C: Gedung Serbaguna</option>
-          <option value="D">Zone D: Lapangan Serbaguna</option>
-          <option value="E">Zone E: Area Registrasi</option>
+          <option value="A">Zone A: Lapangan Lomba</option>
+          <option value="B">Zone B: Panggung Panitia</option>
+          <option value="C">Zone C: Area Registrasi</option>
         </select>
 
         <!-- Toggle View Mode -->
@@ -141,91 +139,67 @@
             </defs>
             <rect width="800" height="500" fill="url(#grid)" />
 
-            <!-- ZONE A: Lapangan Utama (Grass / Outdoor) -->
+            <!-- ZONE A: Lapangan Lomba -->
             <g
               @click="selectZone('A')"
               class="cursor-pointer transition-all duration-300 hover:opacity-90"
             >
               <rect
-                x="30" y="40" width="340" height="200" rx="16"
+                x="30" y="40" width="460" height="380" rx="16"
                 fill="rgba(16, 185, 129, 0.12)"
                 stroke="rgba(16, 185, 129, 0.4)"
                 stroke-width="2"
                 stroke-dasharray="6,4"
               />
-              <text x="45" y="65" fill="#34d399" font-size="12" font-weight="bold" font-family="sans-serif">
-                ZONE A: LAPANGAN UTAMA (OUTDOOR)
+              <text x="45" y="68" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif">
+                ZONE A: LAPANGAN LOMBA
+              </text>
+              <text x="45" y="88" fill="#a7f3d0" font-size="10" font-family="sans-serif">
+                (Area Utama Pertandingan Lomba Kemerdekaan)
               </text>
             </g>
 
-            <!-- ZONE B: Panggung Utama (Stage / Central) -->
+            <!-- ZONE B: Panggung Panitia & Utama -->
             <g
               @click="selectZone('B')"
               class="cursor-pointer transition-all duration-300 hover:opacity-90"
             >
               <rect
-                x="410" y="40" width="360" height="150" rx="16"
+                x="520" y="40" width="250" height="180" rx="16"
                 fill="rgba(239, 68, 68, 0.12)"
                 stroke="rgba(239, 68, 68, 0.4)"
                 stroke-width="2"
               />
-              <text x="425" y="65" fill="#f87171" font-size="12" font-weight="bold" font-family="sans-serif">
-                ZONE B: PANGGUNG UTAMA & TRIBUN
+              <text x="535" y="68" fill="#f87171" font-size="12" font-weight="bold" font-family="sans-serif">
+                ZONE B: PANGGUNG PANITIA
+              </text>
+              <text x="535" y="88" fill="#fca5a5" font-size="10" font-family="sans-serif">
+                (Panggung Utama & Podium Juri)
               </text>
             </g>
 
-            <!-- ZONE C: Gedung Serbaguna (Indoor Hall) -->
+            <!-- ZONE C: Area Registrasi & Informasi -->
             <g
               @click="selectZone('C')"
               class="cursor-pointer transition-all duration-300 hover:opacity-90"
             >
               <rect
-                x="410" y="220" width="360" height="240" rx="16"
+                x="520" y="240" width="250" height="180" rx="16"
                 fill="rgba(59, 130, 246, 0.12)"
                 stroke="rgba(59, 130, 246, 0.4)"
                 stroke-width="2"
               />
-              <text x="425" y="245" fill="#60a5fa" font-size="12" font-weight="bold" font-family="sans-serif">
-                ZONE C: GEDUNG SERBAGUNA (INDOOR)
+              <text x="535" y="268" fill="#60a5fa" font-size="12" font-weight="bold" font-family="sans-serif">
+                ZONE C: AREA REGISTRASI
               </text>
-            </g>
-
-            <!-- ZONE D: Lapangan Serbaguna (Side Court) -->
-            <g
-              @click="selectZone('D')"
-              class="cursor-pointer transition-all duration-300 hover:opacity-90"
-            >
-              <rect
-                x="30" y="260" width="340" height="130" rx="16"
-                fill="rgba(245, 158, 11, 0.12)"
-                stroke="rgba(245, 158, 11, 0.4)"
-                stroke-width="2"
-              />
-              <text x="45" y="285" fill="#fbbf24" font-size="12" font-weight="bold" font-family="sans-serif">
-                ZONE D: LAPANGAN SERBAGUNA
-              </text>
-            </g>
-
-            <!-- ZONE E: Area Registrasi & Pusat Informasi -->
-            <g
-              @click="selectZone('E')"
-              class="cursor-pointer transition-all duration-300 hover:opacity-90"
-            >
-              <rect
-                x="30" y="410" width="340" height="50" rx="12"
-                fill="rgba(168, 85, 247, 0.15)"
-                stroke="rgba(168, 85, 247, 0.5)"
-                stroke-width="2"
-              />
-              <text x="45" y="440" fill="#c084fc" font-size="11" font-weight="bold" font-family="sans-serif">
-                ZONE E: MEJA REGISTRASI & PUSAT INFORMASI
+              <text x="535" y="288" fill="#93c5fd" font-size="10" font-family="sans-serif">
+                (Meja Pendaftaran & Informasi)
               </text>
             </g>
 
             <!-- Walking Paths / Connectors -->
-            <path d="M 200 240 L 200 260" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="4" />
-            <path d="M 370 140 L 410 140" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="4" />
-            <path d="M 370 320 L 410 320" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="4" />
+            <path d="M 490 230 L 520 230" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
+            <path d="M 645 220 L 645 240" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
           </svg>
 
           <!-- DYNAMIC HOTSPOT PIN MARKERS FOR COMPETITIONS -->
@@ -271,16 +245,13 @@
         <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 border-t border-slate-800 pt-3 z-10">
           <div class="flex items-center gap-3">
             <span class="flex items-center gap-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Zone A (Lapangan)
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Zone A (Lapangan Lomba)
             </span>
             <span class="flex items-center gap-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Zone B (Panggung)
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Zone B (Panggung Panitia)
             </span>
             <span class="flex items-center gap-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Zone C (Indoor)
-            </span>
-            <span class="flex items-center gap-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Zone D (Serbaguna)
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Zone C (Area Registrasi)
             </span>
           </div>
           <span class="text-slate-500">Klik pin lomba untuk petunjuk jalan panitia</span>
@@ -516,11 +487,9 @@ const filteredCompetitions = computed(() => {
 
     let matchZone = true;
     const locLower = comp.location.toLowerCase();
-    if (selectedZoneFilter.value === 'A') matchZone = locLower.includes('lapangan utama') || locLower.includes('outdoor');
-    else if (selectedZoneFilter.value === 'B') matchZone = locLower.includes('panggung') || locLower.includes('tribun');
-    else if (selectedZoneFilter.value === 'C') matchZone = locLower.includes('gedung') || locLower.includes('indoor');
-    else if (selectedZoneFilter.value === 'D') matchZone = locLower.includes('serbaguna') || locLower.includes('sisi');
-    else if (selectedZoneFilter.value === 'E') matchZone = locLower.includes('registrasi') || locLower.includes('meja');
+    if (selectedZoneFilter.value === 'A') matchZone = locLower.includes('lapangan') || locLower.includes('rumput') || locLower.includes('utama');
+    else if (selectedZoneFilter.value === 'B') matchZone = locLower.includes('panggung') || locLower.includes('panitia') || locLower.includes('stage');
+    else if (selectedZoneFilter.value === 'C') matchZone = locLower.includes('registrasi') || locLower.includes('meja') || locLower.includes('informasi');
 
     return matchSearch && matchZone;
   });
@@ -560,47 +529,30 @@ function getArenaParticipants(compId: string) {
 
 function getPinPositionStyle(comp: Competition) {
   const loc = comp.location.toLowerCase();
+  const seed = comp.prefix ? (comp.prefix.charCodeAt(0) % 4) : 0;
 
-  // Zone A: Lapangan Utama (X: 10-40%, Y: 15-45%)
-  if (loc.includes('lapangan utama') || loc.includes('rumput') || loc.includes('karung') || loc.includes('tarik tambang')) {
-    const seed = comp.prefix.charCodeAt(0) % 3;
-    return { left: `${18 + seed * 8}%`, top: `${22 + seed * 6}%` };
+  // Zone B: Panggung Panitia (X: 62-82%, Y: 18-38%)
+  if (loc.includes('panggung') || loc.includes('panitia') || loc.includes('stage') || loc.includes('tribun')) {
+    return { left: `${66 + seed * 5}%`, top: `${22 + seed * 6}%` };
   }
 
-  // Zone B: Panggung Utama (X: 55-88%, Y: 15-35%)
-  if (loc.includes('panggung') || loc.includes('tribun') || loc.includes('mewarnai') || loc.includes('puisi')) {
-    const seed = comp.prefix.charCodeAt(0) % 3;
-    return { left: `${62 + seed * 8}%`, top: `${20 + seed * 5}%` };
+  // Zone C: Area Registrasi (X: 62-82%, Y: 58-78%)
+  if (loc.includes('registrasi') || loc.includes('meja') || loc.includes('informasi')) {
+    return { left: `${66 + seed * 5}%`, top: `${66 + seed * 6}%` };
   }
 
-  // Zone C: Gedung Serbaguna Indoor (X: 55-88%, Y: 55-85%)
-  if (loc.includes('gedung') || loc.includes('indoor') || loc.includes('catur') || loc.includes('pingpong')) {
-    const seed = comp.prefix.charCodeAt(0) % 3;
-    return { left: `${65 + seed * 8}%`, top: `${65 + seed * 6}%` };
-  }
-
-  // Zone D: Lapangan Serbaguna (X: 10-40%, Y: 55-75%)
-  if (loc.includes('serbaguna') || loc.includes('kerupuk') || loc.includes('sarung')) {
-    const seed = comp.prefix.charCodeAt(0) % 3;
-    return { left: `${20 + seed * 8}%`, top: `${68 + seed * 4}%` };
-  }
-
-  // Default Zone E / Central
-  return { left: `48%`, top: `48%` };
+  // Zone A: Lapangan Lomba (Default) (X: 12-48%, Y: 18-78%)
+  return { left: `${16 + (seed * 8)}%`, top: `${24 + (seed * 12)}%` };
 }
 
 function getPanitiaRoutingInstruction(comp: Competition): string {
   const loc = comp.location.toLowerCase();
-  if (loc.includes('lapangan utama')) {
-    return 'Arahkan peserta dari Meja Registrasi (Zone E) lurus ke Utara melintasi Tenda Merah Putih menuju Lapangan Utama.';
-  } else if (loc.includes('panggung')) {
-    return 'Arahkan peserta melewati Koridor Timur ke arah Panggung Utama di Sisi Kanan Lapangan.';
-  } else if (loc.includes('gedung') || loc.includes('indoor')) {
-    return 'Arahkan peserta masuk melalui Pintu Selatan Gedung Serbaguna Indoor (Zone C).';
-  } else if (loc.includes('serbaguna')) {
-    return 'Arahkan peserta ke Sisi Barat Lapangan Serbaguna dekat Stand Konsumsi/UMKM.';
+  if (loc.includes('panggung') || loc.includes('panitia')) {
+    return 'Arahkan peserta dari Area Registrasi (Zone C) menuju Panggung Panitia (Zone B) di Sisi Timur Arena.';
+  } else if (loc.includes('registrasi') || loc.includes('meja')) {
+    return 'Peserta berada di Area Registrasi & Meja Informasi (Zone C) untuk pendaftaran dan verifikasi berkas.';
   }
-  return `Petunjuk: Pandu peserta menuju lokasi ${comp.location}. Siapkan kartu peserta sebelum memasuki arena.`;
+  return 'Arahkan peserta dari Area Registrasi (Zone C) lurus menuju Area Lapangan Lomba (Zone A).';
 }
 
 function openLocationEditModal(comp: Competition) {
@@ -609,13 +561,12 @@ function openLocationEditModal(comp: Competition) {
     text: `Pilih atau ketik lokasi arena baru untuk ${comp.name}:`,
     input: 'select',
     inputOptions: {
-      'Lapangan Utama - Area A1 (Rumput)': 'Lapangan Utama - Area A1 (Rumput)',
-      'Lapangan Utama - Area A2 (Tarik Tambang)': 'Lapangan Utama - Area A2 (Tarik Tambang)',
-      'Panggung Utama - Central Stage': 'Panggung Utama - Central Stage',
-      'Panggung Utama - Sayap Barat': 'Panggung Utama - Sayap Barat',
-      'Gedung Serbaguna - Indoor Hall': 'Gedung Serbaguna - Indoor Hall',
-      'Lapangan Serbaguna - Area Makan Kerupuk': 'Lapangan Serbaguna - Area Makan Kerupuk',
-      'Area Depan Meja Registrasi': 'Area Depan Meja Registrasi'
+      'Lapangan Lomba - Area Utama A1': 'Lapangan Lomba - Area Utama A1',
+      'Lapangan Lomba - Area Utama A2': 'Lapangan Lomba - Area Utama A2',
+      'Lapangan Lomba - Area Utama A3': 'Lapangan Lomba - Area Utama A3',
+      'Panggung Panitia - Central Stage': 'Panggung Panitia - Central Stage',
+      'Panggung Panitia - Podium Utama': 'Panggung Panitia - Podium Utama',
+      'Area Registrasi & Meja Informasi': 'Area Registrasi & Meja Informasi'
     },
     inputValue: comp.location,
     showCancelButton: true,
