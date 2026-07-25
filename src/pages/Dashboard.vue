@@ -35,6 +35,17 @@
           </router-link>
 
           <router-link
+            to="/competition-board"
+            target="_blank"
+            class="px-4 py-2.5 bg-slate-900 hover:bg-black text-amber-300 font-extrabold text-sm rounded-lg shadow-md border border-slate-700 transition-all flex items-center gap-2"
+            title="Buka Layar Panggung Proyektor / TV Board di Tab Baru"
+          >
+            <i class="bi bi-display-fill text-amber-400"></i>
+            <span>Layar Proyektor (TV Board)</span>
+            <i class="bi bi-box-arrow-up-right text-xs opacity-75"></i>
+          </router-link>
+
+          <router-link
             to="/lucky-spin"
             class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-lg shadow-md transition-all flex items-center gap-2"
           >

@@ -48,16 +48,32 @@ Semangat berlomba & Merdeka! ✊`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }
 
-export function generateWinnerNotificationMessage(opts: MessageOptions & { rank: string; point: number }): string {
-  const text = `Selamat ${opts.participantName}! 🏆
-
-Anda dinyatakan sebagai *${opts.rank}* pada lomba *${opts.competitionName}* 🇮🇩!
-
-*Total Poin:* ${opts.point}
-Penyerahan hadiah dan sertifikat akan dilaksanakan saat Malam Puncak Kemerdekaan.
-
-Terima kasih atas partisipasi luar biasa Anda! 👏`;
-
-  const phone = cleanPhoneNumber(opts.phone);
-  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+export function renderBulkTemplate(
+  templateText: string,
+  data: {
+    participantName: string;
+    participantNumber: string;
+    competitionName: string;
+    location?: string;
+    status?: string;
+    time?: string;
+    category?: string;
+  }
+): string {
+  let rendered = templateText;
+  rendered = rendered.replace(/\{nama\}/gi, data.participantName || '');
+  rendered = rendered.replace(/\{nomor\}/gi, data.participantNumber || '');
+  rendered = rendered.replace(/\{lomba\}/gi, data.competitionName || '');
+  rendered = rendered.replace(/\{lokasi\}/gi, data.location || '-');
+  rendered = rendered.replace(/\{status\}/gi, data.status || '-');
+  rendered = rendered.replace(/\{waktu\}/gi, data.time || '-');
+  rendered = rendered.replace(/\{kategori\}/gi, data.category || '-');
+  return rendered;
 }
+
+export function generateWaLink(phone: string, text: string): string {
+  const cleanedPhone = cleanPhoneNumber(phone);
+  if (!cleanedPhone) return '#';
+  return `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(text)}`;
+}
+

@@ -97,6 +97,14 @@ export interface AppSettings {
   lastBackupAt?: string;
 }
 
+export interface WaTemplate {
+  id: string;
+  title: string;
+  category: 'panggilan' | 'pengingat' | 'selesai' | 'pengumuman' | 'lainnya';
+  content: string;
+  isDefault?: boolean;
+}
+
 export interface ActivityLog {
   id: string;
   timestamp: string;

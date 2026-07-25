@@ -7,7 +7,8 @@ import {
   Certificate,
   Doorprize,
   AppSettings,
-  ActivityLog
+  ActivityLog,
+  WaTemplate
 } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,7 +21,8 @@ const STORAGE_KEYS = {
   CERTIFICATES: '17an_certificates',
   DOORPRIZES: '17an_doorprizes',
   SETTINGS: '17an_settings',
-  HISTORY: '17an_history'
+  HISTORY: '17an_history',
+  WA_TEMPLATES: '17an_wa_templates'
 };
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -35,6 +37,37 @@ export const DEFAULT_SETTINGS: AppSettings = {
   autoBackup: true,
   colorTheme: '#dc2626'
 };
+
+export const DEFAULT_WA_TEMPLATES: WaTemplate[] = [
+  {
+    id: 'tpl-panggilan-1',
+    title: 'Panggilan Lomba Standard',
+    category: 'panggilan',
+    content: 'Panggilan Peserta Lomba Kemerdekaan 🇮🇩\n\nHalo {nama} (No: {nomor}), Anda dijadwalkan bertanding pada lomba *{lomba}*.\n*Lokasi Arena:* {lokasi}\n*Waktu:* {waktu}\n\nHarap segera menuju area pertandingan. Terima kasih!',
+    isDefault: true
+  },
+  {
+    id: 'tpl-pengingat-1',
+    title: 'Pengingat Jadwal Lomba',
+    category: 'pengingat',
+    content: 'Pengingat Lomba Kemerdekaan 🇮🇩\n\nHalo {nama}, diingatkan kembali bahwa lomba *{lomba}* (No: {nomor}) akan segera dimulai di *{lokasi}* pada pukul *{waktu}*.\n\nPersiapkan diri Anda dan datang tepat waktu! Merdeka! ✊',
+    isDefault: true
+  },
+  {
+    id: 'tpl-selesai-1',
+    title: 'Ucapan Selesai Lomba',
+    category: 'selesai',
+    content: 'Terima Kasih Partisipasi Lomba! 🇮🇩\n\nHalo {nama}, terima kasih telah bertanding pada lomba *{lomba}* (No. Peserta: {nomor}). Hasil pertandingan dan penyerahan piala akan diumumkan di Panggung Utama.',
+    isDefault: true
+  },
+  {
+    id: 'tpl-pengumuman-1',
+    title: 'Pengumuman Juara Lomba',
+    category: 'pengumuman',
+    content: 'Selamat {nama}! 🏆\n\nAnda dinyatakan sebagai pemenang pada lomba *{lomba}* (No. Peserta: {nomor}) di lokasi *{lokasi}*.\n\nPenyerahan piala dan sertifikat akan dilaksanakan saat Malam Puncak Kemerdekaan. Terima kasih atas partisipasi luar biasa Anda! 🇮🇩',
+    isDefault: true
+  }
+];
 
 export const SEED_COMPETITIONS: Competition[] = [];
 export const SEED_PARTICIPANTS: Participant[] = [];
@@ -74,7 +107,10 @@ export class StorageService {
       this.set(STORAGE_KEYS.DOORPRIZES, []);
       this.set(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS);
       this.set(STORAGE_KEYS.HISTORY, []);
+      this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
       localStorage.setItem('17an_cleared_empty_fresh', 'true');
+    } else if (!localStorage.getItem(STORAGE_KEYS.WA_TEMPLATES)) {
+      this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
     }
   }
 
@@ -88,7 +124,8 @@ export class StorageService {
       certificates: this.get<Certificate[]>(STORAGE_KEYS.CERTIFICATES, []),
       doorprizes: this.get<Doorprize[]>(STORAGE_KEYS.DOORPRIZES, []),
       settings: this.get<AppSettings>(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS),
-      history: this.get<ActivityLog[]>(STORAGE_KEYS.HISTORY, [])
+      history: this.get<ActivityLog[]>(STORAGE_KEYS.HISTORY, []),
+      waTemplates: this.get<WaTemplate[]>(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES)
     };
   }
 
@@ -103,6 +140,7 @@ export class StorageService {
     if (data.doorprizes) this.set(STORAGE_KEYS.DOORPRIZES, data.doorprizes);
     if (data.settings) this.set(STORAGE_KEYS.SETTINGS, data.settings);
     if (data.history) this.set(STORAGE_KEYS.HISTORY, data.history);
+    if (data.waTemplates) this.set(STORAGE_KEYS.WA_TEMPLATES, data.waTemplates);
     return true;
   }
 }

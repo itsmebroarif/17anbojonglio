@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-5">
-    <!-- Chart Header & Filters -->
+    <!-- Chart Header & Mode Toggle -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
       <div>
         <div class="flex items-center gap-2">
@@ -9,18 +9,37 @@
             <span>Grafik Statistik Pendaftaran Lomba</span>
           </h2>
           <span class="px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 font-extrabold text-[10px] border border-red-200">
-            Realtime Summary
+            Powered by Recharts
           </span>
         </div>
         <p class="text-xs text-slate-500 mt-0.5">
-          Visualisasi jumlah peserta terdaftar per cabang perlombaan untuk evaluasi panitia.
+          Visualisasi interaktif jumlah peserta terdaftar per cabang perlombaan untuk evaluasi panitia.
         </p>
       </div>
 
-      <!-- Filter Category -->
+      <!-- Mode Toggle & Filter Category -->
       <div class="flex items-center space-x-2">
-        <label class="text-xs font-bold text-slate-600 hidden sm:inline">Kategori:</label>
+        <div class="bg-slate-100 p-0.5 rounded-xl flex items-center gap-1 text-[11px] font-bold">
+          <button
+            @click="chartMode = 'recharts'"
+            class="px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
+            :class="chartMode === 'recharts' ? 'bg-white text-red-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+          >
+            <i class="bi bi-pie-chart-fill"></i>
+            <span>Recharts Bar</span>
+          </button>
+          <button
+            @click="chartMode = 'custom'"
+            class="px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
+            :class="chartMode === 'custom' ? 'bg-white text-red-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+          >
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Grafik Kartu</span>
+          </button>
+        </div>
+
         <select
+          v-if="chartMode === 'custom'"
           v-model="selectedCategory"
           class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500/50"
         >
@@ -72,8 +91,13 @@
       </div>
     </div>
 
-    <!-- Bar Chart SVG Container -->
-    <div class="relative pt-2">
+    <!-- Recharts View Mode -->
+    <div v-if="chartMode === 'recharts'">
+      <RechartsRegistrationContainer :data="rechartsData" />
+    </div>
+
+    <!-- Custom SVG Bar Chart Container -->
+    <div v-else class="relative pt-2">
       <div v-if="chartData.length > 0" class="space-y-3">
         <!-- SVG Canvas Area -->
         <div class="w-full h-64 sm:h-72 bg-slate-50/70 border border-slate-200 rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
@@ -180,14 +204,40 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
+import RechartsRegistrationContainer from './RechartsRegistrationContainer.vue';
 
 const store = useArenaStore();
+const chartMode = ref<'recharts' | 'custom'>('recharts');
 const selectedCategory = ref('ALL');
 const activeHoverId = ref<string | null>(null);
 
 const filteredComps = computed(() => {
   if (selectedCategory.value === 'ALL') return store.competitions;
   return store.competitions.filter(c => c.category === selectedCategory.value);
+});
+
+const rechartsData = computed(() => {
+  return store.competitions.map(comp => {
+    const regs = store.getRegistrationsByCompetition(comp.id);
+    let maleCount = 0;
+    let femaleCount = 0;
+
+    regs.forEach(r => {
+      const p = store.getParticipantById(r.participantId);
+      if (p?.gender === 'L') maleCount++;
+      if (p?.gender === 'P') femaleCount++;
+    });
+
+    return {
+      id: comp.id,
+      name: comp.name,
+      prefix: comp.prefix,
+      category: comp.category,
+      count: regs.length,
+      maleCount,
+      femaleCount
+    };
+  });
 });
 
 const categoryColors: Record<string, string> = {

@@ -9,6 +9,14 @@
 
       <div class="flex items-center space-x-2 w-full sm:w-auto">
         <button
+          @click="openBulkWaModal('ALL')"
+          class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+        >
+          <i class="bi bi-whatsapp"></i>
+          <span>Broadcast WA Peserta</span>
+        </button>
+
+        <button
           @click="openModal()"
           class="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
         >
@@ -115,7 +123,14 @@
             PREFIX: {{ comp.prefix }}
           </span>
 
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-1.5">
+            <button
+              @click="openBulkWaModal(comp.id)"
+              class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-extrabold transition-colors flex items-center gap-1"
+              title="Broadcast WA Peserta Lomba Ini"
+            >
+              <i class="bi bi-whatsapp"></i> Broadcast WA
+            </button>
             <button
               @click="openModal(comp)"
               class="p-2 text-slate-600 hover:text-red-600 hover:bg-slate-100 rounded-lg text-sm transition-colors"
@@ -137,6 +152,13 @@
 
     <!-- Arena Interactive Floor Plan -->
     <ArenaFloorPlan />
+
+    <!-- Bulk WhatsApp Modal -->
+    <BulkWhatsAppModal
+      :isOpen="isBulkWaOpen"
+      :initialCompId="selectedCompForWa"
+      @close="isBulkWaOpen = false"
+    />
 
     <!-- Modal Form CRUD Lomba -->
     <div
@@ -324,11 +346,20 @@ import { ref, computed, reactive } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { Competition, Category } from '../types';
 import ArenaFloorPlan from '../components/ArenaFloorPlan.vue';
+import BulkWhatsAppModal from '../components/BulkWhatsAppModal.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
 const selectedCategory = ref('Semua');
 const searchQuery = ref('');
+
+const isBulkWaOpen = ref(false);
+const selectedCompForWa = ref('ALL');
+
+function openBulkWaModal(compId: string = 'ALL') {
+  selectedCompForWa.value = compId;
+  isBulkWaOpen.value = true;
+}
 
 const showModal = ref(false);
 const editingCompId = ref<string | null>(null);

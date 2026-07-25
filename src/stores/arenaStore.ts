@@ -9,9 +9,10 @@ import {
   Doorprize,
   AppSettings,
   ActivityLog,
-  RegistrationStatus
+  RegistrationStatus,
+  WaTemplate
 } from '../types';
-import { StorageService, DEFAULT_SETTINGS } from '../services/storage';
+import { StorageService, DEFAULT_SETTINGS, DEFAULT_WA_TEMPLATES } from '../services/storage';
 import { exportToJSON } from '../services/export';
 import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
@@ -27,6 +28,7 @@ export const useArenaStore = defineStore('arena', {
     doorprizes: [] as Doorprize[],
     settings: DEFAULT_SETTINGS as AppSettings,
     history: [] as ActivityLog[],
+    waTemplates: [] as WaTemplate[],
     globalSearchQuery: '',
     isInitialized: false,
     isDarkMode: false
@@ -110,6 +112,7 @@ export const useArenaStore = defineStore('arena', {
       this.doorprizes = data.doorprizes;
       this.settings = data.settings;
       this.history = data.history;
+      this.waTemplates = data.waTemplates || DEFAULT_WA_TEMPLATES;
       this.isInitialized = true;
       this.applyDarkMode(false);
     },
@@ -164,6 +167,7 @@ export const useArenaStore = defineStore('arena', {
       StorageService.set('17an_doorprizes', this.doorprizes);
       StorageService.set('17an_settings', this.settings);
       StorageService.set('17an_history', this.history);
+      StorageService.set('17an_wa_templates', this.waTemplates);
     },
 
     logActivity(action: string, details: string) {
@@ -476,6 +480,43 @@ export const useArenaStore = defineStore('arena', {
     updateSettings(newSettings: Partial<AppSettings>) {
       this.settings = { ...this.settings, ...newSettings };
       this.logActivity('Pengaturan Diperbarui', 'Pengaturan acara 17an berhasil disimpan.');
+      this.saveAll();
+    },
+
+    // WhatsApp Template Manager
+    addWaTemplate(template: Omit<WaTemplate, 'id'>) {
+      const newTpl: WaTemplate = {
+        ...template,
+        id: 'tpl-' + uuidv4().substring(0, 8)
+      };
+      this.waTemplates.push(newTpl);
+      this.logActivity('Template WA Ditambahkan', `Template "${newTpl.title}" berhasil disimpan.`);
+      this.saveAll();
+      return newTpl;
+    },
+
+    updateWaTemplate(id: string, updated: Partial<WaTemplate>) {
+      const idx = this.waTemplates.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        this.waTemplates[idx] = { ...this.waTemplates[idx], ...updated };
+        this.logActivity('Template WA Diperbarui', `Template "${this.waTemplates[idx].title}" diperbarui.`);
+        this.saveAll();
+      }
+    },
+
+    deleteWaTemplate(id: string) {
+      const idx = this.waTemplates.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        const title = this.waTemplates[idx].title;
+        this.waTemplates.splice(idx, 1);
+        this.logActivity('Template WA Dihapus', `Template "${title}" berhasil dihapus.`);
+        this.saveAll();
+      }
+    },
+
+    resetWaTemplates() {
+      this.waTemplates = JSON.parse(JSON.stringify(DEFAULT_WA_TEMPLATES));
+      this.logActivity('Template WA Direset', 'Template WhatsApp dikembalikan ke bawaan.');
       this.saveAll();
     }
   }

@@ -29,6 +29,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "recharts": "^3.10.1",
     "sortablejs": "^1.15.7",
     "sweetalert2": "^11.26.25",
     "uuid": "^14.0.1",

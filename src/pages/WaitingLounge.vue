@@ -13,6 +13,14 @@
       <!-- Quick Action Buttons -->
       <div class="flex items-center space-x-2 w-full sm:w-auto">
         <button
+          @click="isBulkWaOpen = true"
+          class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+        >
+          <i class="bi bi-whatsapp"></i>
+          <span>Broadcast WA Peserta</span>
+        </button>
+
+        <button
           @click="callNextParticipant"
           class="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
@@ -347,6 +355,13 @@
 
     <!-- Arena Floor Plan Map Section -->
     <ArenaFloorPlan />
+
+    <!-- Bulk WhatsApp Broadcast Modal -->
+    <BulkWhatsAppModal
+      :isOpen="isBulkWaOpen"
+      :initialCompId="selectedCompetitionId"
+      @close="isBulkWaOpen = false"
+    />
   </div>
 </template>
 
@@ -356,9 +371,11 @@ import { useArenaStore } from '../stores/arenaStore';
 import { RegistrationStatus } from '../types';
 import { generateWaitingLoungeCallMessage } from '../services/whatsapp';
 import ArenaFloorPlan from '../components/ArenaFloorPlan.vue';
+import BulkWhatsAppModal from '../components/BulkWhatsAppModal.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
+const isBulkWaOpen = ref(false);
 const selectedCompetitionId = ref('ALL');
 const selectedStatus = ref('ALL');
 const selectedGender = ref('ALL');

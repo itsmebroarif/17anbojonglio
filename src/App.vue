@@ -5,6 +5,7 @@
       v-if="$route.path !== '/competition-board'"
       @toggleSidebar="isSidebarOpen = !isSidebarOpen"
       @openSearch="isSearchOpen = true"
+      @openBulkWa="isBulkWaOpen = true"
     />
 
     <div class="flex-1 flex">
@@ -31,6 +32,11 @@
       :isOpen="isGeminiOpen"
       @close="isGeminiOpen = false"
     />
+
+    <BulkWhatsAppModal
+      :isOpen="isBulkWaOpen"
+      @close="isBulkWaOpen = false"
+    />
   </div>
 </template>
 
@@ -41,11 +47,13 @@ import Navbar from './components/Navbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import GlobalSearchModal from './components/GlobalSearchModal.vue';
 import GeminiChatModal from './components/GeminiChatModal.vue';
+import BulkWhatsAppModal from './components/BulkWhatsAppModal.vue';
 
 const store = useArenaStore();
 const isSidebarOpen = ref(false);
 const isSearchOpen = ref(false);
 const isGeminiOpen = ref(false);
+const isBulkWaOpen = ref(false);
 
 onMounted(() => {
   store.init();

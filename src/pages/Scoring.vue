@@ -10,16 +10,28 @@
         <p class="text-xs sm:text-sm text-slate-500">Input nilai juri secara realtime, rekap otomatis, dan atur urutan pemenang dengan Drag & Drop.</p>
       </div>
 
-      <!-- Select Competition -->
-      <select
-        v-model="selectedCompId"
-        class="w-full sm:w-auto px-4 py-2 bg-white text-slate-800 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-2xs"
-      >
-        <option value="">-- Pilih Perlombaan --</option>
-        <option v-for="c in store.competitions" :key="c.id" :value="c.id">
-          {{ c.name }} ({{ c.category }})
-        </option>
-      </select>
+      <!-- Header Actions -->
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <button
+          @click="exportAllCompetitionsLeaderboardPdf"
+          class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 w-full sm:w-auto"
+          title="Ekspor rekapitulasi leaderboard seluruh cabang lomba ke file PDF resmi"
+        >
+          <i class="bi bi-file-earmark-pdf-fill"></i>
+          <span>Ekspor Semua Leaderboard (PDF)</span>
+        </button>
+
+        <!-- Select Competition -->
+        <select
+          v-model="selectedCompId"
+          class="w-full sm:w-auto px-4 py-2 bg-white text-slate-800 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-2xs"
+        >
+          <option value="">-- Pilih Perlombaan --</option>
+          <option v-for="c in store.competitions" :key="c.id" :value="c.id">
+            {{ c.name }} ({{ c.category }})
+          </option>
+        </select>
+      </div>
     </div>
 
     <!-- Active Competition Scoring Dashboard -->
@@ -768,6 +780,120 @@ function exportPdf() {
     icon: 'success',
     title: 'File PDF Berhasil Diunduh 📄',
     text: 'Dokumen rekapitulasi nilai leaderboard resmi siap dicetak/diarsipkan.',
+    timer: 1500,
+    showConfirmButton: false
+  });
+}
+
+function exportAllCompetitionsLeaderboardPdf() {
+  if (store.competitions.length === 0) {
+    Swal.fire('Perhatian', 'Belum ada data perlombaan terdaftar.', 'warning');
+    return;
+  }
+
+  const doc = new jsPDF();
+  const eventName = store.settings.eventName || 'Lomba Kemerdekaan 17 Agustus';
+
+  store.competitions.forEach((comp, cIdx) => {
+    if (cIdx > 0) doc.addPage();
+
+    // Calculate standings for this competition
+    const regs = store.getRegistrationsByCompetition(comp.id);
+    const standings = regs.map(reg => {
+      const p = store.getParticipantById(reg.participantId);
+      const scores = store.getScoresByRegistration(reg.id);
+      const total = scores.reduce((sum, s) => sum + s.score, 0);
+      const avg = scores.length > 0 ? Math.round((total / scores.length) * 10) / 10 : 0;
+      return { reg, p, scores, total, avg };
+    }).sort((a, b) => b.total - a.total);
+
+    // Header Title
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(220, 38, 38);
+    doc.text(eventName.toUpperCase(), 14, 20);
+
+    doc.setFontSize(11);
+    doc.setTextColor(30, 41, 59);
+    doc.text(`REKAPITULASI PENILAIAN & LEADERBOARD RESMI`, 14, 27);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Cabang Lomba: ${comp.name} (${comp.category}) | Kode Prefix: [${comp.prefix}]`, 14, 34);
+    doc.text(`Dicetak Pada: ${new Date().toLocaleString('id-ID')} | Total Peserta Dinilai: ${standings.length} Orang`, 14, 40);
+
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, 44, 196, 44);
+
+    // Table Headers
+    let y = 52;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(241, 245, 249);
+    doc.rect(14, y - 5, 182, 7, 'F');
+
+    doc.text('PERINGKAT', 16, y);
+    doc.text('NO. REG', 44, y);
+    doc.text('NAMA PESERTA', 70, y);
+    doc.text('TOTAL', 145, y);
+    doc.text('RATA-RATA', 170, y);
+
+    y += 7;
+    doc.setFont('helvetica', 'normal');
+
+    if (standings.length === 0) {
+      doc.text('Belum ada data peserta/nilai juri untuk cabang ini.', 16, y);
+      y += 10;
+    } else {
+      standings.forEach((row, idx) => {
+        if (y > 255) {
+          doc.addPage();
+          y = 20;
+        }
+
+        const rankStr = idx === 0 ? 'Juara 1 (1st)' : idx === 1 ? 'Juara 2 (2nd)' : idx === 2 ? 'Juara 3 (3rd)' : `Peringkat #${idx + 1}`;
+        const regNum = row.reg.participantNumber || '-';
+        const name = row.p?.name || '-';
+
+        doc.text(rankStr, 16, y);
+        doc.text(regNum, 44, y);
+        doc.text(name, 70, y);
+        doc.text(String(row.total), 145, y);
+        doc.text(String(row.avg), 170, y);
+
+        y += 7;
+        doc.setDrawColor(241, 245, 249);
+        doc.line(14, y - 4, 196, y - 4);
+      });
+    }
+
+    // Signature Block
+    y = Math.min(y + 20, 245);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(51, 65, 85);
+
+    doc.text('Mengetahui,', 25, y);
+    doc.text('Tim Juri Penilai,', 145, y);
+
+    doc.text('( _________________________ )', 20, y + 22);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Ketua Panitia Pelaksana', 25, y + 27);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('( _________________________ )', 140, y + 22);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Koordinator Juri', 148, y + 27);
+  });
+
+  doc.save(`Rekap_Seluruh_Leaderboard_Scoring.pdf`);
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Rekap Semua Leaderboard Diexport 📄',
+    text: 'Dokumen PDF resmi berisi leaderboard seluruh cabang lomba berhasil diunduh.',
     timer: 1500,
     showConfirmButton: false
   });
