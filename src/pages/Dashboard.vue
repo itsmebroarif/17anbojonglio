@@ -165,6 +165,11 @@
         <RegistrationStatsChart />
       </div>
 
+      <!-- Interactive Venue Floor Plan Map -->
+      <div class="lg:col-span-3">
+        <ArenaFloorPlan />
+      </div>
+
       <!-- Waiting Lounge Status Overview -->
       <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -264,6 +269,7 @@
 import { computed } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import RegistrationStatsChart from '../components/RegistrationStatsChart.vue';
+import ArenaFloorPlan from '../components/ArenaFloorPlan.vue';
 
 const store = useArenaStore();
 const stats = computed(() => store.dashboardStats);

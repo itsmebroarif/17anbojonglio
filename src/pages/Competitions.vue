@@ -135,6 +135,9 @@
       </div>
     </div>
 
+    <!-- Arena Interactive Floor Plan -->
+    <ArenaFloorPlan />
+
     <!-- Modal Form CRUD Lomba -->
     <div
       v-if="showModal"
@@ -320,6 +323,7 @@
 import { ref, computed, reactive } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { Competition, Category } from '../types';
+import ArenaFloorPlan from '../components/ArenaFloorPlan.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();

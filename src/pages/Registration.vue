@@ -14,15 +14,15 @@
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Form Pendaftaran Peserta Lomba</h1>
           <p class="text-xs sm:text-sm text-red-100 max-w-xl leading-relaxed">
-            Daftarkan peserta secara perorangan (Wizard) atau entri massal (Bulk Create) untuk mempercepat pendataan panitia.
+            Daftarkan peserta secara perorangan (Wizard), entri massal (Bulk), atau gunakan spreadsheet Excel dengan sheet terpisah per lomba.
           </p>
         </div>
 
         <!-- Mode Switcher Tabs in Banner -->
-        <div class="flex items-center gap-1.5 bg-black/30 p-1.5 rounded-2xl border border-white/20 backdrop-blur-md self-start md:self-auto">
+        <div class="flex flex-wrap items-center gap-1.5 bg-black/30 p-1.5 rounded-2xl border border-white/20 backdrop-blur-md self-start md:self-auto">
           <button
             @click="regMode = 'single'"
-            class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5"
+            class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5"
             :class="regMode === 'single' ? 'bg-white text-red-700 shadow-md' : 'text-white hover:bg-white/10'"
           >
             <i class="bi bi-person-fill"></i>
@@ -31,11 +31,20 @@
 
           <button
             @click="regMode = 'bulk'"
-            class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5"
+            class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5"
             :class="regMode === 'bulk' ? 'bg-amber-400 text-slate-900 shadow-md' : 'text-white hover:bg-white/10'"
           >
             <i class="bi bi-people-fill"></i>
-            <span>Input Massal (Bulk)</span>
+            <span>Input Massal</span>
+          </button>
+
+          <button
+            @click="regMode = 'spreadsheet'"
+            class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5"
+            :class="regMode === 'spreadsheet' ? 'bg-emerald-500 text-white shadow-md' : 'text-white hover:bg-white/10'"
+          >
+            <i class="bi bi-file-earmark-excel-fill"></i>
+            <span>Ingin Gunakan Spreadsheet?</span>
           </button>
         </div>
       </div>
@@ -546,7 +555,7 @@
     <!-- ========================================== -->
     <!-- MODE 2: BULK CREATE PARTICIPANTS (MASAL) -->
     <!-- ========================================== -->
-    <div v-else class="space-y-6 animate-fade-in">
+    <div v-else-if="regMode === 'bulk'" class="space-y-6 animate-fade-in">
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-6">
         <!-- Top Section: Target Competition Dropdown -->
         <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
@@ -847,19 +856,26 @@
       </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- MODE 3: SPREADSHEET EXCEL GENERATOR & IMPORT -->
+    <!-- ========================================== -->
+    <div v-else-if="regMode === 'spreadsheet'" class="space-y-6 animate-fade-in">
+      <SpreadsheetWizard />
+    </div>
+
     <!-- Registration Stats Chart Summary -->
     <RegistrationStatsChart />
 
     <!-- Searchable & Filterable Participants Table Section -->
     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
             <i class="bi bi-people-fill text-red-600"></i>
             <span>Daftar Seluruh Peserta Terdaftar</span>
           </h2>
           <p class="text-xs text-slate-500 mt-0.5">
-            Cari dan filter seluruh data pendaftaran peserta berdasarkan nama, nomor, cabang lomba, atau gender.
+            Filter data berdasarkan Gender, Kategori, Status Juara, atau Lomba. Ubah gender & status arena langsung dari dropdown table.
           </p>
         </div>
 
@@ -867,26 +883,51 @@
           <!-- Filter Competition -->
           <select
             v-model="listCompFilter"
-            class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
           >
             <option value="ALL">-- Semua Lomba --</option>
             <option v-for="c in store.competitions" :key="c.id" :value="c.id">
-              {{ c.name }} ({{ c.prefix }})
+              {{ c.name }} [{{ c.prefix }}]
             </option>
+          </select>
+
+          <!-- Filter Category -->
+          <select
+            v-model="listCategoryFilter"
+            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+          >
+            <option value="ALL">-- Semua Kategori --</option>
+            <option value="Anak-anak">👶 Anak-anak</option>
+            <option value="Remaja">👦 Remaja</option>
+            <option value="Dewasa">👨 Dewasa</option>
+            <option value="Umum">👥 Umum</option>
           </select>
 
           <!-- Filter Gender -->
           <select
             v-model="listGenderFilter"
-            class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
           >
             <option value="ALL">-- Semua Gender --</option>
             <option value="L">👨 Laki-Laki</option>
             <option value="P">👩 Perempuan</option>
           </select>
 
+          <!-- Filter Winner Status -->
+          <select
+            v-model="listWinnerFilter"
+            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
+          >
+            <option value="ALL">-- Status Juara --</option>
+            <option value="WINNER_1">🥇 Juara 1</option>
+            <option value="WINNER_2">🥈 Juara 2</option>
+            <option value="WINNER_3">🥉 Juara 3</option>
+            <option value="ANY_WINNER">🏆 Semua Pemenang</option>
+            <option value="NOT_WINNER">⏳ Belum Menang</option>
+          </select>
+
           <!-- Search Query Input -->
-          <div class="relative w-full sm:w-56">
+          <div class="relative w-full sm:w-48">
             <i class="bi bi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
             <input
               v-model="listSearchQuery"
@@ -903,11 +944,12 @@
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-100 text-slate-600 uppercase font-bold">
             <tr>
-              <th class="p-3 w-28">No. Peserta</th>
-              <th class="p-3">Nama Peserta</th>
-              <th class="p-3 w-32">Gender & Umur</th>
-              <th class="p-3">Cabang Perlombaan</th>
-              <th class="p-3 w-28">Status</th>
+              <th class="p-3 w-24">No. Peserta</th>
+              <th class="p-3">Nama Peserta & Alamat</th>
+              <th class="p-3 w-32">Gender (Ubah)</th>
+              <th class="p-3">Cabang & Kategori</th>
+              <th class="p-3 w-28">Status Juara</th>
+              <th class="p-3 w-36">Status Arena (Ubah)</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -919,48 +961,91 @@
               <td class="p-3 font-mono font-bold text-red-600">
                 {{ reg.participantNumber }}
               </td>
+
               <td class="p-3 font-bold text-slate-900">
                 {{ store.getParticipantById(reg.participantId)?.name }}
                 <span class="block text-[10px] text-slate-400 font-normal">
-                  {{ store.getParticipantById(reg.participantId)?.address || 'Tanpa Alamat' }}
+                  {{ store.getParticipantById(reg.participantId)?.address || 'Tanpa Alamat' }} | {{ store.getParticipantById(reg.participantId)?.age }} Thn
                 </span>
               </td>
+
+              <!-- Interactive Editable Gender Dropdown -->
               <td class="p-3">
-                <span
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold border"
+                <select
+                  :value="store.getParticipantById(reg.participantId)?.gender"
+                  @change="updateParticipantGender(reg.participantId, ($event.target as HTMLSelectElement).value)"
+                  class="px-2 py-1 rounded-lg text-[10px] font-extrabold border focus:outline-none cursor-pointer"
                   :class="store.getParticipantById(reg.participantId)?.gender === 'L' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200'"
                 >
-                  {{ store.getParticipantById(reg.participantId)?.gender === 'L' ? '👨 L' : '👩 P' }}
-                </span>
-                <span class="text-[10px] text-slate-500 ml-1 font-bold">
-                  {{ store.getParticipantById(reg.participantId)?.age }} Thn
-                </span>
+                  <option value="L">👨 Laki-Laki (L)</option>
+                  <option value="P">👩 Perempuan (P)</option>
+                </select>
               </td>
+
               <td class="p-3">
-                <span class="font-bold text-slate-800">
+                <span class="font-bold text-slate-800 block">
                   {{ store.getCompetitionById(reg.competitionId)?.name }}
                 </span>
-                <span class="text-[10px] text-slate-400 block">
+                <span class="inline-block px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">
                   {{ store.getCompetitionById(reg.competitionId)?.category }}
                 </span>
               </td>
+
+              <!-- Winner Status Badge -->
               <td class="p-3">
                 <span
-                  class="px-2 py-1 rounded-md text-[10px] font-extrabold uppercase border"
+                  v-if="getParticipantWinnerRank(reg.competitionId, reg.participantId) === '1'"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 w-fit"
+                >
+                  🥇 Juara 1
+                </span>
+                <span
+                  v-else-if="getParticipantWinnerRank(reg.competitionId, reg.participantId) === '2'"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-800 border border-slate-300 flex items-center gap-1 w-fit"
+                >
+                  🥈 Juara 2
+                </span>
+                <span
+                  v-else-if="getParticipantWinnerRank(reg.competitionId, reg.participantId) === '3'"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-700/10 text-amber-900 border border-amber-700/20 flex items-center gap-1 w-fit"
+                >
+                  🥉 Juara 3
+                </span>
+                <span
+                  v-else
+                  class="text-[10px] text-slate-400 font-medium"
+                >
+                  ⏳ Belum
+                </span>
+              </td>
+
+              <!-- Interactive Editable Status Dropdown -->
+              <td class="p-3">
+                <select
+                  :value="reg.status"
+                  @change="updateRegistrationStatus(reg.id, ($event.target as HTMLSelectElement).value)"
+                  class="px-2 py-1 rounded-lg text-[10px] font-extrabold uppercase border focus:outline-none cursor-pointer"
                   :class="[
                     reg.status === 'Waiting' ? 'bg-amber-50 text-amber-800 border-amber-200' :
                     reg.status === 'Playing' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                    reg.status === 'Ready' ? 'bg-blue-50 text-blue-800 border-blue-200' :
+                    reg.status === 'Called' ? 'bg-purple-50 text-purple-800 border-purple-200' :
                     'bg-slate-100 text-slate-600 border-slate-200'
                   ]"
                 >
-                  {{ reg.status }}
-                </span>
+                  <option value="Waiting">Waiting</option>
+                  <option value="Called">Called</option>
+                  <option value="Ready">Ready</option>
+                  <option value="Playing">Playing</option>
+                  <option value="Finished">Finished</option>
+                  <option value="Disqualified">Disqualified</option>
+                </select>
               </td>
             </tr>
 
             <tr v-if="filteredAllRegistrations.length === 0">
-              <td colspan="5" class="p-8 text-center text-slate-400">
-                Tidak ada peserta yang cocok dengan filter atau kata kunci pencarian.
+              <td colspan="6" class="p-8 text-center text-slate-400">
+                Tidak ada peserta yang cocok dengan filter (Gender, Kategori, Status Juara, Lomba, atau kata kunci).
               </td>
             </tr>
           </tbody>
@@ -976,12 +1061,13 @@ import { useArenaStore } from '../stores/arenaStore';
 import { generateRegistrationConfirmationMessage } from '../services/whatsapp';
 import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
 import RegistrationStatsChart from '../components/RegistrationStatsChart.vue';
+import SpreadsheetWizard from '../components/SpreadsheetWizard.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
 
-// Top Level Mode: 'single' | 'bulk'
-const regMode = ref<'single' | 'bulk'>('single');
+// Top Level Mode: 'single' | 'bulk' | 'spreadsheet'
+const regMode = ref<'single' | 'bulk' | 'spreadsheet'>('single');
 
 // ---------------------------------------------------------------------
 // SINGLE WIZARD REGISTRATION LOGIC
@@ -1336,26 +1422,77 @@ function submitBulkRegistration() {
 }
 
 // ---------------------------------------------------------------------
-// SEARCHABLE & FILTERABLE PARTICIPANTS TABLE LOGIC
+// SEARCHABLE & FILTERABLE PARTICIPANTS TABLE LOGIC WITH INLINE EDITS
 // ---------------------------------------------------------------------
 const listCompFilter = ref('ALL');
 const listGenderFilter = ref('ALL');
+const listCategoryFilter = ref('ALL');
+const listWinnerFilter = ref('ALL');
 const listSearchQuery = ref('');
+
+function getParticipantWinnerRank(compId: string, participantId: string): '1' | '2' | '3' | null {
+  const winner = store.winners.find(w => w.competitionId === compId);
+  if (!winner) return null;
+  if (winner.firstPlaceId === participantId) return '1';
+  if (winner.secondPlaceId === participantId) return '2';
+  if (winner.thirdPlaceId === participantId) return '3';
+  return null;
+}
+
+function updateParticipantGender(participantId: string, gender: string) {
+  if (gender !== 'L' && gender !== 'P') return;
+  store.updateParticipant(participantId, { gender: gender as 'L' | 'P' });
+  Swal.fire({
+    icon: 'success',
+    title: 'Gender Diperbarui',
+    text: `Data gender peserta telah diubah menjadi ${gender === 'L' ? 'Laki-Laki' : 'Perempuan'}.`,
+    timer: 1000,
+    showConfirmButton: false
+  });
+}
+
+function updateRegistrationStatus(regId: string, status: any) {
+  store.updateRegistrationStatus(regId, status);
+  Swal.fire({
+    icon: 'success',
+    title: 'Status Diperbarui',
+    text: `Status arena diubah menjadi ${status}.`,
+    timer: 1000,
+    showConfirmButton: false
+  });
+}
 
 const filteredAllRegistrations = computed(() => {
   return store.registrations.filter(reg => {
+    const comp = store.getCompetitionById(reg.competitionId);
+    const participant = store.getParticipantById(reg.participantId);
+
+    // 1. Filter Competition
     const matchComp = listCompFilter.value === 'ALL' || reg.competitionId === listCompFilter.value;
 
-    const participant = store.getParticipantById(reg.participantId);
+    // 2. Filter Gender
     const matchGender = listGenderFilter.value === 'ALL' || participant?.gender === listGenderFilter.value;
 
+    // 3. Filter Category
+    const matchCategory = listCategoryFilter.value === 'ALL' || comp?.category === listCategoryFilter.value;
+
+    // 4. Filter Winner Status
+    const rank = participant ? getParticipantWinnerRank(reg.competitionId, participant.id) : null;
+    let matchWinner = true;
+    if (listWinnerFilter.value === 'WINNER_1') matchWinner = rank === '1';
+    else if (listWinnerFilter.value === 'WINNER_2') matchWinner = rank === '2';
+    else if (listWinnerFilter.value === 'WINNER_3') matchWinner = rank === '3';
+    else if (listWinnerFilter.value === 'ANY_WINNER') matchWinner = rank !== null;
+    else if (listWinnerFilter.value === 'NOT_WINNER') matchWinner = rank === null;
+
+    // 5. Search Query
     const q = listSearchQuery.value.trim().toLowerCase();
     const matchSearch = !q ||
       reg.participantNumber.toLowerCase().includes(q) ||
       (participant?.name.toLowerCase().includes(q) ?? false) ||
       (participant?.address?.toLowerCase().includes(q) ?? false);
 
-    return matchComp && matchGender && matchSearch;
+    return matchComp && matchGender && matchCategory && matchWinner && matchSearch;
   });
 });
 </script>

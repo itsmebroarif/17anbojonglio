@@ -344,6 +344,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Arena Floor Plan Map Section -->
+    <ArenaFloorPlan />
   </div>
 </template>
 
@@ -352,6 +355,7 @@ import { ref, computed } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { RegistrationStatus } from '../types';
 import { generateWaitingLoungeCallMessage } from '../services/whatsapp';
+import ArenaFloorPlan from '../components/ArenaFloorPlan.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
