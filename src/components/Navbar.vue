@@ -36,6 +36,18 @@
         </span>
       </div>
 
+      <!-- Keyboard Shortcuts Button -->
+      <button
+        @click="$emit('openShortcuts')"
+        class="flex items-center space-x-1.5 px-2.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-300"
+        title="Pintasan Keyboard (Hotkey Manager)"
+      >
+        <i class="bi bi-keyboard-fill text-red-600"></i>
+        <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-white border border-slate-300 rounded text-slate-600">
+          ?
+        </kbd>
+      </button>
+
       <!-- SQL Query Button -->
       <button
         @click="$emit('openSqlConsole')"
@@ -86,5 +98,5 @@ import { useArenaStore } from '../stores/arenaStore';
 
 const store = useArenaStore();
 
-defineEmits(['toggleSidebar', 'openSearch', 'openBulkWa', 'openSqlConsole']);
+defineEmits(['toggleSidebar', 'openSearch', 'openBulkWa', 'openSqlConsole', 'openShortcuts']);
 </script>
