@@ -123,18 +123,26 @@ export const useArenaStore = defineStore('arena', {
       this.waTemplates = data.waTemplates || DEFAULT_WA_TEMPLATES;
       this.committees = data.committees || [];
       this.isInitialized = true;
-      this.applyDarkMode(false);
+      
+      const savedDarkMode = StorageService.get<boolean>('17an_darkmode', false);
+      this.isDarkMode = savedDarkMode;
+      this.applyDarkMode(this.isDarkMode);
     },
 
     toggleDarkMode(force?: boolean) {
-      this.isDarkMode = false;
-      StorageService.set('17an_darkmode', false);
-      this.applyDarkMode(false);
+      this.isDarkMode = typeof force === 'boolean' ? force : !this.isDarkMode;
+      StorageService.set('17an_darkmode', this.isDarkMode);
+      this.applyDarkMode(this.isDarkMode);
+      this.logActivity('Dark Mode Toggle', `Mode tampilan diubah ke: ${this.isDarkMode ? 'Dark Mode (Gelap)' : 'Light Mode (Terang)'}`);
     },
 
-    applyDarkMode(_isDark: boolean) {
+    applyDarkMode(isDark: boolean) {
       if (typeof document !== 'undefined') {
-        document.documentElement.classList.remove('dark');
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       }
     },
 

@@ -36,6 +36,15 @@
         </span>
       </div>
 
+      <!-- Dark Mode Toggle Button -->
+      <button
+        @click="store.toggleDarkMode()"
+        class="flex items-center space-x-1 px-2.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-300"
+        :title="store.isDarkMode ? 'Beralih ke Light Mode' : 'Beralih ke Dark Mode'"
+      >
+        <i :class="store.isDarkMode ? 'bi bi-sun-fill text-amber-500' : 'bi bi-moon-stars-fill text-indigo-600'"></i>
+      </button>
+
       <!-- Keyboard Shortcuts Button -->
       <button
         @click="$emit('openShortcuts')"

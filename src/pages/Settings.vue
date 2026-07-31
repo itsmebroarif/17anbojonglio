@@ -96,6 +96,37 @@
           ></textarea>
         </div>
 
+        <!-- Dark Mode Toggle Card -->
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center text-lg font-bold shadow-xs">
+              <i :class="store.isDarkMode ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill text-amber-500'"></i>
+            </div>
+            <div>
+              <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide">
+                Mode Tampilan Dark Mode (Tema Gelap)
+              </h3>
+              <p class="text-[11px] text-slate-500">
+                Aktifkan mode gelap untuk kenyamanan mata panitia saat malam hari & penggunaan panggung.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            @click="store.toggleDarkMode()"
+            class="relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+            :class="store.isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'"
+          >
+            <span
+              class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out flex items-center justify-center text-[11px]"
+              :class="store.isDarkMode ? 'translate-x-7 text-indigo-600' : 'translate-x-0 text-slate-400'"
+            >
+              <i :class="store.isDarkMode ? 'bi bi-moon-fill' : 'bi bi-sun-fill'"></i>
+            </span>
+          </button>
+        </div>
+
         <div class="pt-4 border-t border-slate-200 flex justify-end">
           <button
             type="submit"

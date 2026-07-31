@@ -103,3 +103,98 @@
     print-color-adjust: exact !important;
   }
 }
+
+/* Global Dark Mode Overrides for Complete Component Harmony */
+html.dark {
+  color-scheme: dark;
+  background-color: #0b0f19 !important; /* Deep Dark Canvas */
+  color: #f8fafc !important;
+}
+
+html.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* Dark Mode Card & Container Overrides */
+html.dark .bg-white {
+  background-color: #1e293b !important; /* Slate 800 */
+  color: #f8fafc !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/60,
+html.dark .bg-slate-50\/80 {
+  background-color: #0f172a !important; /* Slate 900 */
+  color: #e2e8f0 !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #334155 !important; /* Slate 700 */
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #cbd5e1 !important; /* Slate 300 */
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-100,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-300 {
+  border-color: #334155 !important; /* Slate 700 */
+}
+
+/* Dark Mode Inputs, Selects, and Textareas */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Dark Mode Tables */
+html.dark table thead {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html.dark table tbody tr {
+  border-color: #334155 !important;
+}
+
+html.dark table tbody tr:hover {
+  background-color: #334155 !important;
+}
+
+/* Dark Mode Navigation & Header Bars */
+html.dark nav,
+html.dark header,
+html.dark aside {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Dark mode scrollbars */
+html.dark ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
