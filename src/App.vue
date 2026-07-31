@@ -19,10 +19,17 @@
       />
 
       <!-- Main Content Stage -->
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <main class="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-7xl mx-auto w-full">
         <router-view />
       </main>
     </div>
+
+    <!-- Android Mobile Bottom Navigation Bar -->
+    <BottomNav
+      v-if="$route.path !== '/competition-board'"
+      @openSearch="isSearchOpen = true"
+      @openBulkWa="isBulkWaOpen = true"
+    />
 
     <!-- Modals -->
     <GlobalSearchModal
@@ -58,6 +65,7 @@ import { useRouter } from 'vue-router';
 import { useArenaStore } from './stores/arenaStore';
 import Navbar from './components/Navbar.vue';
 import Sidebar from './components/Sidebar.vue';
+import BottomNav from './components/BottomNav.vue';
 import GlobalSearchModal from './components/GlobalSearchModal.vue';
 import GeminiChatModal from './components/GeminiChatModal.vue';
 import BulkWhatsAppModal from './components/BulkWhatsAppModal.vue';
