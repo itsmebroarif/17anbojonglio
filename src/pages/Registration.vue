@@ -202,187 +202,287 @@
         </div>
       </div>
 
-      <!-- STEP 2: Fill Detailed Participant Info -->
+      <!-- STEP 2: Fill Detailed Participant Info + Webcam Photo -->
       <div v-if="step === 2" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-6 animate-fade-in">
-        <div class="border-b border-slate-100 pb-4">
-          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i class="bi bi-person-lines-fill text-red-600"></i>
-            <span>Langkah 2: Pengisian Data Lengkap Peserta</span>
-          </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Lengkapi identitas peserta. Kolom kontak dan alamat bersifat opsional.</p>
+        <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="bi bi-person-lines-fill text-red-600"></i>
+              <span>Langkah 2: Pengisian Data Lengkap & Foto Peserta (Webcam)</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Ambil foto langsung melalui webcam laptop/HP untuk tanda pengenal visual panitia.</p>
+          </div>
+          <div class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto">
+            <i class="bi bi-camera-fill text-red-600"></i>
+            <span>Mode Foto Ditempat (On-Site)</span>
+          </div>
         </div>
 
         <form @submit.prevent="goToStep3" class="space-y-6">
-          <!-- Section A: Identitas Utama (Mandatory) -->
-          <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
-              <span class="w-6 h-6 rounded-lg bg-red-600 text-white text-xs font-bold flex items-center justify-center">1</span>
-              <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Identitas Utama (Wajib)</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT COLUMN: Identitas Utama & Kontak (7 cols) -->
+            <div class="lg:col-span-7 space-y-5">
+              
+              <!-- Section A: Identitas Utama (Mandatory) -->
+              <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <span class="w-6 h-6 rounded-lg bg-red-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                  <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Identitas Utama (Wajib)</h3>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- Nama Peserta -->
+                  <div>
+                    <div class="flex items-center mb-1">
+                      <label class="block text-xs font-bold text-slate-700">Nama Lengkap Peserta <span class="text-red-600">*</span></label>
+                      <QuickHelpTooltip
+                        title="Petunjuk Nama"
+                        content="Gunakan nama resmi peserta untuk pencetakan e-sertifikat juara dan bagan kompetisi."
+                        example="Ahmad Subagyo"
+                        position="top"
+                      />
+                    </div>
+                    <input
+                      v-model="participantForm.name"
+                      required
+                      type="text"
+                      placeholder="e.g. Budi Santoso"
+                      class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Umur & Gender Grid -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <div class="flex items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Umur (Tahun) <span class="text-red-600">*</span></label>
+                        <QuickHelpTooltip
+                          title="Petunjuk Umur"
+                          content="Digunakan untuk memvalidasi kategori lomba (Anak <12, Remaja 12-17, Dewasa 18+)."
+                          example="15"
+                          position="top"
+                        />
+                      </div>
+                      <input
+                        v-model.number="participantForm.age"
+                        required
+                        type="number"
+                        min="2"
+                        max="100"
+                        placeholder="e.g. 12"
+                        class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <div class="flex items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Jenis Kelamin <span class="text-red-600">*</span></label>
+                        <QuickHelpTooltip
+                          title="Petunjuk Gender"
+                          content="Memudahkan pembagian bagan pertandingan Putra / Putri."
+                          position="top"
+                        />
+                      </div>
+                      <div class="grid grid-cols-2 gap-2 mt-1">
+                        <label
+                          class="flex items-center justify-center py-2.5 px-3 rounded-xl border text-xs font-bold cursor-pointer transition-colors"
+                          :class="participantForm.gender === 'L' ? 'bg-blue-50 border-blue-500 text-blue-800 shadow-2xs' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'"
+                        >
+                          <input type="radio" v-model="participantForm.gender" value="L" class="hidden" />
+                          <span>👨 Laki-Laki</span>
+                        </label>
+
+                        <label
+                          class="flex items-center justify-center py-2.5 px-3 rounded-xl border text-xs font-bold cursor-pointer transition-colors"
+                          :class="participantForm.gender === 'P' ? 'bg-rose-50 border-rose-500 text-rose-800 shadow-2xs' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'"
+                        >
+                          <input type="radio" v-model="participantForm.gender" value="P" class="hidden" />
+                          <span>👩 Perempuan</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section B: Kontak & Alamat (Opsional) -->
+              <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <span class="w-6 h-6 rounded-lg bg-slate-700 text-white text-xs font-bold flex items-center justify-center">2</span>
+                  <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Kontak & Alamat (Fully Opsional)</h3>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- WhatsApp & Email -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <div class="flex items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Nomor WhatsApp (Opsional)</label>
+                        <QuickHelpTooltip
+                          title="Format WhatsApp"
+                          content="Boleh dikosongkan. Jika diisi, sistem menyediakan tombol kirim konfirmasi otomatis via WhatsApp."
+                          example="081234567890"
+                          position="top"
+                        />
+                      </div>
+                      <input
+                        v-model="participantForm.whatsapp"
+                        type="tel"
+                        placeholder="e.g. 081234567890 (Boleh Kosong)"
+                        class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <div class="flex items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Email (Opsional)</label>
+                        <QuickHelpTooltip
+                          title="Petunjuk Email"
+                          content="Boleh dikosongkan jika tidak ada."
+                          example="peserta@gmail.com"
+                          position="top"
+                        />
+                      </div>
+                      <input
+                        v-model="participantForm.email"
+                        type="email"
+                        placeholder="e.g. email@domain.com (Boleh Kosong)"
+                        class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Alamat / RT RW -->
+                  <div>
+                    <div class="flex items-center mb-1">
+                      <label class="block text-xs font-bold text-slate-700">Alamat / RT RW (Opsional)</label>
+                      <QuickHelpTooltip
+                        title="Format Alamat"
+                        content="Boleh dikosongkan. Bermanfaat untuk memetakan statistik perwakilan wilayah warga."
+                        example="RT 05 / RW 02 Beji Depok"
+                        position="top"
+                      />
+                    </div>
+                    <input
+                      v-model="participantForm.address"
+                      type="text"
+                      placeholder="e.g. RT 04 / RW 02 Komp. Warga (Boleh Kosong)"
+                      class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Catatan Tambahan Textarea -->
+                  <div>
+                    <div class="flex items-center mb-1">
+                      <label class="block text-xs font-bold text-slate-700">Catatan Tambahan (Opsional)</label>
+                      <QuickHelpTooltip
+                        title="Petunjuk Catatan"
+                        content="Gunakan textarea ini untuk mencatat instruksi khusus, tim perwakilan, atau preferensi peserta."
+                        position="top"
+                      />
+                    </div>
+                    <textarea
+                      v-model="participantForm.notes"
+                      rows="2"
+                      placeholder="Tuliskan catatan khusus bila ada..."
+                      class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none resize-y"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="space-y-4">
-              <!-- Nama Peserta -->
-              <div>
-                <div class="flex items-center mb-1">
-                  <label class="block text-xs font-bold text-slate-700">Nama Lengkap Peserta <span class="text-red-600">*</span></label>
-                  <QuickHelpTooltip
-                    title="Petunjuk Nama"
-                    content="Gunakan nama resmi peserta untuk pencetakan e-sertifikat juara dan bagan kompetisi."
-                    example="Ahmad Subagyo"
-                    position="top"
-                  />
+            <!-- RIGHT COLUMN: Webcam Capture & Live ID Badge Preview (5 cols) -->
+            <div class="lg:col-span-5 space-y-5">
+              
+              <!-- Webcam Capture Component -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="bi bi-camera-fill text-red-600"></i>
+                    <span>Foto Peserta (Webcam / HP)</span>
+                  </h3>
+                  <span class="text-[10px] text-slate-400">Opsional tapi disarankan</span>
                 </div>
-                <input
-                  v-model="participantForm.name"
-                  required
-                  type="text"
-                  placeholder="e.g. Budi Santoso"
-                  class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
+
+                <CameraCapture
+                  :initialPhoto="participantForm.photoUrl"
+                  @captured="onPhotoCaptured"
+                  @cleared="onPhotoCleared"
                 />
               </div>
 
-              <!-- Umur & Gender Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <div class="flex items-center mb-1">
-                    <label class="block text-xs font-bold text-slate-700">Umur (Tahun) <span class="text-red-600">*</span></label>
-                    <QuickHelpTooltip
-                      title="Petunjuk Umur"
-                      content="Digunakan untuk memvalidasi kategori lomba (Anak <12, Remaja 12-17, Dewasa 18+)."
-                      example="15"
-                      position="top"
-                    />
+              <!-- Live ID Badge Preview Card for Committee Identification -->
+              <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white p-5 rounded-2xl border border-slate-700 shadow-xl space-y-3 relative overflow-hidden">
+                <!-- Red-White Ribbon Accent Top -->
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-white to-red-600"></div>
+
+                <div class="flex items-center justify-between border-b border-slate-700 pb-2.5">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-6 h-6 rounded bg-red-600 text-white font-black text-[10px] flex items-center justify-center">17</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">PENGENAL PANITIA</span>
                   </div>
-                  <input
-                    v-model.number="participantForm.age"
-                    required
-                    type="number"
-                    min="2"
-                    max="100"
-                    placeholder="e.g. 12"
-                    class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
-                  />
+                  <span class="text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                    LIVE PREVIEW
+                  </span>
                 </div>
 
-                <div>
-                  <div class="flex items-center mb-1">
-                    <label class="block text-xs font-bold text-slate-700">Jenis Kelamin <span class="text-red-600">*</span></label>
-                    <QuickHelpTooltip
-                      title="Petunjuk Gender"
-                      content="Memudahkan pembagian bagan pertandingan Putra / Putri."
-                      position="top"
+                <div class="flex items-center space-x-3 pt-1">
+                  <!-- Photo Avatar Thumbnail -->
+                  <div class="w-16 h-20 rounded-xl bg-slate-800 border-2 border-red-500/50 overflow-hidden flex-shrink-0 shadow-md relative group">
+                    <img
+                      v-if="participantForm.photoUrl"
+                      :src="participantForm.photoUrl"
+                      alt="Avatar Peserta"
+                      class="w-full h-full object-cover"
                     />
+                    <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-500 p-1 text-center">
+                      <i class="bi bi-person-bounding-box text-xl"></i>
+                      <span class="text-[8px] text-slate-400 mt-1">Belum Ada Foto</span>
+                    </div>
                   </div>
-                  <div class="grid grid-cols-2 gap-2 mt-1">
-                    <label
-                      class="flex items-center justify-center py-2.5 px-3 rounded-xl border text-xs font-bold cursor-pointer transition-colors"
-                      :class="participantForm.gender === 'L' ? 'bg-blue-50 border-blue-500 text-blue-800 shadow-2xs' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'"
+
+                  <!-- Name and Details -->
+                  <div class="min-w-0 flex-1 space-y-1">
+                    <h4 class="font-black text-sm text-white truncate leading-tight">
+                      {{ participantForm.name || 'Nama Peserta Baru' }}
+                    </h4>
+                    <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-300">
+                      <span class="px-2 py-0.5 rounded bg-slate-800 font-bold border border-slate-700">
+                        {{ participantForm.gender === 'L' ? '👨 Laki-Laki' : '👩 Perempuan' }}
+                      </span>
+                      <span class="px-2 py-0.5 rounded bg-slate-800 font-bold border border-slate-700">
+                        {{ participantForm.age || 0 }} Thn
+                      </span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 truncate">
+                      <i class="bi bi-geo-alt-fill text-red-400 mr-1"></i>
+                      {{ participantForm.address || 'Alamat / RT RW belum diisi' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Selected Competitions Pills -->
+                <div class="pt-2 border-t border-slate-800 text-[10px]">
+                  <span class="text-slate-400 font-bold block mb-1">Lomba Terpilih ({{ selectedCompIds.length }}):</span>
+                  <div class="flex flex-wrap gap-1">
+                    <span
+                      v-for="cId in selectedCompIds"
+                      :key="cId"
+                      class="px-2 py-0.5 bg-red-600/30 text-red-300 border border-red-500/40 rounded font-mono font-bold"
                     >
-                      <input type="radio" v-model="participantForm.gender" value="L" class="hidden" />
-                      <span>👨 Laki-Laki</span>
-                    </label>
-
-                    <label
-                      class="flex items-center justify-center py-2.5 px-3 rounded-xl border text-xs font-bold cursor-pointer transition-colors"
-                      :class="participantForm.gender === 'P' ? 'bg-rose-50 border-rose-500 text-rose-800 shadow-2xs' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'"
-                    >
-                      <input type="radio" v-model="participantForm.gender" value="P" class="hidden" />
-                      <span>👩 Perempuan</span>
-                    </label>
+                      {{ store.getCompetitionById(cId)?.prefix }} - {{ store.getCompetitionById(cId)?.name }}
+                    </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Section B: Kontak & Alamat (Opsional) -->
-          <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
-              <span class="w-6 h-6 rounded-lg bg-slate-700 text-white text-xs font-bold flex items-center justify-center">2</span>
-              <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Kontak & Alamat (Fully Opsional)</h3>
-            </div>
-
-            <div class="space-y-4">
-              <!-- WhatsApp & Email -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <div class="flex items-center mb-1">
-                    <label class="block text-xs font-bold text-slate-700">Nomor WhatsApp (Opsional)</label>
-                    <QuickHelpTooltip
-                      title="Format WhatsApp"
-                      content="Boleh dikosongkan. Jika diisi, sistem menyediakan tombol kirim konfirmasi otomatis via WhatsApp."
-                      example="081234567890"
-                      position="top"
-                    />
-                  </div>
-                  <input
-                    v-model="participantForm.whatsapp"
-                    type="tel"
-                    placeholder="e.g. 081234567890 (Boleh Kosong)"
-                    class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <div class="flex items-center mb-1">
-                    <label class="block text-xs font-bold text-slate-700">Email (Opsional)</label>
-                    <QuickHelpTooltip
-                      title="Petunjuk Email"
-                      content="Boleh dikosongkan jika tidak ada."
-                      example="peserta@gmail.com"
-                      position="top"
-                    />
-                  </div>
-                  <input
-                    v-model="participantForm.email"
-                    type="email"
-                    placeholder="e.g. email@domain.com (Boleh Kosong)"
-                    class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <!-- Alamat / RT RW -->
-              <div>
-                <div class="flex items-center mb-1">
-                  <label class="block text-xs font-bold text-slate-700">Alamat / RT RW (Opsional)</label>
-                  <QuickHelpTooltip
-                    title="Format Alamat"
-                    content="Boleh dikosongkan. Bermanfaat untuk memetakan statistik perwakilan wilayah warga."
-                    example="RT 05 / RW 02 Beji Depok"
-                    position="top"
-                  />
-                </div>
-                <input
-                  v-model="participantForm.address"
-                  type="text"
-                  placeholder="e.g. RT 04 / RW 02 Komp. Warga (Boleh Kosong)"
-                  class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none"
-                />
-              </div>
-
-              <!-- Catatan Tambahan Textarea -->
-              <div>
-                <div class="flex items-center mb-1">
-                  <label class="block text-xs font-bold text-slate-700">Catatan Tambahan (Opsional)</label>
-                  <QuickHelpTooltip
-                    title="Petunjuk Catatan"
-                    content="Gunakan textarea ini untuk mencatat instruksi khusus, tim perwakilan, atau preferensi peserta."
-                    position="top"
-                  />
-                </div>
-                <textarea
-                  v-model="participantForm.notes"
-                  rows="3"
-                  placeholder="Tuliskan catatan khusus bila ada (misal: Perwakilan Karang Taruna, permohonan tampil awal, dll.)..."
-                  class="w-full px-3.5 py-2.5 border border-slate-300 bg-white text-slate-900 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-500/50 focus:outline-none resize-y"
-                ></textarea>
-              </div>
             </div>
           </div>
 
           <!-- Wizard Navigation Buttons -->
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
             <button
               type="button"
               @click="step = 1"
@@ -944,6 +1044,7 @@
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-100 text-slate-600 uppercase font-bold">
             <tr>
+              <th class="p-3 w-16 text-center">Foto</th>
               <th class="p-3 w-24">No. Peserta</th>
               <th class="p-3">Nama Peserta & Alamat</th>
               <th class="p-3 w-32">Gender (Ubah)</th>
@@ -958,6 +1059,29 @@
               :key="reg.id"
               class="hover:bg-slate-50 transition-colors"
             >
+              <!-- Photo Thumbnail Avatar -->
+              <td class="p-3 w-16 text-center">
+                <div
+                  @click="openPhotoModal(store.getParticipantById(reg.participantId))"
+                  class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer hover:ring-2 hover:ring-red-500 transition-all mx-auto flex items-center justify-center relative group"
+                  title="Klik untuk ambil/ubah foto webcam"
+                >
+                  <img
+                    v-if="store.getParticipantById(reg.participantId)?.photoUrl"
+                    :src="store.getParticipantById(reg.participantId)?.photoUrl"
+                    alt="Foto Peserta"
+                    class="w-full h-full object-cover"
+                  />
+                  <div v-else class="flex flex-col items-center justify-center text-slate-400 group-hover:text-red-600">
+                    <i class="bi bi-camera-fill text-xs"></i>
+                    <span class="text-[8px] font-bold">Foto</span>
+                  </div>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs">
+                    <i class="bi bi-camera"></i>
+                  </div>
+                </div>
+              </td>
+
               <td class="p-3 font-mono font-bold text-red-600">
                 {{ reg.participantNumber }}
               </td>
@@ -1044,12 +1168,67 @@
             </tr>
 
             <tr v-if="filteredAllRegistrations.length === 0">
-              <td colspan="6" class="p-8 text-center text-slate-400">
+              <td colspan="7" class="p-8 text-center text-slate-400">
                 Tidak ada peserta yang cocok dengan filter (Gender, Kategori, Status Juara, Lomba, atau kata kunci).
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Quick Photo Capture Modal for Existing Registered Participant -->
+    <div
+      v-if="isPhotoModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-fade-in"
+    >
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold">
+              <i class="bi bi-camera-fill text-sm"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-sm text-slate-900">
+                Foto Pengenal Panitia: {{ activeParticipantForPhoto?.name }}
+              </h3>
+              <p class="text-[11px] text-slate-500">Ambil foto webcam laptop/HP untuk pengenal peserta di tempat.</p>
+            </div>
+          </div>
+          <button
+            @click="closePhotoModal"
+            class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            <i class="bi bi-x-lg text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Camera Capture Component -->
+        <CameraCapture
+          :initialPhoto="tempPhotoDataUrl"
+          @captured="onQuickPhotoCaptured"
+          @cleared="tempPhotoDataUrl = ''"
+        />
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+          <button
+            type="button"
+            @click="closePhotoModal"
+            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs"
+          >
+            Batal
+          </button>
+
+          <button
+            type="button"
+            @click="saveQuickPhoto"
+            :disabled="!tempPhotoDataUrl"
+            class="px-5 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-extrabold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5"
+          >
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Simpan Foto Peserta</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1062,6 +1241,7 @@ import { generateRegistrationConfirmationMessage } from '../services/whatsapp';
 import QuickHelpTooltip from '../components/QuickHelpTooltip.vue';
 import RegistrationStatsChart from '../components/RegistrationStatsChart.vue';
 import SpreadsheetWizard from '../components/SpreadsheetWizard.vue';
+import CameraCapture from '../components/CameraCapture.vue';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
@@ -1083,8 +1263,52 @@ const participantForm = reactive({
   whatsapp: '',
   email: '',
   address: '',
-  notes: ''
+  notes: '',
+  photoUrl: ''
 });
+
+function onPhotoCaptured(dataUrl: string) {
+  participantForm.photoUrl = dataUrl;
+}
+
+function onPhotoCleared() {
+  participantForm.photoUrl = '';
+}
+
+// Quick Photo Capture Modal for Existing Participants
+const isPhotoModalOpen = ref(false);
+const activeParticipantForPhoto = ref<any>(null);
+const tempPhotoDataUrl = ref<string>('');
+
+function openPhotoModal(participant: any) {
+  activeParticipantForPhoto.value = participant;
+  tempPhotoDataUrl.value = participant.photoUrl || '';
+  isPhotoModalOpen.value = true;
+}
+
+function closePhotoModal() {
+  isPhotoModalOpen.value = false;
+  activeParticipantForPhoto.value = null;
+  tempPhotoDataUrl.value = '';
+}
+
+function onQuickPhotoCaptured(dataUrl: string) {
+  tempPhotoDataUrl.value = dataUrl;
+}
+
+function saveQuickPhoto() {
+  if (activeParticipantForPhoto.value && tempPhotoDataUrl.value) {
+    store.updateParticipantPhoto(activeParticipantForPhoto.value.id, tempPhotoDataUrl.value);
+    Swal.fire({
+      icon: 'success',
+      title: 'Foto Peserta Disimpan!',
+      text: `Foto pengenal untuk ${activeParticipantForPhoto.value.name} telah diperbarui.`,
+      timer: 1500,
+      showConfirmButton: false
+    });
+    closePhotoModal();
+  }
+}
 
 const createdResult = ref<{ participant: any; registrations: any[] } | null>(null);
 
@@ -1164,6 +1388,7 @@ function resetWizard() {
   participantForm.email = '';
   participantForm.address = '';
   participantForm.notes = '';
+  participantForm.photoUrl = '';
   createdResult.value = null;
 }
 

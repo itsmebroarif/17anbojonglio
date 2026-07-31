@@ -340,7 +340,12 @@
                     {{ idx + 1 }}
                   </td>
                   <td v-for="col in activeColumns" :key="col" class="p-3 whitespace-nowrap">
+                    <div v-if="col === 'photoUrl' && row[col]" class="flex items-center space-x-2">
+                      <img :src="row[col]" alt="Photo" class="w-8 h-8 rounded-lg object-cover border border-slate-200 shadow-2xs" />
+                      <span class="text-[10px] text-slate-500 font-mono">Ada Foto</span>
+                    </div>
                     <span
+                      v-else
                       class="font-mono text-xs text-slate-800 truncate max-w-[220px] block"
                       :title="String(row[col])"
                     >
@@ -898,6 +903,7 @@ function applyRangeSelect() {
 
 function formatCellValue(val: any) {
   if (val === null || val === undefined) return '-';
+  if (typeof val === 'string' && val.startsWith('data:image/')) return '[Gambar Data Base64]';
   if (typeof val === 'object') return JSON.stringify(val);
   return String(val);
 }

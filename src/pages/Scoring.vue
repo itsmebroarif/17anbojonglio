@@ -275,7 +275,20 @@
                 </td>
 
                 <td class="p-3.5 font-bold text-slate-900">
-                  {{ row.participant.name }}
+                  <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 shadow-2xs">
+                      <img
+                        v-if="row.participant.photoUrl"
+                        :src="row.participant.photoUrl"
+                        alt="Photo"
+                        class="w-full h-full object-cover"
+                      />
+                      <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
+                        <i class="bi bi-person-fill text-sm"></i>
+                      </div>
+                    </div>
+                    <span>{{ row.participant.name }}</span>
+                  </div>
                 </td>
 
                 <td class="p-3.5">

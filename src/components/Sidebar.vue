@@ -16,12 +16,15 @@
       <!-- Navigation Menu Header -->
       <div class="p-5 border-b border-slate-100 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center shadow-md shadow-red-200 text-white font-black text-lg">
-            17
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 via-red-700 to-rose-900 border-2 border-amber-400 flex items-center justify-center shadow-lg shadow-red-500/20 text-amber-300 font-black text-xl tracking-tighter relative overflow-hidden group">
+            <span class="absolute top-0 left-0 right-0 h-1/2 bg-red-500/40"></span>
+            <span class="relative z-10 font-black drop-shadow-md">17</span>
           </div>
           <div>
-            <h1 class="font-extrabold text-slate-900 leading-tight text-sm tracking-tight">CHAMPIONSHIP</h1>
-            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">ALL IN ONE</p>
+            <h1 class="font-black text-slate-900 leading-tight text-sm tracking-tight flex items-center gap-1">
+              <span>17AN ARENA</span>
+            </h1>
+            <p class="text-[10px] text-red-600 uppercase tracking-widest font-extrabold">CHAMPIONSHIP ALL-IN-ONE</p>
           </div>
         </div>
         <button

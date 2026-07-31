@@ -13,6 +13,7 @@ export interface Participant {
   email?: string;
   address?: string;
   notes?: string;
+  photoUrl?: string;
   createdAt: string;
 }
 

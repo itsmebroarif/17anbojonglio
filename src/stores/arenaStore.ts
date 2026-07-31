@@ -246,6 +246,10 @@ export const useArenaStore = defineStore('arena', {
           createdAt: new Date().toISOString()
         };
         this.participants.push(participant);
+      } else {
+        if (participantData.photoUrl) {
+          participant.photoUrl = participantData.photoUrl;
+        }
       }
 
       const createdRegistrations: Registration[] = [];
@@ -286,6 +290,15 @@ export const useArenaStore = defineStore('arena', {
       this.saveAll();
 
       return { participant, registrations: createdRegistrations };
+    },
+
+    updateParticipantPhoto(participantId: string, photoUrl: string) {
+      const part = this.participants.find(p => p.id === participantId);
+      if (part) {
+        part.photoUrl = photoUrl;
+        this.logActivity('Foto Peserta Diperbarui', `Foto peserta ${part.name} berhasil diperbarui.`);
+        this.saveAll();
+      }
     },
 
     registerBulkParticipants(

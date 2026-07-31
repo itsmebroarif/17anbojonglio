@@ -189,12 +189,27 @@
               </td>
 
               <td class="p-3.5">
-                <div class="font-bold text-slate-900">
-                  {{ store.getParticipantById(reg.participantId)?.name }}
-                </div>
-                <div class="text-[11px] text-slate-500">
-                  <i class="bi bi-whatsapp text-emerald-600"></i>
-                  {{ store.getParticipantById(reg.participantId)?.whatsapp || '-' }}
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 shadow-2xs">
+                    <img
+                      v-if="store.getParticipantById(reg.participantId)?.photoUrl"
+                      :src="store.getParticipantById(reg.participantId)?.photoUrl"
+                      alt="Avatar"
+                      class="w-full h-full object-cover"
+                    />
+                    <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
+                      <i class="bi bi-person-fill text-base"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold text-slate-900">
+                      {{ store.getParticipantById(reg.participantId)?.name }}
+                    </div>
+                    <div class="text-[11px] text-slate-500">
+                      <i class="bi bi-whatsapp text-emerald-600"></i>
+                      {{ store.getParticipantById(reg.participantId)?.whatsapp || '-' }}
+                    </div>
+                  </div>
                 </div>
               </td>
 
