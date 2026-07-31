@@ -31,7 +31,7 @@
 
         <button
           @click="isPrintPreviewOpen = true"
-          class="px-3.5 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+          class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
           title="Cetak Rekap Papan Lomba"
         >
           <i class="bi bi-printer-fill"></i>

@@ -16,7 +16,7 @@
         </h2>
         <span class="hidden sm:inline-flex px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider items-center gap-1.5 w-fit border border-emerald-200">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>{{ store.settings.location || 'Lapangan Warga Depok' }}</span>
+          <span>{{ store.settings.location || 'Lokasi Kegiatan' }}</span>
         </span>
       </div>
     </div>
@@ -35,6 +35,16 @@
           <span>Tampil: <strong class="text-emerald-800 font-bold">{{ store.dashboardStats.playing }}</strong></span>
         </span>
       </div>
+
+      <!-- SQL Query Button -->
+      <button
+        @click="$emit('openSqlConsole')"
+        class="flex items-center space-x-1.5 px-3 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-300"
+        title="Query Terminal SQL & Keyword Search"
+      >
+        <i class="bi bi-terminal-fill text-red-600"></i>
+        <span class="hidden md:inline font-mono">SQL Query</span>
+      </button>
 
       <!-- Search Button -->
       <button
@@ -76,5 +86,5 @@ import { useArenaStore } from '../stores/arenaStore';
 
 const store = useArenaStore();
 
-defineEmits(['toggleSidebar', 'openSearch']);
+defineEmits(['toggleSidebar', 'openSearch', 'openBulkWa', 'openSqlConsole']);
 </script>

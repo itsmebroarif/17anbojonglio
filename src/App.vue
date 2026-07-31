@@ -6,6 +6,7 @@
       @toggleSidebar="isSidebarOpen = !isSidebarOpen"
       @openSearch="isSearchOpen = true"
       @openBulkWa="isBulkWaOpen = true"
+      @openSqlConsole="isSqlConsoleOpen = true"
     />
 
     <div class="flex-1 flex">
@@ -37,6 +38,11 @@
       :isOpen="isBulkWaOpen"
       @close="isBulkWaOpen = false"
     />
+
+    <SqlKeywordConsoleModal
+      :isOpen="isSqlConsoleOpen"
+      @close="isSqlConsoleOpen = false"
+    />
   </div>
 </template>
 
@@ -48,12 +54,14 @@ import Sidebar from './components/Sidebar.vue';
 import GlobalSearchModal from './components/GlobalSearchModal.vue';
 import GeminiChatModal from './components/GeminiChatModal.vue';
 import BulkWhatsAppModal from './components/BulkWhatsAppModal.vue';
+import SqlKeywordConsoleModal from './components/SqlKeywordConsoleModal.vue';
 
 const store = useArenaStore();
 const isSidebarOpen = ref(false);
 const isSearchOpen = ref(false);
 const isGeminiOpen = ref(false);
 const isBulkWaOpen = ref(false);
+const isSqlConsoleOpen = ref(false);
 
 onMounted(() => {
   store.init();
@@ -68,6 +76,10 @@ function handleGlobalKeydown(e: KeyboardEvent) {
   if (e.key === '/' && !isSearchOpen.value && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
     e.preventDefault();
     isSearchOpen.value = true;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'q') {
+    e.preventDefault();
+    isSqlConsoleOpen.value = !isSqlConsoleOpen.value;
   }
 }
 </script>

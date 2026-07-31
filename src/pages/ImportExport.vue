@@ -27,11 +27,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
         <!-- Export Box -->
-        <div class="p-5 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3">
-          <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-amber-600 text-sm flex items-center gap-2">
             <i class="bi bi-download"></i> 1. Export Backup JSON
           </h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <p class="text-xs text-slate-600 leading-relaxed">
             Unduh seluruh data (lomba, peserta, pendaftaran, skor, juara, sertifikat, doorprize) menjadi satu file JSON backup.
           </p>
           <button
@@ -43,11 +43,11 @@
         </div>
 
         <!-- Import Box -->
-        <div class="p-5 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3">
-          <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-2">
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-emerald-600 text-sm flex items-center gap-2">
             <i class="bi bi-upload"></i> 2. Import Restore JSON
           </h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <p class="text-xs text-slate-600 leading-relaxed">
             Pilih file JSON hasil export dari laptop lain untuk menimpa atau memulihkan data lokal.
           </p>
           <input

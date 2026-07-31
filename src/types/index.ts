@@ -63,6 +63,18 @@ export interface Winner {
   notes?: string;
 }
 
+export interface CommitteeMember {
+  id: string;
+  name: string;
+  role: string;
+  section: string;
+  phone: string;
+  rtRw?: string;
+  idCardNumber: string; // e.g., PNT-001
+  photoUrl?: string;
+  joinedAt?: string;
+}
+
 export interface Certificate {
   id: string;
   certificateNo: string;

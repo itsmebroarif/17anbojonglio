@@ -59,16 +59,16 @@
     </nav>
 
     <!-- Footer System Status Card -->
-    <div class="p-4 border-t border-slate-100">
-      <div class="bg-slate-900 text-white p-4 rounded-xl space-y-2 border border-transparent">
-        <div class="flex justify-between text-[10px] uppercase font-bold opacity-60 tracking-wider">
+    <div class="p-4 border-t border-slate-200">
+      <div class="bg-slate-100 text-slate-800 p-4 rounded-xl space-y-2 border border-slate-200">
+        <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500">
           <span>Offline Mode</span>
-          <span class="text-emerald-400">Active</span>
+          <span class="text-emerald-600 font-extrabold">Active</span>
         </div>
-        <div class="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
-          <div class="h-full w-full bg-emerald-400"></div>
+        <div class="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+          <div class="h-full w-full bg-emerald-500"></div>
         </div>
-        <p class="text-[11px] opacity-80 flex items-center justify-between">
+        <p class="text-[11px] font-medium text-slate-600 flex items-center justify-between">
           <span>Local Sync Ready</span>
           <span class="font-mono text-[10px] text-slate-400">v1.0</span>
         </p>
@@ -98,6 +98,7 @@ const navItems = computed(() => [
   { path: '/resulting-point', label: 'Resulting Point', icon: 'bi bi-bar-chart-line-fill' },
   { path: '/hall-of-fame', label: 'Hall of Fame', icon: 'bi bi-stars' },
   { path: '/certificates', label: 'Cetak Sertifikat', icon: 'bi bi-patch-check-fill' },
+  { path: '/committee', label: 'Panitia & ID Card', icon: 'bi bi-person-badge-fill', badge: store.committees.length || 'NEW', badgeClass: 'bg-red-100 text-red-700' },
   { path: '/lucky-spin', label: 'Lucky Spin', icon: 'bi bi-arrow-clockwise' },
   { path: '/import-export', label: 'Import / Export', icon: 'bi bi-arrow-down-up' },
   { path: '/settings', label: 'Pengaturan', icon: 'bi bi-gear-fill' }

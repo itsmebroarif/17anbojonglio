@@ -88,6 +88,30 @@
         </div>
       </div>
 
+      <!-- Theme Layout Selector Row -->
+      <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div class="flex items-center gap-2">
+          <i class="bi bi-palette-fill text-purple-600"></i>
+          <span class="text-xs font-extrabold text-slate-700">Desain Theme Sertifikat:</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            v-for="t in themes"
+            :key="t.id"
+            @click="activeTheme = t.id"
+            class="px-3 py-1 rounded-lg text-xs font-bold transition-all border flex items-center gap-1"
+            :class="[
+              activeTheme === t.id
+                ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+            ]"
+          >
+            <span>{{ t.icon }}</span>
+            <span>{{ t.label }}</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Quick Selection Helpers -->
       <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
         <div class="flex flex-wrap items-center gap-2">
@@ -293,6 +317,13 @@ const selectedCompId = ref('ALL');
 const selectedTitle = ref('ALL');
 const searchQuery = ref('');
 const selectedCertIds = ref<string[]>([]);
+const activeTheme = ref<'merah-putih' | 'gold-classic' | 'royal-navy'>('merah-putih');
+
+const themes = [
+  { id: 'merah-putih', label: 'Merah Putih Garuda', icon: '🇮🇩' },
+  { id: 'gold-classic', label: 'Elegance Gold Classic', icon: '🏆' },
+  { id: 'royal-navy', label: 'Royal Navy Luxury', icon: '⚜️' }
+];
 
 const filteredCertificates = computed(() => {
   return store.certificates.filter(cert => {

@@ -125,12 +125,12 @@
 
     <!-- MAIN VIEW 1: INTERACTIVE 3D MINIATURE ARENA (THREE.JS + GSAP) -->
     <div v-show="viewMode === '3d'" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-8 bg-slate-950 rounded-2xl border border-slate-800 p-4 relative overflow-hidden min-h-[480px] flex flex-col justify-between">
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-4 relative overflow-hidden min-h-[480px] flex flex-col justify-between shadow-sm">
         <!-- 3D Header overlay -->
-        <div class="flex items-center justify-between z-10 text-white border-b border-slate-800/80 pb-3">
+        <div class="flex items-center justify-between z-10 text-slate-900 border-b border-slate-200 pb-3">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-            <span class="font-bold text-xs tracking-wider uppercase text-slate-200">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+            <span class="font-extrabold text-xs tracking-wider uppercase text-slate-800">
               MINIATURE 3D ARENA LAPANGAN (GSAP INTERACTIVE)
             </span>
           </div>
@@ -138,25 +138,25 @@
           <div class="flex items-center gap-2 text-xs">
             <button
               @click="focusZone3D('A')"
-              class="px-2 py-1 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-300 rounded-lg text-[10px] font-bold border border-emerald-700/50"
+              class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-extrabold border border-emerald-200"
             >
               Zone A
             </button>
             <button
               @click="focusZone3D('B')"
-              class="px-2 py-1 bg-red-900/60 hover:bg-red-800 text-red-300 rounded-lg text-[10px] font-bold border border-red-700/50"
+              class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-[10px] font-extrabold border border-red-200"
             >
               Zone B
             </button>
             <button
               @click="focusZone3D('C')"
-              class="px-2 py-1 bg-blue-900/60 hover:bg-blue-800 text-blue-300 rounded-lg text-[10px] font-bold border border-blue-700/50"
+              class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-[10px] font-extrabold border border-blue-200"
             >
               Zone C
             </button>
             <button
               @click="resetCamera3D"
-              class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[10px] font-bold border border-slate-700"
+              class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-extrabold border border-slate-200"
               title="Reset Tampilan Kamera"
             >
               <i class="bi bi-aspect-ratio-fill"></i> Reset
@@ -167,7 +167,7 @@
         <!-- ThreeJS Canvas Container -->
         <div
           ref="canvasContainer"
-          class="relative my-3 w-full h-[400px] rounded-xl overflow-hidden cursor-grab active:cursor-grabbing bg-slate-900/90"
+          class="relative my-3 w-full h-[400px] rounded-xl overflow-hidden cursor-grab active:cursor-grabbing bg-slate-100 border border-slate-200 shadow-inner"
         >
           <!-- Canvas element -->
           <canvas ref="threeCanvas" class="w-full h-full block outline-none"></canvas>
@@ -185,42 +185,42 @@
             }"
           >
             <div
-              class="group relative flex items-center gap-1 px-2.5 py-1 rounded-full shadow-2xl border text-[10px] font-black transition-all backdrop-blur-xs"
+              class="group relative flex items-center gap-1 px-2.5 py-1 rounded-full shadow-md border text-[10px] font-black transition-all backdrop-blur-xs"
               :class="[
                 selectedCompId === comp.id ? 'ring-4 ring-amber-400 scale-110 z-30 bg-red-600 text-white border-amber-300' :
                 comp.status === 'Ongoing' ? 'bg-red-600/95 text-white border-red-400' :
-                'bg-slate-900/90 text-slate-200 border-slate-700'
+                'bg-white text-slate-800 border-slate-300 shadow-2xs'
               ]"
             >
               <span
                 class="w-2 h-2 rounded-full"
-                :class="comp.status === 'Ongoing' ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'"
+                :class="comp.status === 'Ongoing' ? 'bg-emerald-400 animate-ping' : 'bg-amber-500'"
               ></span>
               <span class="font-mono text-[10px]">[{{ comp.prefix }}]</span>
               <span class="max-w-[80px] truncate">{{ comp.name }}</span>
 
               <!-- Hover Tooltip -->
-              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-slate-950 text-white text-[10px] p-2 rounded-xl border border-slate-700 shadow-2xl whitespace-nowrap z-50 pointer-events-none">
-                <p class="font-extrabold text-amber-300">{{ comp.name }}</p>
-                <p class="text-slate-300">📍 {{ comp.location }}</p>
-                <p class="text-emerald-400 font-bold">🎮 {{ getPlayingCount(comp.id) }} Sedang Bertanding</p>
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-white text-slate-900 text-[10px] p-2.5 rounded-xl border border-slate-200 shadow-2xl whitespace-nowrap z-50 pointer-events-none">
+                <p class="font-extrabold text-red-600">{{ comp.name }}</p>
+                <p class="text-slate-600">📍 {{ comp.location }}</p>
+                <p class="text-emerald-600 font-bold">🎮 {{ getPlayingCount(comp.id) }} Sedang Bertanding</p>
               </div>
             </div>
           </div>
 
           <!-- Helper guide overlay -->
-          <div class="absolute bottom-2 left-3 text-[10px] text-slate-400/80 bg-slate-950/70 px-2.5 py-1 rounded-lg pointer-events-none backdrop-blur-xs border border-slate-800">
-            <i class="bi bi-hand-index-thumb"></i> Putar & geser mouse untuk rotasi 3D. Klik zona/pin untuk efek kamera GSAP.
+          <div class="absolute bottom-2 left-3 text-[10px] text-slate-600 bg-white/90 px-2.5 py-1 rounded-lg pointer-events-none backdrop-blur-xs border border-slate-200 shadow-xs">
+            <i class="bi bi-hand-index-thumb text-red-600"></i> Putar & geser mouse untuk rotasi 3D. Klik zona/pin untuk efek kamera GSAP.
           </div>
         </div>
 
         <!-- 3D Legend Footer -->
-        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 border-t border-slate-800 pt-3 z-10">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600 border-t border-slate-200 pt-3 z-10">
           <div class="flex items-center gap-3">
-            <span class="flex items-center gap-1.5">
+            <span class="flex items-center gap-1.5 font-bold">
               <span class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-300"></span> Zone A (Lapangan Hijau)
             </span>
-            <span class="flex items-center gap-1.5">
+            <span class="flex items-center gap-1.5 font-bold">
               <span class="w-3 h-3 rounded-full bg-red-600 border border-red-300"></span> Zone B (Panggung Utama & Podium)
             </span>
             <span class="flex items-center gap-1.5">
@@ -449,47 +449,47 @@
 
     <!-- MAIN VIEW 2: 2D SVG BLUEPRINT -->
     <div v-show="viewMode === 'map'" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-8 bg-slate-900 rounded-2xl border border-slate-800 p-4 relative overflow-hidden min-h-[420px] flex flex-col justify-between">
-        <div class="flex items-center justify-between z-10 text-white border-b border-slate-800 pb-3">
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-4 relative overflow-hidden min-h-[420px] flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between z-10 text-slate-900 border-b border-slate-200 pb-3">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-            <span class="font-bold text-xs tracking-wider uppercase text-slate-300">PETA ARENA LAPANGAN (2D BLUEPRINT)</span>
+            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+            <span class="font-bold text-xs tracking-wider uppercase text-slate-800">PETA ARENA LAPANGAN (2D BLUEPRINT)</span>
           </div>
-          <span class="text-[11px] text-slate-400 italic">Klik area untuk detail panitia</span>
+          <span class="text-[11px] text-slate-500 italic">Klik area untuk detail panitia</span>
         </div>
 
-        <div class="relative my-4 w-full h-[360px] bg-slate-950/60 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
+        <div class="relative my-4 w-full h-[360px] bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex items-center justify-center">
           <svg class="w-full h-full absolute inset-0 select-none" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet">
             <defs>
               <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
               </pattern>
             </defs>
             <rect width="800" height="500" fill="url(#grid)" />
 
             <!-- ZONE A -->
             <g @click="selectZone('A')" class="cursor-pointer transition-all duration-300 hover:opacity-90">
-              <rect x="30" y="40" width="460" height="380" rx="16" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" stroke-dasharray="6,4" />
-              <text x="45" y="68" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif">ZONE A: LAPANGAN LOMBA</text>
-              <text x="45" y="88" fill="#a7f3d0" font-size="10" font-family="sans-serif">(Area Utama Pertandingan Lomba Kemerdekaan)</text>
+              <rect x="30" y="40" width="460" height="380" rx="16" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-width="2" stroke-dasharray="6,4" />
+              <text x="45" y="68" fill="#047857" font-size="13" font-weight="extrabold" font-family="sans-serif">ZONE A: LAPANGAN LOMBA</text>
+              <text x="45" y="88" fill="#059669" font-size="10" font-family="sans-serif">(Area Utama Pertandingan Lomba Kemerdekaan)</text>
             </g>
 
             <!-- ZONE B -->
             <g @click="selectZone('B')" class="cursor-pointer transition-all duration-300 hover:opacity-90">
-              <rect x="520" y="40" width="250" height="180" rx="16" fill="rgba(239, 68, 68, 0.12)" stroke="rgba(239, 68, 68, 0.4)" stroke-width="2" />
-              <text x="535" y="68" fill="#f87171" font-size="12" font-weight="bold" font-family="sans-serif">ZONE B: PANGGUNG PANITIA</text>
-              <text x="535" y="88" fill="#fca5a5" font-size="10" font-family="sans-serif">(Panggung Utama & Podium Juri)</text>
+              <rect x="520" y="40" width="250" height="180" rx="16" fill="rgba(239, 68, 68, 0.08)" stroke="#ef4444" stroke-width="2" />
+              <text x="535" y="68" fill="#b91c1c" font-size="12" font-weight="extrabold" font-family="sans-serif">ZONE B: PANGGUNG PANITIA</text>
+              <text x="535" y="88" fill="#dc2626" font-size="10" font-family="sans-serif">(Panggung Utama & Podium Juri)</text>
             </g>
 
             <!-- ZONE C -->
             <g @click="selectZone('C')" class="cursor-pointer transition-all duration-300 hover:opacity-90">
-              <rect x="520" y="240" width="250" height="180" rx="16" fill="rgba(59, 130, 246, 0.12)" stroke="rgba(59, 130, 246, 0.4)" stroke-width="2" />
-              <text x="535" y="268" fill="#60a5fa" font-size="12" font-weight="bold" font-family="sans-serif">ZONE C: AREA REGISTRASI</text>
-              <text x="535" y="288" fill="#93c5fd" font-size="10" font-family="sans-serif">(Meja Pendaftaran & Informasi)</text>
+              <rect x="520" y="240" width="250" height="180" rx="16" fill="rgba(59, 130, 246, 0.08)" stroke="#3b82f6" stroke-width="2" />
+              <text x="535" y="268" fill="#1d4ed8" font-size="12" font-weight="extrabold" font-family="sans-serif">ZONE C: AREA REGISTRASI</text>
+              <text x="535" y="288" fill="#2563eb" font-size="10" font-family="sans-serif">(Meja Pendaftaran & Informasi)</text>
             </g>
 
-            <path d="M 490 230 L 520 230" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
-            <path d="M 645 220 L 645 240" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4" />
+            <path d="M 490 230 L 520 230" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-dasharray="4" />
+            <path d="M 645 220 L 645 240" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-dasharray="4" />
           </svg>
 
           <!-- Hotspot Pins -->
@@ -501,11 +501,11 @@
             :style="getPinPositionStyle(comp)"
           >
             <div
-              class="group relative flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-lg border text-xs font-extrabold transition-all"
+              class="group relative flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-md border text-xs font-extrabold transition-all"
               :class="[
-                selectedCompId === comp.id ? 'ring-4 ring-yellow-400 scale-110 z-30' : '',
+                selectedCompId === comp.id ? 'ring-4 ring-amber-400 scale-110 z-30 bg-red-600 text-white border-amber-300' :
                 comp.status === 'Ongoing' ? 'bg-red-600 text-white border-red-400' :
-                'bg-slate-800 text-slate-100 border-slate-600'
+                'bg-white text-slate-800 border-slate-300'
               ]"
             >
               <span class="w-2 h-2 rounded-full" :class="comp.status === 'Ongoing' ? 'bg-emerald-400 animate-ping' : 'bg-slate-400'"></span>

@@ -51,23 +51,23 @@
               <span class="text-slate-600 font-semibold">Orientasi:</span>
               <button
                 @click="orientation = 'portrait'"
-                :class="['px-2.5 py-1 rounded-md font-bold transition-colors', orientation === 'portrait' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200']"
+                :class="['px-2.5 py-1 rounded-md font-bold transition-colors', orientation === 'portrait' ? 'bg-red-600 text-white' : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200']"
               >
                 Portrait (Tegak)
               </button>
               <button
                 @click="orientation = 'landscape'"
-                :class="['px-2.5 py-1 rounded-md font-bold transition-colors', orientation === 'landscape' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200']"
+                :class="['px-2.5 py-1 rounded-md font-bold transition-colors', orientation === 'landscape' ? 'bg-red-600 text-white' : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200']"
               >
                 Landscape (Mendatar)
               </button>
             </div>
 
             <div class="flex items-center space-x-2">
-              <span class="text-slate-400 font-semibold">Ukuran Teks:</span>
+              <span class="text-slate-600 font-semibold">Ukuran Teks:</span>
               <select
                 v-model="fontSize"
-                class="bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1 rounded-md text-xs font-medium focus:outline-none"
+                class="bg-white border border-slate-300 text-slate-800 px-2 py-1 rounded-md text-xs font-semibold focus:outline-none"
               >
                 <option value="text-xs">Kecil (Kompak)</option>
                 <option value="text-sm">Sedang (Standar)</option>
@@ -76,14 +76,14 @@
             </div>
           </div>
 
-          <div class="text-slate-400">
-            Total Baris: <strong class="text-white">{{ rows.length }}</strong>
+          <div class="text-slate-500 font-semibold">
+            Total Baris: <strong class="text-slate-900">{{ rows.length }}</strong>
           </div>
         </div>
       </div>
 
       <!-- Live Printable Preview Container -->
-      <div class="flex-1 p-6 overflow-y-auto bg-slate-950/60">
+      <div class="flex-1 p-6 overflow-y-auto bg-slate-200/60">
         <div
           id="printable-preview-area"
           :class="[
@@ -178,7 +178,7 @@
             <div class="text-center w-48">
               <p class="text-slate-700 font-semibold mb-12">Ketua Panitia Pelaksana,</p>
               <p class="font-extrabold text-slate-900 border-b border-slate-900 inline-block px-4">
-                {{ store.settings.headOfCommittee || 'Ahmad Subardjo, S.T.' }}
+                {{ store.settings.headOfCommittee || '(Ketua Panitia)' }}
               </p>
             </div>
           </div>
@@ -186,17 +186,17 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-5 border-t border-slate-800 flex items-center justify-between bg-slate-900 sticky bottom-0">
+      <div class="p-5 border-t border-slate-200 flex items-center justify-between bg-slate-50 sticky bottom-0">
         <button
           @click="$emit('close')"
-          class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-colors"
+          class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-colors"
         >
           Batal
         </button>
 
         <button
           @click="triggerPrint"
-          class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-red-900/50 transition-all flex items-center gap-2"
+          class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-2"
         >
           <i class="bi bi-printer-fill"></i>
           <span>Cetak Dokumen Sekarang</span>

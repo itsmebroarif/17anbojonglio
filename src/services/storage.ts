@@ -8,7 +8,8 @@ import {
   Doorprize,
   AppSettings,
   ActivityLog,
-  WaTemplate
+  WaTemplate,
+  CommitteeMember
 } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,7 +23,8 @@ const STORAGE_KEYS = {
   DOORPRIZES: '17an_doorprizes',
   SETTINGS: '17an_settings',
   HISTORY: '17an_history',
-  WA_TEMPLATES: '17an_wa_templates'
+  WA_TEMPLATES: '17an_wa_templates',
+  COMMITTEES: '17an_committees'
 };
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -30,8 +32,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   eventYear: 2026,
   theme: 'merah-putih',
   logoUrl: '',
-  headOfCommittee: 'Ahmad Subardjo, S.T.',
-  location: 'Lapangan Warga Depok',
+  headOfCommittee: '',
+  location: '',
   prefixRule: 'AUTO',
   certificateTemplateText: 'Diberikan sebagai bentuk penghargaan atas prestasi dan partisipasi aktif dalam menyemarakkan HUT Kemerdekaan Republik Indonesia.',
   autoBackup: true,
@@ -108,9 +110,15 @@ export class StorageService {
       this.set(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS);
       this.set(STORAGE_KEYS.HISTORY, []);
       this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
+      this.set(STORAGE_KEYS.COMMITTEES, []);
       localStorage.setItem('17an_cleared_empty_fresh', 'true');
-    } else if (!localStorage.getItem(STORAGE_KEYS.WA_TEMPLATES)) {
-      this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
+    } else {
+      if (!localStorage.getItem(STORAGE_KEYS.WA_TEMPLATES)) {
+        this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.COMMITTEES)) {
+        this.set(STORAGE_KEYS.COMMITTEES, []);
+      }
     }
   }
 
@@ -125,7 +133,8 @@ export class StorageService {
       doorprizes: this.get<Doorprize[]>(STORAGE_KEYS.DOORPRIZES, []),
       settings: this.get<AppSettings>(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS),
       history: this.get<ActivityLog[]>(STORAGE_KEYS.HISTORY, []),
-      waTemplates: this.get<WaTemplate[]>(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES)
+      waTemplates: this.get<WaTemplate[]>(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES),
+      committees: this.get<CommitteeMember[]>(STORAGE_KEYS.COMMITTEES, [])
     };
   }
 
@@ -141,6 +150,7 @@ export class StorageService {
     if (data.settings) this.set(STORAGE_KEYS.SETTINGS, data.settings);
     if (data.history) this.set(STORAGE_KEYS.HISTORY, data.history);
     if (data.waTemplates) this.set(STORAGE_KEYS.WA_TEMPLATES, data.waTemplates);
+    if (data.committees) this.set(STORAGE_KEYS.COMMITTEES, data.committees);
     return true;
   }
 }

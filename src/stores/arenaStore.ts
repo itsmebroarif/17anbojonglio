@@ -10,7 +10,8 @@ import {
   AppSettings,
   ActivityLog,
   RegistrationStatus,
-  WaTemplate
+  WaTemplate,
+  CommitteeMember
 } from '../types';
 import { StorageService, DEFAULT_SETTINGS, DEFAULT_WA_TEMPLATES } from '../services/storage';
 import { exportToJSON } from '../services/export';
@@ -29,6 +30,7 @@ export const useArenaStore = defineStore('arena', {
     settings: DEFAULT_SETTINGS as AppSettings,
     history: [] as ActivityLog[],
     waTemplates: [] as WaTemplate[],
+    committees: [] as CommitteeMember[],
     globalSearchQuery: '',
     isInitialized: false,
     isDarkMode: false
@@ -111,8 +113,15 @@ export const useArenaStore = defineStore('arena', {
       this.certificates = data.certificates;
       this.doorprizes = data.doorprizes;
       this.settings = data.settings;
+      if (this.settings.headOfCommittee === 'Ahmad Subardjo, S.T.') {
+        this.settings.headOfCommittee = '';
+      }
+      if (this.settings.location === 'Lapangan Warga Depok') {
+        this.settings.location = '';
+      }
       this.history = data.history;
       this.waTemplates = data.waTemplates || DEFAULT_WA_TEMPLATES;
+      this.committees = data.committees || [];
       this.isInitialized = true;
       this.applyDarkMode(false);
     },
@@ -168,6 +177,7 @@ export const useArenaStore = defineStore('arena', {
       StorageService.set('17an_settings', this.settings);
       StorageService.set('17an_history', this.history);
       StorageService.set('17an_wa_templates', this.waTemplates);
+      StorageService.set('17an_committees', this.committees);
     },
 
     logActivity(action: string, details: string) {
@@ -518,6 +528,60 @@ export const useArenaStore = defineStore('arena', {
       this.waTemplates = JSON.parse(JSON.stringify(DEFAULT_WA_TEMPLATES));
       this.logActivity('Template WA Direset', 'Template WhatsApp dikembalikan ke bawaan.');
       this.saveAll();
+    },
+
+    // Committee Actions
+    addCommitteeMember(member: Omit<CommitteeMember, 'id' | 'idCardNumber' | 'joinedAt'>) {
+      const seq = String(this.committees.length + 1).padStart(3, '0');
+      const newMember: CommitteeMember = {
+        ...member,
+        id: 'pnt-' + uuidv4().substring(0, 8),
+        idCardNumber: `PNT-${seq}`,
+        joinedAt: new Date().toISOString()
+      };
+      this.committees.push(newMember);
+      this.logActivity('Panitia Ditambahkan', `Panitia ${newMember.name} (${newMember.role}) berhasil ditambahkan.`);
+      this.saveAll();
+      return newMember;
+    },
+
+    updateCommitteeMember(id: string, updated: Partial<CommitteeMember>) {
+      const idx = this.committees.findIndex(m => m.id === id);
+      if (idx !== -1) {
+        this.committees[idx] = { ...this.committees[idx], ...updated };
+        this.logActivity('Panitia Diperbarui', `Data panitia ${this.committees[idx].name} telah diperbarui.`);
+        this.saveAll();
+      }
+    },
+
+    deleteCommitteeMember(id: string) {
+      const m = this.committees.find(item => item.id === id);
+      this.committees = this.committees.filter(item => item.id !== id);
+      this.logActivity('Panitia Dihapus', `Panitia ${m?.name || id} telah dihapus.`);
+      this.saveAll();
+    },
+
+    bulkAddCommitteeMembers(membersList: { name: string; role?: string; section?: string; phone?: string; rtRw?: string }[]) {
+      const added: CommitteeMember[] = [];
+      membersList.forEach((item) => {
+        if (!item.name || !item.name.trim()) return;
+        const seq = String(this.committees.length + 1).padStart(3, '0');
+        const newMember: CommitteeMember = {
+          id: 'pnt-' + uuidv4().substring(0, 8),
+          name: item.name.trim(),
+          role: item.role?.trim() || 'Anggota Panitia',
+          section: item.section?.trim() || 'Panitia HUT RI',
+          phone: item.phone?.trim() || '-',
+          rtRw: item.rtRw?.trim() || '-',
+          idCardNumber: `PNT-${seq}`,
+          joinedAt: new Date().toISOString()
+        };
+        this.committees.push(newMember);
+        added.push(newMember);
+      });
+      this.logActivity('Bulk Add Panitia', `Berhasil mengimpor ${added.length} panitia sekaligus.`);
+      this.saveAll();
+      return added;
     }
   }
 });

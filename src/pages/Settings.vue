@@ -71,7 +71,7 @@
               v-model="form.headOfCommittee"
               required
               type="text"
-              placeholder="e.g. Ahmad Subardjo, S.T."
+              placeholder="Masukkan Nama Lengkap Ketua Panitia"
               class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-red-500/50"
             />
           </div>

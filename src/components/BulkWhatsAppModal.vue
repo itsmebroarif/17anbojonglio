@@ -3,26 +3,26 @@
     <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150">
       
       <!-- Modal Header -->
-      <div class="p-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+      <div class="p-5 bg-white text-slate-900 flex items-center justify-between border-b border-slate-200 shadow-xs">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xl font-bold shadow-lg shadow-emerald-500/20">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-emerald-600/20">
             <i class="bi bi-whatsapp"></i>
           </div>
           <div>
-            <h2 class="text-base font-extrabold flex items-center gap-2">
+            <h2 class="text-base font-extrabold flex items-center gap-2 text-slate-900">
               <span>Broadcast WhatsApp Peserta</span>
-              <span class="px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] uppercase font-bold border border-emerald-400/30">
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] uppercase font-bold border border-emerald-200">
                 Bulk Message
               </span>
             </h2>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-slate-500">
               Kirim pesan masal langsung ke WhatsApp peserta berdasarkan kriteria lomba atau status arena.
             </p>
           </div>
         </div>
         <button
           @click="$emit('close')"
-          class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+          class="text-slate-400 hover:text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
         >
           <i class="bi bi-x-lg text-lg"></i>
         </button>

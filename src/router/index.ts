@@ -9,6 +9,7 @@ import Results from '../pages/Results.vue';
 import ResultingPoint from '../pages/ResultingPoint.vue';
 import HallOfFame from '../pages/HallOfFame.vue';
 import Certificates from '../pages/Certificates.vue';
+import CommitteeCards from '../pages/CommitteeCards.vue';
 import LuckySpin from '../pages/LuckySpin.vue';
 import ImportExport from '../pages/ImportExport.vue';
 import Settings from '../pages/Settings.vue';
@@ -24,6 +25,7 @@ const routes = [
   { path: '/resulting-point', name: 'ResultingPoint', component: ResultingPoint },
   { path: '/hall-of-fame', name: 'HallOfFame', component: HallOfFame },
   { path: '/certificates', name: 'Certificates', component: Certificates },
+  { path: '/committee', name: 'CommitteeCards', component: CommitteeCards },
   { path: '/lucky-spin', name: 'LuckySpin', component: LuckySpin },
   { path: '/import-export', name: 'ImportExport', component: ImportExport },
   { path: '/settings', name: 'Settings', component: Settings }
