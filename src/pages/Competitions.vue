@@ -26,32 +26,63 @@
       </div>
     </div>
 
-    <!-- Filters & Category Tabs -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-1.5 overflow-x-auto w-full md:w-auto no-scrollbar text-xs">
-        <button
-          v-for="cat in ['Semua', 'Anak-anak', 'Remaja', 'Dewasa', 'Umum']"
-          :key="cat"
-          @click="selectedCategory = cat"
-          class="px-3 py-2 rounded-xl font-medium transition-colors whitespace-nowrap"
-          :class="[
-            selectedCategory === cat
-              ? 'bg-red-600 text-white font-bold shadow-xs'
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-          ]"
-        >
-          {{ cat }}
-        </button>
+    <!-- Filters & Category Tabs & Keyword Query Engine -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-1.5 overflow-x-auto w-full md:w-auto no-scrollbar text-xs">
+          <button
+            v-for="cat in ['Semua', 'Anak-anak', 'Remaja', 'Dewasa', 'Umum']"
+            :key="cat"
+            @click="selectedCategory = cat"
+            class="px-3 py-2 rounded-xl font-medium transition-colors whitespace-nowrap"
+            :class="[
+              selectedCategory === cat
+                ? 'bg-red-600 text-white font-bold shadow-xs'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+            ]"
+          >
+            {{ cat }}
+          </button>
+        </div>
+
+        <div class="relative w-full md:w-96">
+          <i class="bi bi-search absolute left-3 top-2.5 text-slate-400"></i>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Cari atau ketik keyword query (e.g. status:ongoing, kat:anak, poin>50)..."
+            class="w-full pl-9 pr-8 py-2 bg-slate-50 text-slate-800 rounded-xl text-xs border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500/50 font-medium"
+          />
+          <button
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-700 text-xs"
+            title="Bersihkan Pencarian"
+          >
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
       </div>
 
-      <div class="relative w-full md:w-64">
-        <i class="bi bi-search absolute left-3 top-2.5 text-slate-400"></i>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Cari nama lomba..."
-          class="w-full pl-9 pr-3 py-2 bg-slate-100 text-slate-800 rounded-xl text-xs border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/50"
-        />
+      <!-- Keyword Query Autofill Helper Chips -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 text-[11px]">
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <span class="text-slate-400 font-extrabold flex items-center gap-1">
+            <i class="bi bi-key-fill text-amber-500"></i> Keyword Query:
+          </span>
+          <button
+            v-for="chip in keywordChips"
+            :key="chip"
+            @click="addKeywordToSearch(chip)"
+            class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[10px] rounded-lg border border-slate-200 transition-colors whitespace-nowrap"
+          >
+            + {{ chip }}
+          </button>
+        </div>
+
+        <div class="text-slate-500 font-bold whitespace-nowrap ml-auto">
+          Menampilkan <span class="text-red-600 font-extrabold">{{ filteredCompetitions.length }}</span> dari {{ store.competitions.length }} Lomba
+        </div>
       </div>
     </div>
 
@@ -397,11 +428,80 @@ const form = reactive({
   prefix: 'LB'
 });
 
+const keywordChips = [
+  'status:Ongoing',
+  'status:Upcoming',
+  'status:Finished',
+  'kat:Anak-anak',
+  'kat:Dewasa',
+  'poin>50',
+  'kuota:sisa'
+];
+
+function addKeywordToSearch(chip: string) {
+  if (!searchQuery.value) {
+    searchQuery.value = chip;
+  } else if (!searchQuery.value.includes(chip)) {
+    searchQuery.value = `${searchQuery.value.trim()} ${chip}`;
+  }
+}
+
 const filteredCompetitions = computed(() => {
+  const queryRaw = searchQuery.value.trim().toLowerCase();
+
   return store.competitions.filter(comp => {
-    const matchCat = selectedCategory.value === 'Semua' || comp.category === selectedCategory.value;
-    const matchSearch = comp.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-    return matchCat && matchSearch;
+    // Category Tab check
+    const matchCatTab = selectedCategory.value === 'Semua' || comp.category === selectedCategory.value;
+    if (!matchCatTab) return false;
+
+    if (!queryRaw) return true;
+
+    // Parse tokens (space separated)
+    const tokens = queryRaw.split(/\s+/);
+
+    return tokens.every(token => {
+      if (token.startsWith('status:')) {
+        const val = token.replace('status:', '');
+        return comp.status.toLowerCase().includes(val);
+      }
+      if (token.startsWith('kat:') || token.startsWith('kategori:')) {
+        const val = token.replace(/^(kat:|kategori:)/, '');
+        return comp.category.toLowerCase().includes(val);
+      }
+      if (token.startsWith('lokasi:')) {
+        const val = token.replace('lokasi:', '');
+        return comp.location.toLowerCase().includes(val);
+      }
+      if (token.startsWith('prefix:')) {
+        const val = token.replace('prefix:', '');
+        return comp.prefix.toLowerCase().includes(val);
+      }
+      if (token.startsWith('poin>')) {
+        const num = parseFloat(token.replace('poin>', ''));
+        return !isNaN(num) && comp.pointFirst > num;
+      }
+      if (token.startsWith('poin>=')) {
+        const num = parseFloat(token.replace('poin>=', ''));
+        return !isNaN(num) && comp.pointFirst >= num;
+      }
+      if (token === 'kuota:penuh') {
+        const registered = store.getRegistrationsByCompetition(comp.id).length;
+        return registered >= comp.maxParticipants;
+      }
+      if (token === 'kuota:sisa') {
+        const registered = store.getRegistrationsByCompetition(comp.id).length;
+        return registered < comp.maxParticipants;
+      }
+
+      // Default string match
+      return (
+        comp.name.toLowerCase().includes(token) ||
+        comp.description.toLowerCase().includes(token) ||
+        comp.location.toLowerCase().includes(token) ||
+        comp.prefix.toLowerCase().includes(token) ||
+        comp.category.toLowerCase().includes(token)
+      );
+    });
   });
 });
 

@@ -13,6 +13,7 @@ import CommitteeCards from '../pages/CommitteeCards.vue';
 import LuckySpin from '../pages/LuckySpin.vue';
 import ImportExport from '../pages/ImportExport.vue';
 import Settings from '../pages/Settings.vue';
+import SuperUserStudio from '../pages/SuperUserStudio.vue';
 
 const routes = [
   { path: '/', name: 'Dashboard', component: Dashboard },
@@ -27,6 +28,7 @@ const routes = [
   { path: '/certificates', name: 'Certificates', component: Certificates },
   { path: '/committee', name: 'CommitteeCards', component: CommitteeCards },
   { path: '/lucky-spin', name: 'LuckySpin', component: LuckySpin },
+  { path: '/superuser', name: 'SuperUserStudio', component: SuperUserStudio },
   { path: '/import-export', name: 'ImportExport', component: ImportExport },
   { path: '/settings', name: 'Settings', component: Settings }
 ];

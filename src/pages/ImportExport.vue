@@ -107,7 +107,7 @@
 import { ref } from 'vue';
 import { useArenaStore } from '../stores/arenaStore';
 import { StorageService } from '../services/storage';
-import { exportToJSON, exportToXLSX, exportToCSV, exportToSQL } from '../services/export';
+import { exportToJSON, exportToXLSX, exportToCSV, exportToSQL, exportFullMySQLDump } from '../services/export';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
@@ -166,6 +166,12 @@ function exportCSV() {
 
 function exportSQL() {
   const data = StorageService.getAllData();
-  exportToSQL('participants', data.participants, '17an_participants.sql');
+  const dbName = exportFullMySQLDump(data);
+  Swal.fire({
+    icon: 'success',
+    title: 'SQL Dump Berhasil Dibuat!',
+    html: `File database <strong class="text-purple-700 font-mono">${dbName}.sql</strong> telah di-download.<br/><span class="text-xs text-slate-500">Siap di-import langsung ke Navicat, SQLyog, atau HeidiSQL.</span>`,
+    confirmButtonColor: '#9333ea'
+  });
 }
 </script>

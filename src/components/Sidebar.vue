@@ -100,6 +100,7 @@ const navItems = computed(() => [
   { path: '/certificates', label: 'Cetak Sertifikat', icon: 'bi bi-patch-check-fill' },
   { path: '/committee', label: 'Panitia & ID Card', icon: 'bi bi-person-badge-fill', badge: store.committees.length || 'NEW', badgeClass: 'bg-red-100 text-red-700' },
   { path: '/lucky-spin', label: 'Lucky Spin', icon: 'bi bi-arrow-clockwise' },
+  { path: '/superuser', label: 'Super User Studio', icon: 'bi bi-database-fill-gear', badge: 'SQL', badgeClass: 'bg-purple-100 text-purple-700 font-extrabold border border-purple-200' },
   { path: '/import-export', label: 'Import / Export', icon: 'bi bi-arrow-down-up' },
   { path: '/settings', label: 'Pengaturan', icon: 'bi bi-gear-fill' }
 ]);
