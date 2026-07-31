@@ -11,8 +11,8 @@
       </button>
 
       <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
-        <h2 class="text-base sm:text-xl font-black text-slate-900 leading-tight tracking-tight uppercase">
-          CHAMPIONSHIP ALL IN ONE
+        <h2 class="hidden sm:block text-base sm:text-xl font-black text-slate-900 leading-tight tracking-tight uppercase">
+          17AN ARENA CHAMPIONSHIP
         </h2>
         <span class="hidden sm:inline-flex px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider items-center gap-1.5 w-fit border border-emerald-200">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>

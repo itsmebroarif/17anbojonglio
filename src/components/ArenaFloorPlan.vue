@@ -40,6 +40,7 @@
           <option value="A">Zone A: Lapangan Utama</option>
           <option value="B">Zone B: Panggung Panitia</option>
           <option value="C">Zone C: Area Registrasi</option>
+          <option value="D">Zone D: Lounge & Konsumsi</option>
         </select>
 
         <!-- Toggle View Mode -->
@@ -560,6 +561,142 @@
         </div>
       </div>
     </div>
+    <!-- ZONE OCCUPANCY & PARTICIPANTS MODAL -->
+    <div
+      v-if="selectedZoneModal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fade-in"
+      @click.self="selectedZoneModal = null"
+    >
+      <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+        <!-- Modal Header -->
+        <div class="p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-between border-b border-slate-700">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-red-600/30 text-red-400 border border-red-500/40 flex items-center justify-center text-xl font-bold">
+              <i :class="getZoneMeta(selectedZoneModal).icon"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-mono text-[10px] font-extrabold uppercase border border-red-400/30">
+                  Real-time Zone Monitor
+                </span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              </div>
+              <h3 class="font-extrabold text-base text-white">
+                {{ getZoneMeta(selectedZoneModal).title }}
+              </h3>
+            </div>
+          </div>
+          <button @click="selectedZoneModal = null" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-5 overflow-y-auto space-y-5">
+          <!-- Zone Description & Occupancy Stats -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+              <span class="text-[10px] font-extrabold text-emerald-700 uppercase block">Sedang Bertanding</span>
+              <span class="text-2xl font-black text-emerald-900">{{ getZoneParticipants(selectedZoneModal, 'Playing').length }}</span>
+              <span class="text-[10px] text-emerald-600 block">Peserta Active</span>
+            </div>
+
+            <div class="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-center">
+              <span class="text-[10px] font-extrabold text-blue-700 uppercase block">Siap / Dipanggil</span>
+              <span class="text-2xl font-black text-blue-900">{{ getZoneParticipants(selectedZoneModal, 'Ready').length }}</span>
+              <span class="text-[10px] text-blue-600 block">Peserta Ready</span>
+            </div>
+
+            <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-center">
+              <span class="text-[10px] font-extrabold text-amber-700 uppercase block">Antrean Lounge</span>
+              <span class="text-2xl font-black text-amber-900">{{ getZoneParticipants(selectedZoneModal, 'Waiting').length }}</span>
+              <span class="text-[10px] text-amber-600 block">Peserta Waiting</span>
+            </div>
+          </div>
+
+          <!-- Active Competitions in Zone -->
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i class="bi bi-trophy-fill text-amber-500"></i>
+              <span>Cabang Lomba Di Zona Ini:</span>
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="c in getZoneCompetitions(selectedZoneModal)"
+                :key="c.id"
+                class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-extrabold text-slate-800 flex items-center gap-1.5"
+              >
+                <span class="w-2 h-2 rounded-full" :class="c.status === 'Ongoing' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                <span>[{{ c.prefix }}] {{ c.name }}</span>
+              </span>
+              <span v-if="getZoneCompetitions(selectedZoneModal).length === 0" class="text-xs text-slate-400 italic">
+                Tidak ada perlombaan aktif di zona ini saat ini.
+              </span>
+            </div>
+          </div>
+
+          <!-- Active Participants List -->
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span>Roster Peserta Di Zona {{ selectedZoneModal }}:</span>
+              <span class="text-[10px] font-extrabold text-purple-600">Total: {{ getZoneAllParticipants(selectedZoneModal).length }} Peserta</span>
+            </h4>
+
+            <div class="border border-slate-200 rounded-2xl overflow-hidden max-h-60 overflow-y-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-700 font-extrabold sticky top-0">
+                  <tr>
+                    <th class="p-2.5">No</th>
+                    <th class="p-2.5">Peserta</th>
+                    <th class="p-2.5">Lomba</th>
+                    <th class="p-2.5 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr v-for="item in getZoneAllParticipants(selectedZoneModal)" :key="item.id" class="hover:bg-slate-50 font-sans">
+                    <td class="p-2.5 font-mono font-bold text-red-600">#{{ item.participantNumber }}</td>
+                    <td class="p-2.5">
+                      <strong class="text-slate-900 block">{{ store.getParticipantById(item.participantId)?.name }}</strong>
+                      <span class="text-[10px] text-slate-500 font-bold">{{ store.getParticipantById(item.participantId)?.rtRw }}</span>
+                    </td>
+                    <td class="p-2.5 font-semibold text-slate-700">
+                      {{ store.getCompetitionById(item.competitionId)?.name }}
+                    </td>
+                    <td class="p-2.5 text-center">
+                      <span
+                        class="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase border"
+                        :class="[
+                          item.status === 'Playing' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                          item.status === 'Ready' || item.status === 'Called' ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                          'bg-amber-100 text-amber-800 border-amber-300'
+                        ]"
+                      >
+                        {{ item.status }}
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr v-if="getZoneAllParticipants(selectedZoneModal).length === 0">
+                    <td colspan="4" class="p-6 text-center text-slate-400 italic">
+                      Tidak ada peserta aktif di zona ini.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+          <button
+            @click="selectedZoneModal = null"
+            class="px-5 py-2 bg-slate-900 hover:bg-black text-white font-extrabold text-xs rounded-xl shadow-xs"
+          >
+            Tutup Monitor Zona
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -577,6 +714,42 @@ const viewMode = ref<'3d' | 'map' | 'grid'>('3d');
 const searchQuery = ref('');
 const selectedZoneFilter = ref('ALL');
 const selectedCompId = ref<string>('');
+const selectedZoneModal = ref<string | null>(null);
+
+function getZoneMeta(zoneKey: string) {
+  switch (zoneKey) {
+    case 'A': return { title: 'Zone A: Lapangan Lomba Utama', icon: 'bi-flag-fill' };
+    case 'B': return { title: 'Zone B: Panggung Panitia & Podium Juri', icon: 'bi-mic-fill' };
+    case 'C': return { title: 'Zone C: Area Registrasi & Informasi', icon: 'bi-card-checklist' };
+    case 'D': return { title: 'Zone D: Lounge Peserta & Area Konsumsi', icon: 'bi-cup-hot-fill' };
+    default: return { title: 'Zone Arena', icon: 'bi-geo-alt-fill' };
+  }
+}
+
+function getZoneCompetitions(zoneKey: string) {
+  return store.competitions.filter(comp => {
+    const locLower = comp.location.toLowerCase();
+    if (zoneKey === 'A') return locLower.includes('lapangan') || locLower.includes('rumput') || locLower.includes('utama');
+    if (zoneKey === 'B') return locLower.includes('panggung') || locLower.includes('panitia') || locLower.includes('stage');
+    if (zoneKey === 'C') return locLower.includes('registrasi') || locLower.includes('meja') || locLower.includes('informasi');
+    if (zoneKey === 'D') return locLower.includes('lounge') || locLower.includes('konsumsi') || locLower.includes('tenda');
+    return false;
+  });
+}
+
+function getZoneAllParticipants(zoneKey: string) {
+  const compIds = getZoneCompetitions(zoneKey).map(c => c.id);
+  if (compIds.length === 0) return store.registrations.slice(0, 8);
+  return store.registrations.filter(r => compIds.includes(r.competitionId));
+}
+
+function getZoneParticipants(zoneKey: string, status: string) {
+  const all = getZoneAllParticipants(zoneKey);
+  if (status === 'Ready') {
+    return all.filter(r => r.status === 'Ready' || r.status === 'Called');
+  }
+  return all.filter(r => r.status === status);
+}
 
 // Three.js References
 const canvasContainer = ref<HTMLDivElement | null>(null);
@@ -661,6 +834,7 @@ function selectCompetition(comp: Competition) {
 
 function selectZone(zoneKey: string) {
   selectedZoneFilter.value = zoneKey;
+  selectedZoneModal.value = zoneKey;
   onZoneFilterChange();
 }
 

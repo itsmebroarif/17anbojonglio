@@ -21,6 +21,15 @@
         </button>
 
         <button
+          @click="exportCompetitionMultiPagePdf()"
+          class="flex-1 sm:flex-none px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+          title="Unduh 1 File PDF Multi-Page Untuk Seluruh Peserta Cabang Lomba Terpilih"
+        >
+          <i class="bi bi-file-pdf-fill"></i>
+          <span>Multi-Page PDF Lomba</span>
+        </button>
+
+        <button
           @click="printSelectedCertificates"
           :disabled="selectedCertIds.length === 0"
           class="flex-1 sm:flex-none px-4 py-2 bg-slate-900 hover:bg-black text-white font-extrabold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -394,6 +403,46 @@ async function generateAllCertificates() {
     text: `Total ${store.certificates.length} sertifikat berhasil dibuat dan siap dicetak/diunduh.`,
     confirmButtonColor: '#dc2626'
   });
+}
+
+async function exportCompetitionMultiPagePdf(compId?: string) {
+  let targetCompId = compId || selectedCompId.value;
+
+  if (!targetCompId || targetCompId === 'ALL') {
+    // If no specific competition is selected, prompt user to pick one
+    const options: Record<string, string> = {};
+    store.competitions.forEach(c => {
+      options[c.id] = `${c.name} (${c.category})`;
+    });
+
+    const { value: chosenId } = await Swal.fire({
+      title: 'Pilih Cabang Perlombaan',
+      text: 'Pilih cabang lomba untuk membuat 1 dokumen PDF multi-halaman berisi seluruh peserta:',
+      input: 'select',
+      inputOptions: options,
+      inputPlaceholder: '-- Pilih Perlombaan --',
+      showCancelButton: true,
+      confirmButtonText: 'Generate & Unduh PDF Multi-Page',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#d97706'
+    });
+
+    if (!chosenId) return;
+    targetCompId = chosenId;
+  }
+
+  // Ensure certificates exist for this competition
+  await store.generateBatchCertificates(targetCompId);
+
+  const comp = store.getCompetitionById(targetCompId);
+  const compCerts = store.certificates.filter(c => c.competitionId === targetCompId);
+
+  if (compCerts.length === 0) {
+    Swal.fire('Belum Ada Peserta', `Tidak ada data peserta/sertifikat terdaftar untuk cabang lomba ${comp?.name || ''}.`, 'warning');
+    return;
+  }
+
+  exportCertificatesToPdf(compCerts);
 }
 
 function printSelectedCertificates() {

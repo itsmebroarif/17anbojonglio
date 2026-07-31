@@ -123,6 +123,8 @@ export interface ActivityLog {
   timestamp: string;
   action: string;
   details: string;
+  user?: string;
+  ip?: string;
 }
 
 export interface ChatMessage {

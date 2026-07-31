@@ -180,14 +180,16 @@ export const useArenaStore = defineStore('arena', {
       StorageService.set('17an_committees', this.committees);
     },
 
-    logActivity(action: string, details: string) {
+    logActivity(action: string, details: string, user?: string, ip?: string) {
       this.history.unshift({
         id: uuidv4(),
         timestamp: new Date().toISOString(),
         action,
-        details
+        details,
+        user: user || 'Root Admin (Super User)',
+        ip: ip || '127.0.0.1 (Local Session)'
       });
-      if (this.history.length > 100) this.history.pop();
+      if (this.history.length > 150) this.history.pop();
       this.saveAll();
     },
 

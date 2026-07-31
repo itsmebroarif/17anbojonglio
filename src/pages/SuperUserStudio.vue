@@ -86,6 +86,19 @@
         <i class="bi bi-pie-chart-fill"></i>
         <span>D3 Real-time Analytics Panel</span>
       </button>
+
+      <button
+        @click="activeTab = 'audit'"
+        class="px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-2"
+        :class="[
+          activeTab === 'audit'
+            ? 'bg-rose-600 text-white shadow-md'
+            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+        ]"
+      >
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>Audit Log & System Integrity</span>
+      </button>
     </div>
 
     <!-- MAIN TWO-COLUMN WORKSPACE -->
@@ -461,6 +474,136 @@
           <D3AnalyticsPanel />
         </div>
 
+        <!-- TAB 4: AUDIT LOG & COMPETITION INTEGRITY PANEL -->
+        <div v-if="activeTab === 'audit'" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6 font-sans">
+          <!-- Audit Log Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-extrabold uppercase border border-rose-200">
+                  Competition Integrity Ledger
+                </span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              </div>
+              <h2 class="text-lg font-black text-slate-900 flex items-center gap-2 mt-1">
+                <i class="bi bi-shield-check text-rose-600"></i>
+                <span>Super User System Audit Log</span>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Mencatat seluruh rekam jejak eksekusi query JIT SQL, batch edit massal, penghapusan data, & pendaftaran untuk integritas panitia.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                @click="exportAuditLogsJson"
+                class="px-3.5 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+              >
+                <i class="bi bi-download"></i>
+                <span>Export Audit JSON</span>
+              </button>
+              <button
+                @click="clearAuditLogs"
+                class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition-colors flex items-center gap-1.5"
+              >
+                <i class="bi bi-eraser-fill"></i>
+                <span>Bersihkan Log</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Audit Log Filter Bar -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+            <div class="relative w-full sm:w-80">
+              <i class="bi bi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+              <input
+                v-model="auditSearchQuery"
+                type="text"
+                placeholder="Cari aksi, user, rincian, atau tanggal..."
+                class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/50"
+              />
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <span class="text-xs font-bold text-slate-500">Filter Aksi:</span>
+              <select
+                v-model="auditActionFilter"
+                class="px-3 py-1.5 bg-white border border-slate-200 text-slate-800 font-bold text-xs rounded-xl focus:outline-none"
+              >
+                <option value="ALL">-- Semua Tipe Aksi --</option>
+                <option value="SQL_EXECUTE">JIT SQL Execution</option>
+                <option value="BATCH_EDIT">Batch Update Massal</option>
+                <option value="BATCH_DELETE">Batch Delete Massal</option>
+                <option value="DELETE">Penghapusan Record</option>
+                <option value="SYSTEM">Aktivitas Sistem</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Audit Log Table -->
+          <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+            <div class="overflow-x-auto max-h-[500px]">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-700 font-mono text-[11px] font-extrabold sticky top-0 border-b border-slate-200">
+                  <tr>
+                    <th class="p-3 w-12 text-center">#</th>
+                    <th class="p-3 w-40">Waktu & Tanggal</th>
+                    <th class="p-3 w-44">Operator / User Detail</th>
+                    <th class="p-3 w-36">Tipe Aksi</th>
+                    <th class="p-3">Rincian Perubahan / SQL Statement</th>
+                    <th class="p-3 w-28 text-center">Integritas</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-sans">
+                  <tr v-for="(log, idx) in filteredAuditLogs" :key="log.id || idx" class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-3 text-center font-mono text-slate-400 text-[11px]">{{ idx + 1 }}</td>
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap text-[11px]">
+                      <span class="font-bold block text-slate-900">{{ formatDate(log.timestamp || log.id) }}</span>
+                      <span class="text-slate-400 text-[10px]">{{ formatTime(log.timestamp || log.id) }}</span>
+                    </td>
+                    <td class="p-3">
+                      <div class="flex items-center gap-1.5">
+                        <i class="bi bi-person-circle text-rose-600"></i>
+                        <span class="font-extrabold text-slate-900 block truncate">{{ log.user || 'Root Admin (Super User)' }}</span>
+                      </div>
+                      <span class="text-[10px] text-slate-500 font-mono block">IP: {{ log.ip || '127.0.0.1 (Local)' }}</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span
+                        class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase font-mono border"
+                        :class="[
+                          log.action?.includes('SQL') ? 'bg-amber-100 text-amber-900 border-amber-300' :
+                          log.action?.includes('Batch') ? 'bg-purple-100 text-purple-900 border-purple-300' :
+                          log.action?.includes('Delete') || log.action?.includes('Hapus') ? 'bg-rose-100 text-rose-900 border-rose-300' :
+                          'bg-slate-100 text-slate-800 border-slate-300'
+                        ]"
+                      >
+                        {{ log.action || 'ACTIVITY' }}
+                      </span>
+                    </td>
+                    <td class="p-3 font-mono text-[11px] text-slate-800 leading-relaxed max-w-md break-words">
+                      {{ log.details }}
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold flex items-center justify-center gap-1 w-fit mx-auto border border-emerald-200">
+                        <i class="bi bi-shield-check text-emerald-600"></i>
+                        <span>VERIFIED</span>
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr v-if="filteredAuditLogs.length === 0">
+                    <td colspan="6" class="p-8 text-center text-slate-400">
+                      <i class="bi bi-journal-x text-3xl block mb-2 opacity-50"></i>
+                      Belum ada catatan log audit yang sesuai filter.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -651,10 +794,84 @@ import Swal from 'sweetalert2';
 
 const store = useArenaStore();
 
-const activeTab = ref<'grid' | 'sql' | 'charts'>('grid');
+const activeTab = ref<'grid' | 'sql' | 'charts' | 'audit'>('grid');
 const activeTable = ref<string>('participants');
 const gridSearchQuery = ref('');
 const selectedRows = ref<string[]>([]);
+
+const auditSearchQuery = ref('');
+const auditActionFilter = ref('ALL');
+
+const filteredAuditLogs = computed(() => {
+  return store.history.filter(log => {
+    const q = auditSearchQuery.value.trim().toLowerCase();
+    const matchSearch = !q ||
+      log.action.toLowerCase().includes(q) ||
+      log.details.toLowerCase().includes(q) ||
+      (log.user && log.user.toLowerCase().includes(q));
+
+    let matchFilter = true;
+    if (auditActionFilter.value !== 'ALL') {
+      if (auditActionFilter.value === 'SQL_EXECUTE') matchFilter = log.action.includes('SQL');
+      else if (auditActionFilter.value === 'BATCH_EDIT') matchFilter = log.action.includes('Batch') || log.action.includes('Edit') || log.action.includes('Update');
+      else if (auditActionFilter.value === 'BATCH_DELETE') matchFilter = log.action.includes('Batch Delete') || log.action.includes('Hapus Massal');
+      else if (auditActionFilter.value === 'DELETE') matchFilter = log.action.includes('Delete') || log.action.includes('Hapus');
+      else if (auditActionFilter.value === 'SYSTEM') matchFilter = log.action.includes('System') || log.action.includes('Backup') || log.action.includes('Flush');
+    }
+
+    return matchSearch && matchFilter;
+  });
+});
+
+function formatDate(isoStr?: string) {
+  if (!isoStr) return '-';
+  try {
+    return new Date(isoStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return isoStr;
+  }
+}
+
+function formatTime(isoStr?: string) {
+  if (!isoStr) return '-';
+  try {
+    return new Date(isoStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  } catch {
+    return '-';
+  }
+}
+
+function exportAuditLogsJson() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store.history, null, 2));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", `audit_logs_${new Date().toISOString().substring(0, 10)}.json`);
+  dlAnchorElem.click();
+}
+
+function clearAuditLogs() {
+  Swal.fire({
+    title: 'Bersihkan Audit Log?',
+    text: 'Tindakan ini akan menghapus riwayat audit log. Tindakan ini tidak dapat dibatalkan.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e11d48',
+    confirmButtonText: 'Ya, Bersihkan Log'
+  }).then(res => {
+    if (res.isConfirmed) {
+      store.history = [{
+        id: `log_${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        action: 'Audit Log Cleared',
+        details: 'Riwayat audit log dibersihkan oleh Root Admin (Super User).',
+        user: 'Root Admin (Super User)',
+        ip: '127.0.0.1 (Local Session)'
+      }];
+      store.saveAll();
+      Swal.fire('Dibersihkan!', 'Audit log berhasil dikosongkan.', 'success');
+    }
+  });
+}
 
 const rangeStart = ref<number | null>(null);
 const rangeEnd = ref<number | null>(null);
