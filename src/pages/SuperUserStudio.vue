@@ -99,6 +99,19 @@
         <i class="bi bi-shield-lock-fill"></i>
         <span>Audit Log & System Integrity</span>
       </button>
+
+      <button
+        @click="activeTab = 'printQueue'"
+        class="px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-2"
+        :class="[
+          activeTab === 'printQueue'
+            ? 'bg-indigo-600 text-white shadow-md'
+            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+        ]"
+      >
+        <i class="bi bi-printer-fill"></i>
+        <span>Dedicated Print Queue Manager</span>
+      </button>
     </div>
 
     <!-- MAIN TWO-COLUMN WORKSPACE -->
@@ -604,6 +617,170 @@
           </div>
         </div>
 
+        <!-- TAB 5: DEDICATED PRINT QUEUE MANAGER PANEL -->
+        <div v-if="activeTab === 'printQueue'" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6 font-sans">
+          <!-- Print Queue Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-extrabold uppercase border border-indigo-200">
+                  Batch Printing Hub
+                </span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              </div>
+              <h2 class="text-lg font-black text-slate-900 flex items-center gap-2 mt-1">
+                <i class="bi bi-printer-fill text-indigo-600"></i>
+                <span>Dedicated Print Queue Manager</span>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Kelola antrean pencetakan massal sertifikat juara/peserta, kartu peserta, dan ID card panitia dalam satu tempat.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                @click="processBatchPrintQueue"
+                class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-2"
+                :disabled="selectedQueueIds.length === 0"
+                :class="{ 'opacity-50 cursor-not-allowed': selectedQueueIds.length === 0 }"
+              >
+                <i class="bi bi-printer"></i>
+                <span>Cetak Batch Terpilih ({{ selectedQueueIds.length }})</span>
+              </button>
+
+              <button
+                @click="markSelectedAsPrinted"
+                class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 transition-colors flex items-center gap-1.5"
+                :disabled="selectedQueueIds.length === 0"
+                :class="{ 'opacity-50 cursor-not-allowed': selectedQueueIds.length === 0 }"
+              >
+                <i class="bi bi-check2-circle"></i>
+                <span>Tandai Selesai</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Print Queue Filter Bar & Controls -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+            <div class="relative w-full sm:w-72">
+              <i class="bi bi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+              <input
+                v-model="printQueueSearch"
+                type="text"
+                placeholder="Cari penerima, no. kartu, atau tipe..."
+                class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <select
+                v-model="printQueueFilterType"
+                class="px-3 py-1.5 bg-white border border-slate-200 text-slate-800 font-bold text-xs rounded-xl focus:outline-none"
+              >
+                <option value="ALL">-- Semua Tipe Dokumen --</option>
+                <option value="Certificate">📜 Sertifikat Lomba</option>
+                <option value="ParticipantCard">🏷️ Kartu Peserta</option>
+                <option value="CommitteeBadge">🪪 ID Card Panitia</option>
+              </select>
+
+              <select
+                v-model="printQueueFilterStatus"
+                class="px-3 py-1.5 bg-white border border-slate-200 text-slate-800 font-bold text-xs rounded-xl focus:outline-none"
+              >
+                <option value="ALL">-- Semua Status Antrean --</option>
+                <option value="Ready">🟢 Siap Cetak (Ready)</option>
+                <option value="Printed">✅ Sudah Dicetak (Printed)</option>
+              </select>
+
+              <button
+                @click="toggleSelectAllQueue"
+                class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-colors"
+              >
+                {{ selectedQueueIds.length === filteredPrintQueue.length ? 'Batal Semua' : 'Pilih Semua' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Print Queue Items Table -->
+          <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+            <div class="overflow-x-auto max-h-[500px]">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-700 font-mono text-[11px] font-extrabold sticky top-0 border-b border-slate-200">
+                  <tr>
+                    <th class="p-3 w-10 text-center">
+                      <input
+                        type="checkbox"
+                        :checked="selectedQueueIds.length > 0 && selectedQueueIds.length === filteredPrintQueue.length"
+                        @change="toggleSelectAllQueue"
+                        class="rounded text-indigo-600 focus:ring-indigo-500"
+                      />
+                    </th>
+                    <th class="p-3 w-36">Tipe Dokumen</th>
+                    <th class="p-3">Penerima & Rincian</th>
+                    <th class="p-3 w-40">Nomor Dokumen / Kode</th>
+                    <th class="p-3 w-32 text-center">Status Antrean</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-sans">
+                  <tr v-for="item in filteredPrintQueue" :key="item.id" class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        :value="item.id"
+                        v-model="selectedQueueIds"
+                        class="rounded text-indigo-600 focus:ring-indigo-500"
+                      />
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span
+                        class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase border font-mono flex items-center gap-1.5 w-fit"
+                        :class="[
+                          item.type === 'Certificate' ? 'bg-amber-100 text-amber-900 border-amber-300' :
+                          item.type === 'ParticipantCard' ? 'bg-blue-100 text-blue-900 border-blue-300' :
+                          'bg-purple-100 text-purple-900 border-purple-300'
+                        ]"
+                      >
+                        <i :class="[
+                          item.type === 'Certificate' ? 'bi bi-award-fill' :
+                          item.type === 'ParticipantCard' ? 'bi bi-person-vcard-fill' :
+                          'bi bi-person-badge-fill'
+                        ]"></i>
+                        <span>{{ item.type }}</span>
+                      </span>
+                    </td>
+                    <td class="p-3">
+                      <span class="font-extrabold text-slate-900 block text-sm">{{ item.recipientName }}</span>
+                      <span class="text-xs text-slate-500 block">{{ item.subtitle }} • {{ item.title }}</span>
+                    </td>
+                    <td class="p-3 font-mono text-slate-700 font-bold whitespace-nowrap">
+                      {{ item.codeNumber }}
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span
+                        class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border flex items-center justify-center gap-1 w-fit mx-auto"
+                        :class="[
+                          item.status === 'Printed' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                          'bg-amber-100 text-amber-800 border-amber-300'
+                        ]"
+                      >
+                        <i :class="item.status === 'Printed' ? 'bi bi-check-circle-fill text-emerald-600' : 'bi bi-clock-fill text-amber-600'"></i>
+                        <span>{{ item.status === 'Printed' ? 'TERCETAK' : 'SIAP CETAK' }}</span>
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr v-if="filteredPrintQueue.length === 0">
+                    <td colspan="5" class="p-8 text-center text-slate-400">
+                      <i class="bi bi-printer-fill text-3xl block mb-2 opacity-50"></i>
+                      Tidak ada dokumen atau kartu yang sesuai filter antrean.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -794,7 +971,7 @@ import Swal from 'sweetalert2';
 
 const store = useArenaStore();
 
-const activeTab = ref<'grid' | 'sql' | 'charts' | 'audit'>('grid');
+const activeTab = ref<'grid' | 'sql' | 'charts' | 'audit' | 'printQueue'>('grid');
 const activeTable = ref<string>('participants');
 const gridSearchQuery = ref('');
 const selectedRows = ref<string[]>([]);
@@ -1310,6 +1487,171 @@ function executeJitSql() {
       message: 'Query Error',
       executionTimeMs: 0
     };
+  }
+}
+
+// DEDICATED PRINT QUEUE MANAGER LOGIC
+interface PrintQueueItem {
+  id: string;
+  type: 'Certificate' | 'ParticipantCard' | 'CommitteeBadge';
+  title: string;
+  subtitle: string;
+  recipientName: string;
+  codeNumber: string;
+  status: 'Ready' | 'Printed';
+  rawData: any;
+}
+
+const printQueueFilterType = ref<'ALL' | 'Certificate' | 'ParticipantCard' | 'CommitteeBadge'>('ALL');
+const printQueueFilterStatus = ref<'ALL' | 'Ready' | 'Printed'>('ALL');
+const printQueueSearch = ref('');
+const selectedQueueIds = ref<string[]>([]);
+const printedItemIds = ref<Set<string>>(new Set());
+
+const allPrintQueueItems = computed<PrintQueueItem[]>(() => {
+  const items: PrintQueueItem[] = [];
+
+  // 1. Certificates
+  store.certificates.forEach(cert => {
+    const p = store.getParticipantById(cert.participantId);
+    const c = store.getCompetitionById(cert.competitionId);
+    const isPrinted = printedItemIds.value.has(cert.id);
+    items.push({
+      id: cert.id,
+      type: 'Certificate',
+      title: `Sertifikat ${cert.title}`,
+      subtitle: c ? `Lomba ${c.name}` : 'Sertifikat Arena',
+      recipientName: p ? p.name : 'Peserta',
+      codeNumber: cert.certificateNo,
+      status: isPrinted ? 'Printed' : 'Ready',
+      rawData: { cert, participant: p, competition: c }
+    });
+  });
+
+  // 2. Participant ID Cards
+  store.registrations.forEach(reg => {
+    const p = store.getParticipantById(reg.participantId);
+    const c = store.getCompetitionById(reg.competitionId);
+    const isPrinted = printedItemIds.value.has(`card_${reg.id}`);
+    items.push({
+      id: `card_${reg.id}`,
+      type: 'ParticipantCard',
+      title: `Kartu Peserta #${reg.participantNumber}`,
+      subtitle: c ? `Lomba ${c.name}` : 'Peserta Arena',
+      recipientName: p ? p.name : 'Peserta',
+      codeNumber: `REG-${reg.participantNumber}`,
+      status: isPrinted ? 'Printed' : 'Ready',
+      rawData: { reg, participant: p, competition: c }
+    });
+  });
+
+  // 3. Committee Badges
+  store.committees.forEach(comm => {
+    const isPrinted = printedItemIds.value.has(`comm_${comm.id}`);
+    items.push({
+      id: `comm_${comm.id}`,
+      type: 'CommitteeBadge',
+      title: `ID Card Panitia`,
+      subtitle: `Jabatan: ${comm.role} (${comm.section})`,
+      recipientName: comm.name,
+      codeNumber: comm.idCardNumber,
+      status: isPrinted ? 'Printed' : 'Ready',
+      rawData: { committee: comm }
+    });
+  });
+
+  return items;
+});
+
+const filteredPrintQueue = computed(() => {
+  return allPrintQueueItems.value.filter(item => {
+    const matchType = printQueueFilterType.value === 'ALL' || item.type === printQueueFilterType.value;
+    const matchStatus = printQueueFilterStatus.value === 'ALL' || item.status === printQueueFilterStatus.value;
+    const q = printQueueSearch.value.trim().toLowerCase();
+    const matchSearch = !q ||
+      item.recipientName.toLowerCase().includes(q) ||
+      item.title.toLowerCase().includes(q) ||
+      item.codeNumber.toLowerCase().includes(q);
+    return matchType && matchStatus && matchSearch;
+  });
+});
+
+function toggleSelectAllQueue() {
+  if (selectedQueueIds.value.length === filteredPrintQueue.value.length) {
+    selectedQueueIds.value = [];
+  } else {
+    selectedQueueIds.value = filteredPrintQueue.value.map(i => i.id);
+  }
+}
+
+function markSelectedAsPrinted() {
+  selectedQueueIds.value.forEach(id => printedItemIds.value.add(id));
+  store.logActivity('Print Queue Updated', `${selectedQueueIds.value.length} dokumen/kartu ditandai telah dicetak.`);
+  Swal.fire('Berhasil!', `${selectedQueueIds.value.length} item ditandai sebagai 'Sudah Dicetak'.`, 'success');
+  selectedQueueIds.value = [];
+}
+
+function processBatchPrintQueue() {
+  if (selectedQueueIds.value.length === 0) {
+    Swal.fire('Antrean Kosong', 'Pilih setidaknya satu dokumen atau kartu untuk dicetak.', 'warning');
+    return;
+  }
+
+  const selectedItems = allPrintQueueItems.value.filter(i => selectedQueueIds.value.includes(i.id));
+
+  let printContent = `
+    <html>
+      <head>
+        <title>Batch Print Queue - 17AN Arena Championship 2026</title>
+        <style>
+          @page { size: A4 portrait; margin: 10mm; }
+          body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: white; color: #000; }
+          .print-card {
+            page-break-after: always;
+            box-sizing: border-box;
+            border: 3px double #000;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            text-align: center;
+            background: #fff;
+          }
+          .card-header { font-size: 20px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
+          .badge-type { display: inline-block; padding: 4px 14px; background: #000; color: #fff; font-size: 11px; font-weight: bold; border-radius: 20px; margin-bottom: 12px; }
+          .recipient { font-size: 26px; font-weight: 900; margin: 16px 0 6px 0; }
+          .subtitle { font-size: 15px; font-weight: bold; color: #333; margin-bottom: 16px; }
+          .code-box { font-family: monospace; font-size: 18px; font-weight: bold; background: #eee; padding: 8px 18px; display: inline-block; border-radius: 6px; border: 1px solid #ccc; }
+          .footer { margin-top: 35px; font-size: 11px; font-style: italic; color: #555; border-top: 1px dashed #aaa; padding-top: 10px; }
+        </style>
+      </head>
+      <body>
+  `;
+
+  selectedItems.forEach(item => {
+    printContent += `
+      <div class="print-card">
+        <div class="card-header">17AN ARENA CHAMPIONSHIP 2026</div>
+        <div class="badge-type">${item.type.toUpperCase()}</div>
+        <div class="recipient">${item.recipientName}</div>
+        <div class="subtitle">${item.subtitle} • ${item.title}</div>
+        <div class="code-box">NO: ${item.codeNumber}</div>
+        <div class="footer">Cetakan Resmi Sistem Antrean Super User 17AN Arena | Verifikasi Resmi Panitia</div>
+      </div>
+    `;
+  });
+
+  printContent += `</body></html>`;
+
+  const printWin = window.open('', '_blank', 'width=800,height=900');
+  if (printWin) {
+    printWin.document.write(printContent);
+    printWin.document.close();
+    printWin.focus();
+    setTimeout(() => {
+      printWin.print();
+      selectedQueueIds.value.forEach(id => printedItemIds.value.add(id));
+      store.logActivity('Batch Print Executed', `${selectedItems.length} dokumen dikirim ke printer.`);
+    }, 500);
   }
 }
 </script>

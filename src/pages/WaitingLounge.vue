@@ -11,12 +11,21 @@
       </div>
 
       <!-- Quick Action Buttons -->
-      <div class="flex items-center space-x-2 w-full sm:w-auto">
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
         <button
-          @click="isBulkWaOpen = true"
+          @click="store.sendRosterToMc(selectedCompetitionId !== 'ALL' ? selectedCompetitionId : undefined)"
           class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+          title="Kirim daftar nama peserta yang akan bermain langsung ke WhatsApp MC"
         >
           <i class="bi bi-whatsapp"></i>
+          <span>Oper Roster ke MC (WA)</span>
+        </button>
+
+        <button
+          @click="isBulkWaOpen = true"
+          class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+        >
+          <i class="bi bi-send-fill text-emerald-400"></i>
           <span>Broadcast WA Peserta</span>
         </button>
 
@@ -25,7 +34,7 @@
           class="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
         >
           <i class="bi bi-megaphone-fill"></i>
-          <span>Panggil Peserta Berikutnya (Next Call)</span>
+          <span>Panggil Peserta (Next)</span>
         </button>
       </div>
     </div>

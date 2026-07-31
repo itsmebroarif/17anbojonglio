@@ -37,7 +37,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   prefixRule: 'AUTO',
   certificateTemplateText: 'Diberikan sebagai bentuk penghargaan atas prestasi dan partisipasi aktif dalam menyemarakkan HUT Kemerdekaan Republik Indonesia.',
   autoBackup: true,
-  colorTheme: '#dc2626'
+  colorTheme: '#dc2626',
+  mcPhoneNumber: ''
 };
 
 export const DEFAULT_WA_TEMPLATES: WaTemplate[] = [

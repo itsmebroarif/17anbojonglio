@@ -88,6 +88,16 @@
         </div>
 
         <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp MC Arena / Pemandu Acara</label>
+          <input
+            v-model="form.mcPhoneNumber"
+            type="text"
+            placeholder="e.g. 08123456789 (Untuk fitur Oper Roster panggil peserta ke MC)"
+            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500/50"
+          />
+        </div>
+
+        <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Teks Template Sertifikat</label>
           <textarea
             v-model="form.certificateTemplateText"
@@ -385,6 +395,7 @@ const form = reactive({
   eventYear: 2026,
   headOfCommittee: '',
   location: '',
+  mcPhoneNumber: '',
   certificateTemplateText: ''
 });
 
@@ -393,6 +404,7 @@ onMounted(() => {
   form.eventYear = store.settings.eventYear;
   form.headOfCommittee = store.settings.headOfCommittee;
   form.location = store.settings.location;
+  form.mcPhoneNumber = store.settings.mcPhoneNumber || '';
   form.certificateTemplateText = store.settings.certificateTemplateText;
 });
 

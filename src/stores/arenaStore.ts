@@ -206,6 +206,74 @@ export const useArenaStore = defineStore('arena', {
       this.init();
     },
 
+    async sendRosterToMc(competitionId?: string) {
+      // Find active / called / ready participants
+      let targetComp = competitionId ? this.getCompetitionById(competitionId) : null;
+      let targetRegs = this.registrations.filter(r => {
+        const matchesComp = competitionId ? r.competitionId === competitionId : true;
+        const matchesStatus = r.status === 'Called' || r.status === 'Ready' || r.status === 'Playing' || r.status === 'Waiting';
+        return matchesComp && matchesStatus;
+      });
+
+      if (targetRegs.length === 0) {
+        if (typeof window !== 'undefined' && (window as any).Swal) {
+          (window as any).Swal.fire('Info Roster', 'Tidak ada peserta dengan status Waiting, Called, Ready, atau Playing.', 'info');
+        }
+        return;
+      }
+
+      // Check for MC Phone Number in settings
+      let mcPhone = this.settings.mcPhoneNumber || '';
+      if (!mcPhone) {
+        if (typeof window !== 'undefined' && (window as any).Swal) {
+          const { value: inputPhone } = await (window as any).Swal.fire({
+            title: 'Nomor WhatsApp MC Arena',
+            text: 'Masukkan nomor WA MC / Pemandu Acara (Contoh: 08123456789):',
+            input: 'text',
+            inputPlaceholder: '08xxxxxxxxxx',
+            showCancelButton: true,
+            confirmButtonText: 'Simpan & Kirim ke MC',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#16a34a'
+          });
+
+          if (!inputPhone) return;
+          mcPhone = inputPhone.trim();
+          this.settings.mcPhoneNumber = mcPhone;
+          this.saveAll();
+        }
+      }
+
+      // Format clean WA message
+      let formattedPhone = mcPhone.replace(/[^0-9]/g, '');
+      if (formattedPhone.startsWith('0')) {
+        formattedPhone = '62' + formattedPhone.substring(1);
+      }
+
+      const compTitle = targetComp ? targetComp.name : 'SEMUA CABANG ARENA';
+      const compLoc = targetComp ? targetComp.location : 'Lapangan Arena';
+
+      let message = `📢 *PANGGILAN ROSTER MC ARENA 17AN*\n`;
+      message += `---------------------------------\n`;
+      message += `🏆 *Lomba:* ${compTitle}\n`;
+      message += `📍 *Lokasi:* ${compLoc}\n`;
+      message += `⏰ *Waktu:* ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}\n\n`;
+      message += `*Daftar Peserta Siap Bermain / Dipanggil:*\n`;
+
+      targetRegs.slice(0, 15).forEach((r, idx) => {
+        const p = this.getParticipantById(r.participantId);
+        const c = this.getCompetitionById(r.competitionId);
+        const statusTag = r.status === 'Playing' ? '⚡ SEDANG TAMPIL' : r.status === 'Ready' ? '🔥 SIAP TAMPIL' : r.status === 'Called' ? '📢 DIPANGGIL' : '⏳ WAITING';
+        message += `${idx + 1}. [#${r.participantNumber}] *${p?.name || 'Peserta'}* (${p?.rtRw || 'Masyarakat'}) - *${c?.name || 'Lomba'}* -> [${statusTag}]\n`;
+      });
+
+      message += `\nMohon MC dapat mengumumkan pemanggilan nama peserta di atas melalui sound system arena. Merdeka! ✊🇮🇩`;
+
+      const waUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+      window.open(waUrl, '_blank');
+      this.logActivity('Roster Dikirim ke MC', `Roster ${targetRegs.length} peserta dikirim via WA ke MC (${mcPhone}).`);
+    },
+
     // Competitions Actions
     addCompetition(comp: Omit<Competition, 'id'>) {
       const newComp: Competition = {

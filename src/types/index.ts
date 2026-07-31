@@ -108,6 +108,7 @@ export interface AppSettings {
   autoBackup: boolean;
   colorTheme: string;
   lastBackupAt?: string;
+  mcPhoneNumber?: string;
 }
 
 export interface WaTemplate {

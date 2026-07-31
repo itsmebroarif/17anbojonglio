@@ -123,7 +123,10 @@
         </div>
         <div class="flex items-end justify-between">
           <h3 class="text-3xl font-extrabold text-slate-900">{{ stats.totalCompetitions }}</h3>
-          <span class="text-red-700 bg-red-50 border border-red-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Cabang</span>
+          <span class="text-emerald-800 bg-emerald-100 border border-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>In Progress</span>
+          </span>
         </div>
       </div>
 
@@ -136,7 +139,10 @@
         </div>
         <div class="flex items-end justify-between">
           <h3 class="text-3xl font-extrabold text-slate-900">{{ stats.totalParticipants }}</h3>
-          <span class="text-blue-700 bg-blue-50 border border-blue-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Orang</span>
+          <span class="text-amber-800 bg-amber-100 border border-amber-300 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase flex items-center gap-1">
+            <i class="bi bi-hourglass-split text-amber-600"></i>
+            <span>Pending Queue</span>
+          </span>
         </div>
       </div>
 
@@ -149,7 +155,7 @@
         </div>
         <div class="flex items-end justify-between">
           <h3 class="text-3xl font-extrabold text-slate-900">{{ stats.totalWinners }}</h3>
-          <span class="text-amber-700 bg-amber-50 border border-amber-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Podium</span>
+          <span class="text-amber-700 bg-amber-50 border border-amber-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Podium Ready</span>
         </div>
       </div>
 
@@ -162,7 +168,108 @@
         </div>
         <div class="flex items-end justify-between">
           <h3 class="text-3xl font-extrabold text-slate-900">{{ stats.totalCertificates }}</h3>
-          <span class="text-emerald-700 bg-emerald-50 border border-emerald-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Terbit</span>
+          <span class="text-emerald-700 bg-emerald-50 border border-emerald-100 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Batch Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Competition Status Cards & MC WhatsApp Dispatch -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-extrabold uppercase border border-red-200">
+              Real-time Competition Monitor
+            </span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+          <h2 class="text-base font-extrabold text-slate-900 mt-0.5">
+            Status Perlombaan & Oper Roster ke MC Arena
+          </h2>
+        </div>
+
+        <button
+          @click="store.sendRosterToMc()"
+          class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+        >
+          <i class="bi bi-whatsapp"></i>
+          <span>Kirim Roster Semua Lomba ke MC</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          v-for="comp in store.competitions"
+          :key="comp.id"
+          class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all flex flex-col justify-between space-y-3"
+        >
+          <!-- Card Header & Color-Coded Status Badge -->
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-mono font-extrabold text-red-600 uppercase tracking-wider block">
+                [{{ comp.prefix }}] {{ comp.category }}
+              </span>
+              <h3 class="font-extrabold text-sm text-slate-900 leading-snug">
+                {{ comp.name }}
+              </h3>
+            </div>
+
+            <!-- Color Coded Dynamic Status Badge -->
+            <span
+              class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase border flex items-center gap-1.5 whitespace-nowrap shadow-2xs"
+              :class="[
+                getCompetitionStatus(comp.id).statusKey === 'In Progress' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                getCompetitionStatus(comp.id).statusKey === 'Pending' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                getCompetitionStatus(comp.id).statusKey === 'Finished' ? 'bg-slate-200 text-slate-800 border-slate-300' :
+                'bg-blue-100 text-blue-800 border-blue-300'
+              ]"
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full"
+                :class="[
+                  getCompetitionStatus(comp.id).statusKey === 'In Progress' ? 'bg-emerald-500 animate-pulse' :
+                  getCompetitionStatus(comp.id).statusKey === 'Pending' ? 'bg-amber-500 animate-pulse' :
+                  getCompetitionStatus(comp.id).statusKey === 'Finished' ? 'bg-slate-500' :
+                  'bg-blue-500'
+                ]"
+              ></span>
+              <span>{{ getCompetitionStatus(comp.id).statusLabel }}</span>
+            </span>
+          </div>
+
+          <!-- Progress Bar & Participant Stats -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-[11px] font-bold text-slate-600">
+              <span>Progres Selesai:</span>
+              <span>{{ getCompetitionStatus(comp.id).finished }} / {{ getCompetitionStatus(comp.id).total }} Peserta</span>
+            </div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-gradient-to-r from-red-500 to-emerald-500 rounded-full transition-all duration-500"
+                :style="{ width: getCompetitionStatus(comp.id).percent + '%' }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons on Card -->
+          <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
+            <button
+              @click="store.sendRosterToMc(comp.id)"
+              class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-extrabold text-[11px] rounded-xl transition-colors flex items-center gap-1"
+              title="Oper daftar peserta lomba ini ke WhatsApp MC"
+            >
+              <i class="bi bi-whatsapp"></i>
+              <span>Oper ke MC</span>
+            </button>
+
+            <router-link
+              to="/waiting-lounge"
+              class="px-3 py-1.5 bg-slate-900 hover:bg-black text-white font-bold text-[11px] rounded-xl transition-colors flex items-center gap-1"
+            >
+              <span>Lounge</span>
+              <i class="bi bi-chevron-right text-[9px]"></i>
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -347,4 +454,33 @@ const genderCounts = computed(() => {
 const recentLogs = computed(() => {
   return store.history.slice(0, 4);
 });
+
+function getCompetitionStatus(compId: string) {
+  const regs = store.getRegistrationsByCompetition(compId);
+  const total = regs.length;
+  const finished = regs.filter(r => r.status === 'Finished' || r.status === 'Disqualified').length;
+  const playing = regs.filter(r => r.status === 'Playing').length;
+  const ready = regs.filter(r => r.status === 'Ready' || r.status === 'Called').length;
+
+  const percent = total > 0 ? Math.round((finished / total) * 100) : 0;
+
+  let statusKey = 'Pending';
+  let statusLabel = 'Pending Queue';
+
+  if (playing > 0) {
+    statusKey = 'In Progress';
+    statusLabel = 'In Progress / Live';
+  } else if (finished > 0 && finished === total) {
+    statusKey = 'Finished';
+    statusLabel = 'Selesai / Finished';
+  } else if (ready > 0) {
+    statusKey = 'Pending';
+    statusLabel = 'Dipanggil / Ready';
+  } else if (total === 0) {
+    statusKey = 'Upcoming';
+    statusLabel = 'Persiapan Arena';
+  }
+
+  return { total, finished, playing, ready, percent, statusKey, statusLabel };
+}
 </script>
