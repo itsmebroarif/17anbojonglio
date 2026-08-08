@@ -13,7 +13,7 @@ import {
   WaTemplate,
   CommitteeMember
 } from '../types';
-import { StorageService, DEFAULT_SETTINGS, DEFAULT_WA_TEMPLATES } from '../services/storage';
+import { StorageService, DEFAULT_SETTINGS, DEFAULT_WA_TEMPLATES, DEFAULT_17AN_TEMPLATE_COMPETITIONS } from '../services/storage';
 import { exportToJSON } from '../services/export';
 import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
@@ -673,6 +673,25 @@ export const useArenaStore = defineStore('arena', {
       this.logActivity('Bulk Add Panitia', `Berhasil mengimpor ${added.length} panitia sekaligus.`);
       this.saveAll();
       return added;
+    },
+
+    applyCompetitionTemplate(mode: 'replace' | 'append' = 'replace') {
+      const templateItems: Competition[] = DEFAULT_17AN_TEMPLATE_COMPETITIONS.map((tpl) => ({
+        ...tpl,
+        id: `comp_tpl_${uuidv4().substring(0, 8)}`
+      }));
+
+      if (mode === 'replace') {
+        this.competitions = templateItems;
+      } else {
+        const existingNames = new Set(this.competitions.map(c => c.name.toLowerCase().trim()));
+        const uniqueTemplates = templateItems.filter(t => !existingNames.has(t.name.toLowerCase().trim()));
+        this.competitions = [...this.competitions, ...uniqueTemplates];
+      }
+
+      this.logActivity('Template Lomba Diterapkan', `Berhasil memuat 8 cabang lomba resmi 17-an (5 Anak-anak, 3 Dewasa) dengan mode ${mode}.`);
+      this.saveAll();
+      return this.competitions;
     }
   }
 });

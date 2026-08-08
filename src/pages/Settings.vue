@@ -12,10 +12,10 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="flex border-b border-slate-200 gap-4 text-xs font-bold">
+    <div class="flex border-b border-slate-200 gap-4 text-xs font-bold overflow-x-auto no-scrollbar">
       <button
         @click="activeTab = 'general'"
-        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap"
         :class="activeTab === 'general' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
       >
         <i class="bi bi-sliders"></i>
@@ -23,8 +23,17 @@
       </button>
 
       <button
+        @click="activeTab = 'competition-template'"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap"
+        :class="activeTab === 'competition-template' ? 'border-amber-600 text-amber-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
+      >
+        <i class="bi bi-trophy-fill text-amber-500"></i>
+        <span>Template Lomba 17an (8 Cabang)</span>
+      </button>
+
+      <button
         @click="activeTab = 'wa-templates'"
-        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap"
         :class="activeTab === 'wa-templates' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
       >
         <i class="bi bi-whatsapp"></i>
@@ -33,7 +42,7 @@
 
       <button
         @click="activeTab = 'danger'"
-        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap"
         :class="activeTab === 'danger' ? 'border-rose-600 text-rose-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
       >
         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -148,7 +157,181 @@
       </form>
     </div>
 
-    <!-- TAB 2: SAVED WHATSAPP TEMPLATE MANAGER -->
+    <!-- TAB 2: COMPETITION TEMPLATE MANAGER -->
+    <div v-if="activeTab === 'competition-template'" class="space-y-6">
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-2xs space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-extrabold uppercase border border-amber-200">
+                Preset Paket Kemerdekaan RI
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold border border-emerald-200">
+                {{ store.competitions.length }} Lomba Terdaftar di System
+              </span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2 mt-1">
+              <i class="bi bi-trophy-fill text-amber-500"></i>
+              <span>Template Lomba 17-an (8 Cabang Lomba Utama)</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Klik tombol di bawah untuk menyetel otomatis daftar perlombaan dengan template standar 17-an yang terdiri dari 5 cabang Anak-anak dan 3 cabang Dewasa.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              @click="applyCompetitionTemplate('append')"
+              class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 transition-colors flex items-center gap-1.5"
+            >
+              <i class="bi bi-plus-circle-fill text-indigo-600"></i>
+              <span>Tambahkan (Append)</span>
+            </button>
+
+            <button
+              @click="applyCompetitionTemplate('replace')"
+              class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-2"
+            >
+              <i class="bi bi-check2-circle"></i>
+              <span>Set / Terapkan Template Lomba</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Template Categories Preview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- a. Lomba Anak-anak Card -->
+          <div class="bg-amber-50/50 border border-amber-200 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-amber-200/80 pb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black text-sm shadow-xs">
+                  A
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-sm text-amber-950">a. Lomba Anak-Anak</h3>
+                  <p class="text-[11px] text-amber-700">5 Cabang Perlombaan Ketangkasan & Kecepatan</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900 font-extrabold text-[10px]">
+                5 Lomba
+              </span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="bg-white p-3 rounded-xl border border-amber-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🚩</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">1. Lomba Pindahin Bendera</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">BNDR</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Lomba adu kecepatan memindahkan bendera Merah Putih kecil ke dalam botol.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-amber-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🍘</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">2. Lomba Makan Kerupuk</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">KRPK</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Lomba makan kerupuk putih yang digantung tali tanpa menggunakan tangan.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-amber-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🎈</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">3. Lomba Voli Balon</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">VBLN</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Permainan voli menggunakan balon air/udara antar tim anak-anak.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-amber-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🪖</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">4. Lomba Balap Karung Pakai Helm</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">BKR3</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Balap karung unik anak-anak mengenakan helm keselamatan yang meriah.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-amber-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🔴</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">5. Lomba Kelereng</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">KLRG</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Lomba ketangkasan membawa kelereng di atas sendok yang digigit sambil berjalan.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- b. Lomba Dewasa Card -->
+          <div class="bg-blue-50/50 border border-blue-200 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-blue-200/80 pb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
+                  B
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-sm text-blue-950">b. Lomba Dewasa</h3>
+                  <p class="text-[11px] text-blue-700">3 Cabang Perlombaan Kekompakan & Hiburan</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-blue-200 text-blue-900 font-extrabold text-[10px]">
+                3 Lomba
+              </span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="bg-white p-3 rounded-xl border border-blue-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🪑</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">1. Joget Bangku</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">JBNK</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Lomba berjoget mengelilingi kursi saat musik berputar dan berebut duduk saat musik berhenti.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-blue-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🥣</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">2. Estafet Terigu</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">ESTG</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Lomba estafet memindahkan tepung terigu ke belakang lewat atas kepala secara berregu.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-blue-200/70 shadow-2xs flex items-start gap-3">
+                <span class="text-lg">🪢</span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-black text-xs text-slate-900">3. Tarik Tambang</h4>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-bold">TTMB</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Adu kekuatan fisik dan semangat gotong royong antar tim warga dalam menarik tali tambang.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SAVED WHATSAPP TEMPLATE MANAGER -->
     <div v-if="activeTab === 'wa-templates'" class="space-y-6">
       <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-2xs space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
@@ -388,7 +571,32 @@ import { renderBulkTemplate } from '../services/whatsapp';
 import Swal from 'sweetalert2';
 
 const store = useArenaStore();
-const activeTab = ref<'general' | 'wa-templates' | 'danger'>('general');
+const activeTab = ref<'general' | 'competition-template' | 'wa-templates' | 'danger'>('general');
+
+function applyCompetitionTemplate(mode: 'replace' | 'append') {
+  const isReplace = mode === 'replace';
+  Swal.fire({
+    title: isReplace ? 'Set Daftar Lomba ke Template?' : 'Tambahkan Template Lomba?',
+    text: isReplace
+      ? 'Ini akan mengganti daftar lomba saat ini dengan 8 cabang lomba template resmi 17-an (5 Anak-anak, 3 Dewasa).'
+      : 'Cabang lomba template yang belum ada akan ditambahkan ke daftar lomba Anda saat ini.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#d97706',
+    confirmButtonText: isReplace ? 'Ya, Set Template Lomba' : 'Ya, Tambahkan Lomba',
+    cancelButtonText: 'Batal'
+  }).then(res => {
+    if (res.isConfirmed) {
+      store.applyCompetitionTemplate(mode);
+      Swal.fire({
+        icon: 'success',
+        title: 'Template Lomba Berhasil Diset!',
+        text: `Daftar lomba kini telah disesuaikan dengan 8 cabang lomba 17-an resmi. Total lomba aktif: ${store.competitions.length}.`,
+        confirmButtonColor: '#059669'
+      });
+    }
+  });
+}
 
 const form = reactive({
   eventName: '',

@@ -7,7 +7,16 @@
         <p class="text-xs sm:text-sm text-slate-500">Kelola daftar cabang lomba, kategori, lokasi, dan alokasi poin juara.</p>
       </div>
 
-      <div class="flex items-center space-x-2 w-full sm:w-auto">
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <button
+          @click="loadTemplateComps"
+          class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
+          title="Setel otomatis daftar lomba dengan 8 cabang template 17an"
+        >
+          <i class="bi bi-trophy-fill"></i>
+          <span>Muat Template Lomba 17an</span>
+        </button>
+
         <button
           @click="openBulkWaModal('ALL')"
           class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5"
@@ -232,18 +241,21 @@
             <label class="font-bold block mb-1">Gunakan Preset Lomba Khas 17an:</label>
             <select
               @change="applyPreset($event)"
-              class="w-full bg-white border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800"
+              class="w-full bg-white border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-800"
             >
-              <option value="">-- Pilih Template Preset --</option>
-              <option value="Balap Karung">Balap Karung Helm (Anak-anak)</option>
-              <option value="Makan Kerupuk">Makan Kerupuk (Anak-anak)</option>
-              <option value="Tarik Tambang">Tarik Tambang (Dewasa)</option>
-              <option value="Balon Joget">Balon Joget Pasangan (Remaja)</option>
-              <option value="Estafet Air">Estafet Air Baskom (Remaja)</option>
-              <option value="Memasukkan Paku">Memasukkan Paku dalam Botol (Anak-anak)</option>
-              <option value="Mobile Legends">Mobile Legends e-Sport (Remaja/Dewasa)</option>
-              <option value="Fashion Show">Fashion Show Busana Adat (Umum)</option>
-              <option value="Karaoke">Lomba Karaoke Kemerdekaan (Dewasa)</option>
+              <option value="">-- Pilih Template Preset Lomba --</option>
+              <optgroup label="a. Lomba Anak-anak">
+                <option value="Lomba Pindahin Bendera">🚩 Lomba Pindahin Bendera</option>
+                <option value="Lomba Makan Kerupuk">🍘 Lomba Makan Kerupuk</option>
+                <option value="Lomba Voli Balon">🎈 Lomba Voli Balon</option>
+                <option value="Lomba Balap Karung Pakai Helm">🪖 Lomba Balap Karung Pakai Helm</option>
+                <option value="Lomba Kelereng">🔴 Lomba Kelereng</option>
+              </optgroup>
+              <optgroup label="b. Lomba Dewasa">
+                <option value="Joget Bangku">🪑 Joget Bangku</option>
+                <option value="Estafet Terigu">🥣 Estafet Terigu</option>
+                <option value="Tarik Tambang">🪢 Tarik Tambang</option>
+              </optgroup>
             </select>
           </div>
 
@@ -547,42 +559,83 @@ function openModal(comp?: Competition) {
   showModal.value = true;
 }
 
+function loadTemplateComps() {
+  Swal.fire({
+    title: 'Muat Template Lomba 17an?',
+    text: 'Ini akan mengatur ulang/memuat 8 cabang lomba template resmi 17-an (5 Anak-anak, 3 Dewasa).',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#d97706',
+    confirmButtonText: 'Ya, Muat Template Lomba',
+    cancelButtonText: 'Batal'
+  }).then(res => {
+    if (res.isConfirmed) {
+      store.applyCompetitionTemplate('replace');
+      Swal.fire('Berhasil!', 'Daftar lomba diset dengan 8 cabang lomba 17-an.', 'success');
+    }
+  });
+}
+
 function applyPreset(e: Event) {
   const val = (e.target as HTMLSelectElement).value;
   if (!val) return;
 
   switch (val) {
-    case 'Balap Karung':
-      form.name = 'Balap Karung Helm';
+    case 'Lomba Pindahin Bendera':
+      form.name = 'Lomba Pindahin Bendera';
       form.category = 'Anak-anak';
-      form.prefix = 'BK';
-      form.description = 'Peserta menggunakan karung dan helm keselamatan melintasi lintasan 10 meter.';
+      form.prefix = 'BNDR';
+      form.description = 'Lomba adu kecepatan memindahkan bendera Merah Putih kecil ke dalam botol.';
+      form.location = 'Lapangan Utama (Zone A)';
       break;
-    case 'Makan Kerupuk':
-      form.name = 'Makan Kerupuk Raksasa';
+    case 'Lomba Makan Kerupuk':
+      form.name = 'Lomba Makan Kerupuk';
       form.category = 'Anak-anak';
-      form.prefix = 'MK';
-      form.description = 'Lomba memakan kerupuk tanpa menyentuh tangan.';
+      form.prefix = 'KRPK';
+      form.description = 'Lomba makan kerupuk putih yang digantung tali tanpa menyentuh dengan tangan.';
+      form.location = 'Area Panggung Utama (Zone B)';
+      break;
+    case 'Lomba Voli Balon':
+      form.name = 'Lomba Voli Balon';
+      form.category = 'Anak-anak';
+      form.prefix = 'VBLN';
+      form.description = 'Permainan voli menggunakan balon air/udara antar tim anak-anak.';
+      form.location = 'Lapangan Utama (Zone A)';
+      break;
+    case 'Lomba Balap Karung Pakai Helm':
+      form.name = 'Lomba Balap Karung Pakai Helm';
+      form.category = 'Anak-anak';
+      form.prefix = 'BKR3';
+      form.description = 'Balap karung unik anak-anak mengenakan helm keselamatan.';
+      form.location = 'Lapangan Utama (Zone A)';
+      break;
+    case 'Lomba Kelereng':
+      form.name = 'Lomba Kelereng';
+      form.category = 'Anak-anak';
+      form.prefix = 'KLRG';
+      form.description = 'Lomba ketangkasan membawa kelereng di atas sendok yang digigit sambil berjalan.';
+      form.location = 'Area Registrasi (Zone C)';
+      break;
+    case 'Joget Bangku':
+      form.name = 'Joget Bangku';
+      form.category = 'Dewasa';
+      form.prefix = 'JBNK';
+      form.description = 'Lomba berjoget mengelilingi kursi saat musik berputar dan berebut duduk saat musik berhenti.';
+      form.location = 'Panggung Utama (Zone B)';
+      break;
+    case 'Estafet Terigu':
+      form.name = 'Estafet Terigu';
+      form.category = 'Dewasa';
+      form.prefix = 'ESTG';
+      form.description = 'Lomba estafet memindahkan tepung terigu ke belakang lewat atas kepala secara berregu.';
+      form.location = 'Lapangan Utama (Zone A)';
       break;
     case 'Tarik Tambang':
-      form.name = 'Tarik Tambang Kebangsaan';
+      form.name = 'Tarik Tambang';
       form.category = 'Dewasa';
-      form.prefix = 'TT';
-      form.description = 'Lomba kekuatan beregu 5v5 menarik tambang.';
-      form.pointFirst = 150;
-      break;
-    case 'Balon Joget':
-      form.name = 'Balon Joget Pasangan';
-      form.category = 'Remaja';
-      form.prefix = 'BJ';
-      form.description = 'Berjoget berpasangan menjaga balon di dahi saat musik diputar.';
-      break;
-    case 'Mobile Legends':
-      form.name = 'Mobile Legends MLBB';
-      form.category = 'Remaja';
-      form.prefix = 'ML';
-      form.description = 'Turnamen e-sport kustom 5v5 mode draft pick.';
-      form.pointFirst = 200;
+      form.prefix = 'TTMB';
+      form.description = 'Adu kekuatan fisik dan semangat gotong royong antar tim warga dalam menarik tali tambang.';
+      form.location = 'Lapangan Utama (Zone A)';
       break;
   }
 }

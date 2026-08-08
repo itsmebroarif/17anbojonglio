@@ -72,7 +72,128 @@ export const DEFAULT_WA_TEMPLATES: WaTemplate[] = [
   }
 ];
 
-export const SEED_COMPETITIONS: Competition[] = [];
+export const DEFAULT_17AN_TEMPLATE_COMPETITIONS: Omit<Competition, 'id'>[] = [
+  // a. Lomba Anak-anak
+  {
+    name: 'Lomba Pindahin Bendera',
+    category: 'Anak-anak',
+    description: 'Lomba adu kecepatan memindahkan bendera Merah Putih kecil ke dalam botol untuk anak-anak.',
+    location: 'Lapangan Utama (Zone A)',
+    date: '17 Agustus 2026',
+    time: '08:00 WIB',
+    maxParticipants: 30,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'BNDR'
+  },
+  {
+    name: 'Lomba Makan Kerupuk',
+    category: 'Anak-anak',
+    description: 'Lomba makan kerupuk putih yang digantung tali tanpa menyentuh dengan tangan.',
+    location: 'Area Panggung Utama (Zone B)',
+    date: '17 Agustus 2026',
+    time: '09:00 WIB',
+    maxParticipants: 30,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'KRPK'
+  },
+  {
+    name: 'Lomba Voli Balon',
+    category: 'Anak-anak',
+    description: 'Permainan voli balon air/udara antar tim anak-anak yang melatih kekompakan.',
+    location: 'Lapangan Utama (Zone A)',
+    date: '17 Agustus 2026',
+    time: '10:00 WIB',
+    maxParticipants: 24,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'VBLN'
+  },
+  {
+    name: 'Lomba Balap Karung Pakai Helm',
+    category: 'Anak-anak',
+    description: 'Balap karung unik anak-anak mengenakan helm keselamatan yang meriah dan mengocok perut.',
+    location: 'Lapangan Utama (Zone A)',
+    date: '17 Agustus 2026',
+    time: '11:00 WIB',
+    maxParticipants: 20,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'BKR3'
+  },
+  {
+    name: 'Lomba Kelereng',
+    category: 'Anak-anak',
+    description: 'Lomba ketangkasan membawa kelereng di atas sendok yang digigit dari garis start hingga finish.',
+    location: 'Area Registrasi (Zone C)',
+    date: '17 Agustus 2026',
+    time: '13:00 WIB',
+    maxParticipants: 30,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'KLRG'
+  },
+
+  // b. Lomba Dewasa
+  {
+    name: 'Joget Bangku',
+    category: 'Dewasa',
+    description: 'Lomba berjoget mengelilingi deretan kursi saat musik berputar dan berebut duduk saat musik berhenti.',
+    location: 'Panggung Utama (Zone B)',
+    date: '17 Agustus 2026',
+    time: '14:00 WIB',
+    maxParticipants: 20,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'JBNK'
+  },
+  {
+    name: 'Estafet Terigu',
+    category: 'Dewasa',
+    description: 'Lomba estafet memindahkan tepung terigu ke belakang lewat atas kepala secara berregu.',
+    location: 'Lapangan Utama (Zone A)',
+    date: '17 Agustus 2026',
+    time: '15:30 WIB',
+    maxParticipants: 32,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'ESTG'
+  },
+  {
+    name: 'Tarik Tambang',
+    category: 'Dewasa',
+    description: 'Adu kekuatan fisik dan semangat gotong royong antar tim warga dalam menarik tali tambang.',
+    location: 'Lapangan Utama (Zone A)',
+    date: '17 Agustus 2026',
+    time: '16:30 WIB',
+    maxParticipants: 40,
+    pointFirst: 100,
+    pointSecond: 75,
+    pointThird: 50,
+    status: 'Upcoming',
+    prefix: 'TTMB'
+  }
+];
+
+export const SEED_COMPETITIONS: Competition[] = DEFAULT_17AN_TEMPLATE_COMPETITIONS.map((c, idx) => ({
+  ...c,
+  id: `comp_tpl_${idx + 1}`
+}));
 export const SEED_PARTICIPANTS: Participant[] = [];
 export const SEED_REGISTRATIONS: Registration[] = [];
 export const SEED_WINNERS: Winner[] = [];
@@ -99,9 +220,9 @@ export class StorageService {
   }
 
   static initializeDefaults(force = false): void {
-    const isCleared = localStorage.getItem('17an_cleared_empty_fresh');
+    const isCleared = localStorage.getItem('17an_cleared_empty_fresh_v2');
     if (force || !isCleared || !localStorage.getItem(STORAGE_KEYS.COMPETITIONS)) {
-      this.set(STORAGE_KEYS.COMPETITIONS, []);
+      this.set(STORAGE_KEYS.COMPETITIONS, SEED_COMPETITIONS);
       this.set(STORAGE_KEYS.PARTICIPANTS, []);
       this.set(STORAGE_KEYS.REGISTRATIONS, []);
       this.set(STORAGE_KEYS.SCORES, []);
@@ -112,7 +233,7 @@ export class StorageService {
       this.set(STORAGE_KEYS.HISTORY, []);
       this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
       this.set(STORAGE_KEYS.COMMITTEES, []);
-      localStorage.setItem('17an_cleared_empty_fresh', 'true');
+      localStorage.setItem('17an_cleared_empty_fresh_v2', 'true');
     } else {
       if (!localStorage.getItem(STORAGE_KEYS.WA_TEMPLATES)) {
         this.set(STORAGE_KEYS.WA_TEMPLATES, DEFAULT_WA_TEMPLATES);
